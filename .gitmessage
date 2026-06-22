@@ -1,0 +1,4 @@
+# <type>(scope): <summary>
+#
+# Types: feat, fix, chore, docs, style, refactor, test, ci
+# Example: feat(site): add landing page
