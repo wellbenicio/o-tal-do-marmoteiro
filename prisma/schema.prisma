@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  phone     String
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Service {
+  id              String    @id @default(cuid())
+  name            String
+  description     String   @db.Text
+  durationMinutes Int
+  priceCents      Int
+  currency        String   @default("BRL")
+  active          Boolean  @default(true)
+  bookings        Booking[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Booking {
+  id                    String        @id @default(cuid())
+  publicToken           String        @unique @default(cuid())
+  customerId            String
+  serviceId             String
+  scheduledStart        DateTime
+  scheduledEnd          DateTime
+  status                BookingStatus
+  slotLockExpiresAt     DateTime
+  googleCalendarEventId String?
+  customer              Customer      @relation(fields: [customerId], references: [id])
+  service               Service       @relation(fields: [serviceId], references: [id])
+  payments              Payment[]
+  notes                 BookingNote[]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([scheduledStart])
+  @@index([scheduledEnd])
+  @@index([status])
+  @@index([serviceId, scheduledStart, scheduledEnd])
+}
+
+model Payment {
+  id                  String         @id @default(cuid())
+  bookingId           String
+  gateway             PaymentGateway
+  gatewayPaymentId    String?
+  gatewayPreferenceId String?
+  status              PaymentStatus
+  amountCents         Int
+  currency            String         @default("BRL")
+  approvedAt          DateTime?
+  rawPayload          Json?
+  booking             Booking        @relation(fields: [bookingId], references: [id])
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([gatewayPaymentId])
+  @@index([gatewayPreferenceId])
+  @@index([status])
+}
+
+model BookingNote {
+  id                   String   @id @default(cuid())
+  bookingId            String
+  privateNotes         String?  @db.Text
+  customerVisibleNotes String?  @db.Text
+  booking              Booking  @relation(fields: [bookingId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PAYMENT_REJECTED
+  EXPIRED
+  CANCELED
+  REFUNDED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  IN_PROCESS
+  REJECTED
+  CANCELLED
+  REFUNDED
+  CHARGED_BACK
+  UNKNOWN
+}
+
+enum PaymentGateway {
+  MERCADO_PAGO
+}
