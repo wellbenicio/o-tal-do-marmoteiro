@@ -3,12 +3,13 @@ import { clsx } from "clsx";
 
 export function buttonClassName(variant: "primary" | "secondary" | "ghost" = "primary") {
   return clsx(
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-marmoteiro-gold focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-55",
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-marmoteiro-amber focus:ring-offset-2 focus:ring-offset-black disabled:pointer-events-none disabled:opacity-55",
     {
-      "bg-marmoteiro-wine text-white shadow-soft hover:bg-marmoteiro-rose": variant === "primary",
-      "border border-marmoteiro-wine/25 bg-marmoteiro-paper text-marmoteiro-ink hover:border-marmoteiro-wine/50":
+      "orange-cta border border-marmoteiro-yellow/80 text-white shadow-amber hover:brightness-110":
+        variant === "primary",
+      "border border-marmoteiro-amber/40 bg-marmoteiro-panel text-marmoteiro-text hover:border-marmoteiro-amber":
         variant === "secondary",
-      "text-marmoteiro-wine hover:bg-marmoteiro-wine/10": variant === "ghost"
+      "text-marmoteiro-text hover:text-marmoteiro-amber": variant === "ghost"
     }
   );
 }

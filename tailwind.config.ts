@@ -6,13 +6,16 @@ const config: Config = {
     extend: {
       colors: {
         marmoteiro: {
-          ink: "#241212",
-          wine: "#6d162f",
-          rose: "#b84255",
-          gold: "#d89b36",
-          leaf: "#3d5a36",
-          mist: "#f8efe4",
-          paper: "#fff9f0"
+          black: "#000000",
+          charcoal: "#111111",
+          panel: "#171717",
+          card: "#3b2700",
+          amber: "#ff9700",
+          amberDark: "#9b6000",
+          yellow: "#ffb21a",
+          red: "#f51f28",
+          text: "#f8f7f4",
+          muted: "#b7b2aa"
         }
       },
       fontFamily: {
@@ -20,7 +23,8 @@ const config: Config = {
         display: ["var(--font-display)", "Georgia", "serif"]
       },
       boxShadow: {
-        soft: "0 18px 50px rgba(36, 18, 18, 0.14)"
+        amber: "0 0 22px rgba(255, 151, 0, 0.36)",
+        soft: "0 18px 50px rgba(0, 0, 0, 0.34)"
       }
     }
   },

@@ -13,9 +13,9 @@ export default async function PendingPage({
   return (
     <main className="min-h-screen px-4 py-12">
       <Card className="mx-auto max-w-2xl">
-        <Clock3 className="text-marmoteiro-gold" size={34} />
+        <Clock3 className="text-marmoteiro-amber" size={34} />
         <h1 className="mt-4 font-display text-4xl">Pagamento pendente</h1>
-        <p className="mt-4 leading-7 text-marmoteiro-ink/72">
+        <p className="mt-4 leading-7 text-white/72">
           A reserva ainda não está confirmada. A confirmação depende da aprovação
           do pagamento.
         </p>

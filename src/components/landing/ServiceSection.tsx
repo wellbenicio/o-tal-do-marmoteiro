@@ -1,48 +1,61 @@
-import { Clock, CreditCard, Video } from "lucide-react";
+import Image from "next/image";
+import { ChartNoAxesColumnIncreasing, Handshake, Heart, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/ui/Section";
 
 export function ServiceSection() {
   const items = [
     {
-      icon: Clock,
-      title: "30 minutos",
-      text: "Tempo direto para olhar a questão principal com calma e foco."
+      icon: Heart,
+      title: "Relacionamentos",
+      text: "Entenda sentimentos, intenções e próximos passos."
     },
     {
-      icon: Video,
-      title: "Online",
-      text: "Atendimento remoto para você participar de onde estiver."
+      icon: ChartNoAxesColumnIncreasing,
+      title: "Trabalho e Finanças",
+      text: "Clareza para decisões profissionais e oportunidades."
     },
     {
-      icon: CreditCard,
-      title: "Pagamento antes",
-      text: "A confirmação só acontece depois da aprovação do pagamento."
+      icon: MessageCircle,
+      title: "Orientação Espiritual",
+      text: "Mensagens e direcionamentos para seu momento."
+    },
+    {
+      icon: Handshake,
+      title: "Atendimento imediato",
+      text: "Receba sua consulta sem sair de casa."
     }
   ];
 
   return (
-    <Section id="servico">
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-marmoteiro-rose">
-            Serviço inicial
-          </p>
-          <h2 className="mt-3 font-display text-4xl text-marmoteiro-ink">
-            Jogo de Cartomancia — 30 minutos
-          </h2>
-          <p className="mt-4 text-base leading-7 text-marmoteiro-ink/72">
-            Uma consulta online com Baralho Cigano para direcionamento, clareza e
-            reflexão espiritual/intuitiva. A proposta é acolher sem prometer milagre
-            e orientar sem substituir decisões profissionais.
-          </p>
+    <Section id="servico" className="pb-10 pt-20">
+      <div className="relative mx-auto max-w-[650px]">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-marmoteiro-amber p-8 text-white shadow-soft sm:min-h-[300px]">
+          <div className="absolute bottom-0 left-3 hidden w-64 sm:block">
+            <Image alt="" height={350} src="/assets/figma/service-person.png" width={280} />
+          </div>
+          <div className="ml-auto max-w-[330px] py-8">
+            <p className="text-4xl font-black leading-[0.88] text-white/30 sm:text-5xl">
+              Marmo teiro
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              Simples, rápido e online.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-white/85">
+              Encontre respostas para o amor, trabalho e suas principais dúvidas em
+              uma sessão de cartomancia online de 30 minutos.
+            </p>
+          </div>
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+
+        <div className="-mt-12 grid gap-3 sm:grid-cols-4">
           {items.map((item) => (
-            <Card key={item.title}>
-              <item.icon className="text-marmoteiro-wine" size={24} />
-              <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-marmoteiro-ink/70">{item.text}</p>
+            <Card key={item.title} className="relative z-10 !bg-[#4d3500]/95 p-4 shadow-amber">
+              <item.icon className="text-marmoteiro-amber" size={18} />
+              <h3 className="mt-4 text-sm font-semibold text-marmoteiro-amber">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-xs leading-5 text-white/72">{item.text}</p>
             </Card>
           ))}
         </div>

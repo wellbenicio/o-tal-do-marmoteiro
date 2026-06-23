@@ -3,27 +3,37 @@ import { Section } from "@/components/ui/Section";
 export function FaqSection() {
   const faqs = [
     {
-      q: "Quando meu horário fica confirmado?",
-      a: "Somente depois da aprovação do pagamento. Antes disso, o sistema mantém uma reserva temporária."
+      q: "Como recebo a confirmação?",
+      a: "A confirmação aparece no status público do agendamento depois que o pagamento for aprovado."
     },
     {
-      q: "O atendimento é presencial?",
-      a: "Não. O serviço inicial é online e dura 30 minutos."
+      q: "Posso remarcar?",
+      a: "Sim. Entre em contato pelo WhatsApp para avaliarmos uma nova disponibilidade."
     },
     {
-      q: "O que acontece se o pagamento não for aprovado?",
-      a: "O agendamento não é confirmado e o horário volta a ficar disponível após a expiração da reserva."
+      q: "A consulta é gravada?",
+      a: "O MVP não inclui gravação automática. Combine detalhes diretamente no atendimento."
+    },
+    {
+      q: "Como funciona o atendimento?",
+      a: "Você agenda, paga e recebe a orientação online no horário marcado."
     }
   ];
 
   return (
-    <Section id="faq">
-      <h2 className="font-display text-4xl">Perguntas frequentes</h2>
-      <div className="mt-8 divide-y divide-marmoteiro-wine/15 rounded-md border border-marmoteiro-wine/15 bg-marmoteiro-paper">
+    <Section id="faq" className="pb-20 pt-16">
+      <h2 className="text-center text-4xl font-medium">Perguntas frequentes</h2>
+      <p className="mt-3 text-center text-xs text-white/50">
+        Confira as dúvidas mais comuns antes de agendar sua consulta online.
+      </p>
+      <div className="mt-10 divide-y divide-white/10">
         {faqs.map((faq) => (
-          <details key={faq.q} className="group p-5">
-            <summary className="cursor-pointer list-none font-semibold">{faq.q}</summary>
-            <p className="mt-3 leading-7 text-marmoteiro-ink/70">{faq.a}</p>
+          <details key={faq.q} className="group py-6">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium text-white/80">
+              {faq.q}
+              <span className="text-marmoteiro-amber transition group-open:rotate-180">↓</span>
+            </summary>
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-white/58">{faq.a}</p>
           </details>
         ))}
       </div>

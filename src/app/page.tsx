@@ -14,8 +14,8 @@ export default function Home() {
       <ServiceSection />
       <HowItWorksSection />
       <BookingForm />
-      <BenefitsSection />
       <ImportantNotesSection />
+      <BenefitsSection />
       <FaqSection />
       <Footer />
     </main>

@@ -54,20 +54,20 @@ export function MockPaymentClient() {
     <main className="min-h-screen px-4 py-12">
       <Card className="mx-auto max-w-2xl">
         <div className="flex items-start gap-4">
-          <AlertTriangle className="shrink-0 text-marmoteiro-gold" size={28} />
+          <AlertTriangle className="shrink-0 text-marmoteiro-amber" size={28} />
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-marmoteiro-rose">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-marmoteiro-amber">
               Ambiente local
             </p>
             <h1 className="mt-2 font-display text-4xl">Pagamento mockado</h1>
-            <p className="mt-4 leading-7 text-marmoteiro-ink/72">
+            <p className="mt-4 leading-7 text-white/72">
               Esta tela não representa uma cobrança real. Ela existe para validar o
               fluxo do MVP antes da integração com Mercado Pago.
             </p>
           </div>
         </div>
 
-        <p className="mt-6 rounded-md bg-marmoteiro-gold/15 p-3 text-sm text-marmoteiro-ink/72">
+        <p className="mt-6 rounded-md bg-marmoteiro-amber/15 p-3 text-sm text-white/72">
           Token do agendamento: {publicToken || "não informado"}
         </p>
 
@@ -95,13 +95,13 @@ export function MockPaymentClient() {
         </div>
 
         {message ? (
-          <p className="mt-4 rounded-md border border-marmoteiro-rose/30 bg-marmoteiro-rose/10 p-3 text-sm text-marmoteiro-wine">
+          <p className="mt-4 rounded-md border border-marmoteiro-red/30 bg-marmoteiro-red/10 p-3 text-sm text-white">
             {message}
           </p>
         ) : null}
 
         {publicToken ? (
-          <Link className="mt-6 inline-flex text-sm font-semibold text-marmoteiro-wine" href={`/agendamento/${publicToken}`}>
+          <Link className="mt-6 inline-flex text-sm font-semibold text-marmoteiro-amber" href={`/agendamento/${publicToken}`}>
             Consultar agendamento
           </Link>
         ) : null}

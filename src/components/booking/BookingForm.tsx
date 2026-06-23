@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, Loader2 } from "lucide-react";
+import { ArrowRightCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Section } from "@/components/ui/Section";
 import { formatCurrency, toDateInputValue } from "@/lib/format";
@@ -112,53 +112,57 @@ export function BookingForm() {
   }
 
   return (
-    <Section id="agendamento">
-      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-marmoteiro-rose">
-            Agendamento
-          </p>
-          <h2 className="mt-3 font-display text-4xl text-marmoteiro-ink">
-            Escolha seu horário
-          </h2>
-          <p className="mt-4 leading-7 text-marmoteiro-ink/72">
-            O horário fica reservado temporariamente enquanto você segue para o pagamento.
-            A confirmação só acontece depois que o pagamento for aprovado.
-          </p>
-          {selectedService ? (
-            <Card className="mt-6">
-              <h3 className="text-lg font-semibold">{selectedService.name}</h3>
-              <p className="mt-2 text-sm leading-6 text-marmoteiro-ink/68">
-                {selectedService.description}
-              </p>
-              <p className="mt-4 text-2xl font-bold text-marmoteiro-wine">
-                {formatCurrency(selectedService.priceCents, selectedService.currency)}
-              </p>
-            </Card>
-          ) : null}
+    <Section id="agendamento" className="py-16">
+      <div className="grid overflow-hidden rounded-2xl bg-[#1a0716] shadow-soft sm:grid-cols-[1.05fr_0.95fr]">
+        <div className="relative min-h-[430px] overflow-hidden">
+          <Image
+            fill
+            alt=""
+            className="object-cover"
+            src="/assets/figma/booking-photo.png"
+            sizes="(max-width: 860px) 100vw, 430px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0716] via-[#1a0716]/25 to-transparent" />
         </div>
 
-        <Card>
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <label className="space-y-2 text-sm font-medium">
-              Serviço
-              <select
-                className="min-h-11 w-full rounded-md border border-marmoteiro-wine/20 bg-white px-3 py-2 text-sm outline-none focus:border-marmoteiro-gold focus:ring-2 focus:ring-marmoteiro-gold/25"
-                value={serviceId}
-                onChange={(event) => setServiceId(event.target.value)}
-              >
-                {services.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+        <form className="space-y-4 p-6 sm:p-8" onSubmit={handleSubmit}>
+          <Image
+            alt="O Tal do Marmoteiro"
+            className="mb-4 h-auto w-28"
+            height={73}
+            src="/assets/figma/logo.png"
+            width={160}
+          />
 
+          {selectedService ? (
+            <div className="rounded-md border border-white/10 bg-black/25 p-3">
+              <p className="text-sm font-semibold text-white">{selectedService.name}</p>
+              <p className="mt-1 text-xs text-white/55">
+                {selectedService.durationMinutes} minutos ·{" "}
+                {formatCurrency(selectedService.priceCents, selectedService.currency)}
+              </p>
+            </div>
+          ) : null}
+
+          <label className="space-y-2 text-xs font-medium text-white/75">
+            Serviço
+            <select
+              className="min-h-10 w-full rounded-sm border border-white/25 bg-transparent px-3 py-2 text-sm text-white outline-none focus:border-marmoteiro-amber focus:ring-2 focus:ring-marmoteiro-amber/25"
+              value={serviceId}
+              onChange={(event) => setServiceId(event.target.value)}
+            >
+              {services.map((service) => (
+                <option className="bg-black" key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="grid gap-4 sm:grid-cols-2">
             <DateSelector value={date} onChange={setDate} />
-
-            <div className="space-y-2">
-              <span className="text-sm font-medium">Horário</span>
+            <div className="space-y-2 text-xs font-medium text-white/75">
+              Horário
               <TimeSlotSelector
                 loading={loadingSlots}
                 selectedSlot={selectedSlot}
@@ -166,50 +170,55 @@ export function BookingForm() {
                 onSelect={setSelectedSlot}
               />
             </div>
+          </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium sm:col-span-2">
-                Nome
-                <Input
-                  required
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={(event) => setForm({ ...form, name: event.target.value })}
-                />
-              </label>
-              <label className="space-y-2 text-sm font-medium">
-                E-mail
-                <Input
-                  required
-                  autoComplete="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(event) => setForm({ ...form, email: event.target.value })}
-                />
-              </label>
-              <label className="space-y-2 text-sm font-medium">
-                WhatsApp
-                <Input
-                  required
-                  autoComplete="tel"
-                  value={form.phone}
-                  onChange={(event) => setForm({ ...form, phone: event.target.value })}
-                />
-              </label>
-            </div>
+          <label className="space-y-2 text-xs font-medium text-white/75">
+            Nome
+            <Input
+              required
+              autoComplete="name"
+              placeholder="Digite seu nome"
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value })}
+            />
+          </label>
+          <label className="space-y-2 text-xs font-medium text-white/75">
+            E-mail
+            <Input
+              required
+              autoComplete="email"
+              placeholder="Digite seu e-mail"
+              type="email"
+              value={form.email}
+              onChange={(event) => setForm({ ...form, email: event.target.value })}
+            />
+          </label>
+          <label className="space-y-2 text-xs font-medium text-white/75">
+            WhatsApp
+            <Input
+              required
+              autoComplete="tel"
+              placeholder="(00) 00000-0000"
+              value={form.phone}
+              onChange={(event) => setForm({ ...form, phone: event.target.value })}
+            />
+          </label>
 
-            {message ? (
-              <p className="rounded-md border border-marmoteiro-rose/30 bg-marmoteiro-rose/10 p-3 text-sm text-marmoteiro-wine">
-                {message}
-              </p>
-            ) : null}
+          {message ? (
+            <p className="rounded-md border border-marmoteiro-red/40 bg-marmoteiro-red/15 p-3 text-xs text-white">
+              {message}
+            </p>
+          ) : null}
 
-            <Button className="w-full" disabled={submitting || !serviceId} type="submit">
-              {submitting ? <Loader2 className="animate-spin" size={18} /> : <CalendarCheck size={18} />}
-              Iniciar pagamento
-            </Button>
-          </form>
-        </Card>
+          <Button className="w-full rounded-sm" disabled={submitting || !serviceId} type="submit">
+            {submitting ? <Loader2 className="animate-spin" size={16} /> : null}
+            Enviar
+          </Button>
+          <p className="text-center text-xs text-white/50">
+            Ou fale com a gente pelo <span className="text-marmoteiro-amber">nosso whatsapp</span>
+            <ArrowRightCircle className="ml-1 inline" size={13} />
+          </p>
+        </form>
       </div>
     </Section>
   );

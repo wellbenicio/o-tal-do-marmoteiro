@@ -9,7 +9,7 @@ export function DateSelector({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="space-y-2 text-sm font-medium">
+    <label className="space-y-2 text-xs font-medium text-white/75">
       Data
       <Input
         min={toDateInputValue()}

@@ -12,19 +12,19 @@ export function TimeSlotSelector({
   loading: boolean;
 }) {
   if (loading) {
-    return <p className="text-sm text-marmoteiro-ink/64">Carregando horários...</p>;
+    return <p className="text-xs text-white/55">Carregando horários...</p>;
   }
 
   if (!slots.length) {
     return (
-      <p className="rounded-md border border-marmoteiro-wine/15 bg-white p-3 text-sm text-marmoteiro-ink/68">
+      <p className="rounded-sm border border-white/15 bg-black/25 p-3 text-xs text-white/60">
         Nenhum horário disponível para esta data.
       </p>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+    <div className="grid max-h-28 grid-cols-2 gap-2 overflow-y-auto pr-1">
       {slots.map((slot) => {
         const label = new Intl.DateTimeFormat("pt-BR", {
           hour: "2-digit",
@@ -35,10 +35,10 @@ export function TimeSlotSelector({
         return (
           <button
             className={clsx(
-              "min-h-11 rounded-md border px-3 py-2 text-sm font-semibold transition",
+              "min-h-10 rounded-sm border px-2 py-2 text-xs font-semibold transition",
               selectedSlot === slot
-                ? "border-marmoteiro-wine bg-marmoteiro-wine text-white"
-                : "border-marmoteiro-wine/20 bg-white text-marmoteiro-ink hover:border-marmoteiro-rose"
+                ? "border-marmoteiro-amber bg-marmoteiro-amber text-black"
+                : "border-white/20 bg-black/25 text-white hover:border-marmoteiro-amber"
             )}
             key={slot}
             type="button"

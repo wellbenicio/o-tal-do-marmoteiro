@@ -1,50 +1,58 @@
-import { CalendarDays, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { ArrowRightCircle, CircleHelp } from "lucide-react";
 import { buttonClassName } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 
 export function HeroSection() {
   return (
-    <header className="overflow-hidden border-b border-marmoteiro-wine/10">
-      <div className="mx-auto grid min-h-[620px] w-full max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-        <div className="space-y-7">
-          <Badge>Cartomancia online</Badge>
-          <div className="space-y-5">
-            <h1 className="max-w-3xl font-display text-5xl leading-[1.02] text-marmoteiro-ink sm:text-6xl lg:text-7xl">
-              O Tal do Marmoteiro
-            </h1>
-            <p className="max-w-2xl text-lg leading-8 text-marmoteiro-ink/78">
-              Jogo de Cartomancia com Baralho Cigano para clareza, direção e reflexão.
-              Um encontro online de 30 minutos com acolhimento, intuição e aquele
-              humor que desarma o coração.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <a className={buttonClassName("primary")} href="#agendamento">
-              <CalendarDays size={18} />
-              Agendar consulta
-            </a>
-            <a className={buttonClassName("secondary")} href="#como-funciona">
-              <Sparkles size={18} />
-              Como funciona
-            </a>
-          </div>
+    <header className="relative isolate overflow-hidden bg-black">
+      <div className="figma-shell relative min-h-[520px] px-5 sm:px-8">
+        <div className="absolute inset-y-0 right-0 -z-10 w-[78%] overflow-hidden opacity-90">
+          <Image
+            fill
+            priority
+            alt=""
+            className="object-cover object-center"
+            sizes="(max-width: 860px) 100vw, 720px"
+            src="/assets/figma/hero-scene.png"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/45 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black to-transparent" />
         </div>
 
-        <div className="relative min-h-[430px]">
-          <div className="absolute left-1/2 top-1/2 h-80 w-56 -translate-x-1/2 -translate-y-1/2 rotate-[-9deg] rounded-md border border-marmoteiro-gold/55 bg-marmoteiro-wine p-4 shadow-soft">
-            <div className="flex h-full flex-col justify-between rounded-md border border-marmoteiro-gold/50 bg-marmoteiro-paper p-5 text-center">
-              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-marmoteiro-wine">
-                Baralho
-              </span>
-              <span className="font-display text-7xl text-marmoteiro-gold">✦</span>
-              <span className="text-sm text-marmoteiro-ink/70">Clareza e caminho</span>
-            </div>
-          </div>
-          <div className="absolute left-[18%] top-[18%] h-72 w-48 rotate-[11deg] rounded-md border border-marmoteiro-wine/20 bg-marmoteiro-gold/80 p-4 shadow-soft">
-            <div className="card-pattern h-full rounded-md border border-marmoteiro-paper/70" />
-          </div>
-          <div className="absolute bottom-[12%] right-[8%] h-64 w-44 rotate-[18deg] rounded-md border border-marmoteiro-wine/20 bg-marmoteiro-leaf p-4 shadow-soft">
-            <div className="h-full rounded-md border border-marmoteiro-paper/70 bg-marmoteiro-paper/20" />
+        <div className="flex min-h-[520px] max-w-[430px] flex-col justify-center py-10">
+          <Image
+            priority
+            alt="O Tal do Marmoteiro"
+            className="mb-9 h-auto w-36"
+            height={73}
+            src="/assets/figma/logo.png"
+            width={160}
+          />
+
+          <h1 className="text-[2.35rem] font-medium leading-[1.12] tracking-[-0.02em] text-white sm:text-5xl">
+            Baralho Cigano,{" "}
+            <span className="font-semibold text-marmoteiro-amber">espiritualidade</span>,
+            bate-papo e aquele{" "}
+            <span className="font-semibold text-marmoteiro-amber">axé</span> com bom humor.
+          </h1>
+          <p className="mt-6 max-w-[390px] text-sm leading-6 text-white/82">
+            Uma consulta online para quem busca direcionamento, clareza e
+            aconselhamento intuitivo. Agende, pague e receba seu jogo com praticidade
+            e acolhimento.
+          </p>
+
+          <div className="mt-8 flex flex-col items-start gap-4">
+            <a className={buttonClassName("primary") + " w-full max-w-[360px]"} href="#agendamento">
+              Agendar meu jogo
+              <ArrowRightCircle size={16} />
+            </a>
+            <a
+              className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-marmoteiro-amber"
+              href="#como-funciona"
+            >
+              Quero entender como funciona
+              <CircleHelp size={16} />
+            </a>
           </div>
         </div>
       </div>
