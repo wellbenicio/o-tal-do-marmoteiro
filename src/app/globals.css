@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Inter", "Avenir Next", system-ui, sans-serif;
-  --font-display: "Inter", "Avenir Next", system-ui, sans-serif;
+  --font-sans: "Poppins", "Inter", "Avenir Next", system-ui, sans-serif;
+  --font-display: "Poppins", "Inter", "Avenir Next", system-ui, sans-serif;
   color: #f8f7f4;
   background: #000000;
 }
@@ -46,10 +46,30 @@ textarea {
 }
 
 .figma-shell {
-  width: min(100%, 860px);
+  width: min(100% - 40px, 1122px);
   margin-inline: auto;
 }
 
 .orange-cta {
-  background: linear-gradient(90deg, #ff9700 0%, #ff8a00 48%, #8f5a00 100%);
+  background: linear-gradient(90deg, #ff9700 0%, #ff9500 52%, #8f5f00 100%);
+}
+
+.figma-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 222, 0, 0.92),
+    0 0 22px rgba(255, 219, 0, 0.44),
+    0 0 26px rgba(255, 0, 121, 0.45);
+}
+
+@media (max-width: 640px) {
+  .figma-shell {
+    width: min(100% - 28px, 1122px);
+  }
+}
+
+@media (min-width: 1320px) {
+  .figma-shell {
+    margin-left: calc((100vw - 1122px) / 2 + 63px);
+    margin-right: 0;
+  }
 }

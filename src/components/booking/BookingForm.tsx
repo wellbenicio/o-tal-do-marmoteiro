@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRightCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Section } from "@/components/ui/Section";
-import { formatCurrency, toDateInputValue } from "@/lib/format";
+import { toDateInputValue } from "@/lib/format";
 import { DateSelector } from "./DateSelector";
 import { TimeSlotSelector } from "./TimeSlotSelector";
 
@@ -33,11 +33,6 @@ export function BookingForm() {
     email: "",
     phone: ""
   });
-
-  const selectedService = useMemo(
-    () => services.find((service) => service.id === serviceId),
-    [serviceId, services]
-  );
 
   useEffect(() => {
     fetch("/api/services")
@@ -112,42 +107,32 @@ export function BookingForm() {
   }
 
   return (
-    <Section id="agendamento" className="py-16">
-      <div className="grid overflow-hidden rounded-2xl bg-[#1a0716] shadow-soft sm:grid-cols-[1.05fr_0.95fr]">
-        <div className="relative min-h-[430px] overflow-hidden">
+    <Section id="agendamento" className="bg-black py-20 md:py-24">
+      <div className="grid overflow-hidden rounded-[30px] bg-[#210015] shadow-soft md:grid-cols-[1.18fr_0.82fr]">
+        <div className="relative min-h-[520px] overflow-hidden">
           <Image
             fill
             alt=""
             className="object-cover"
             src="/assets/figma/booking-photo.png"
-            sizes="(max-width: 860px) 100vw, 430px"
+            sizes="(max-width: 860px) 100vw, 640px"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0716] via-[#1a0716]/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-[#2d001d]/15 to-[#2d001d]/70" />
         </div>
 
-        <form className="space-y-4 p-6 sm:p-8" onSubmit={handleSubmit}>
+        <form className="space-y-5 p-7 md:p-11" onSubmit={handleSubmit}>
           <Image
             alt="O Tal do Marmoteiro"
-            className="mb-4 h-auto w-28"
+            className="mb-9 h-auto w-[162px]"
             height={73}
             src="/assets/figma/logo.png"
-            width={160}
+            width={163}
           />
 
-          {selectedService ? (
-            <div className="rounded-md border border-white/10 bg-black/25 p-3">
-              <p className="text-sm font-semibold text-white">{selectedService.name}</p>
-              <p className="mt-1 text-xs text-white/55">
-                {selectedService.durationMinutes} minutos ·{" "}
-                {formatCurrency(selectedService.priceCents, selectedService.currency)}
-              </p>
-            </div>
-          ) : null}
-
-          <label className="space-y-2 text-xs font-medium text-white/75">
+          <label className="space-y-3 text-sm font-medium text-white">
             Serviço
             <select
-              className="min-h-10 w-full rounded-sm border border-white/25 bg-transparent px-3 py-2 text-sm text-white outline-none focus:border-marmoteiro-amber focus:ring-2 focus:ring-marmoteiro-amber/25"
+              className="min-h-12 w-full rounded border border-white/70 bg-transparent px-4 py-3 text-base text-white outline-none focus:border-marmoteiro-amber focus:ring-2 focus:ring-marmoteiro-amber/25"
               value={serviceId}
               onChange={(event) => setServiceId(event.target.value)}
             >
@@ -159,9 +144,9 @@ export function BookingForm() {
             </select>
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <DateSelector value={date} onChange={setDate} />
-            <div className="space-y-2 text-xs font-medium text-white/75">
+            <div className="space-y-3 text-sm font-medium text-white">
               Horário
               <TimeSlotSelector
                 loading={loadingSlots}
@@ -172,7 +157,7 @@ export function BookingForm() {
             </div>
           </div>
 
-          <label className="space-y-2 text-xs font-medium text-white/75">
+          <label className="space-y-3 text-sm font-medium text-white">
             Nome
             <Input
               required
@@ -182,7 +167,7 @@ export function BookingForm() {
               onChange={(event) => setForm({ ...form, name: event.target.value })}
             />
           </label>
-          <label className="space-y-2 text-xs font-medium text-white/75">
+          <label className="space-y-3 text-sm font-medium text-white">
             E-mail
             <Input
               required
@@ -193,7 +178,7 @@ export function BookingForm() {
               onChange={(event) => setForm({ ...form, email: event.target.value })}
             />
           </label>
-          <label className="space-y-2 text-xs font-medium text-white/75">
+          <label className="space-y-3 text-sm font-medium text-white">
             WhatsApp
             <Input
               required
@@ -210,11 +195,11 @@ export function BookingForm() {
             </p>
           ) : null}
 
-          <Button className="w-full rounded-sm" disabled={submitting || !serviceId} type="submit">
+          <Button className="min-h-12 w-full rounded bg-marmoteiro-amber text-base shadow-none" disabled={submitting || !serviceId} type="submit">
             {submitting ? <Loader2 className="animate-spin" size={16} /> : null}
             Enviar
           </Button>
-          <p className="text-center text-xs text-white/50">
+          <p className="pt-2 text-center text-base text-white/90">
             Ou fale com a gente pelo <span className="text-marmoteiro-amber">nosso whatsapp</span>
             <ArrowRightCircle className="ml-1 inline" size={13} />
           </p>
