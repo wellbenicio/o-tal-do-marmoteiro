@@ -1,0 +1,20 @@
+{
+  "name": "o-tal-do-marmoteiro",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Plataforma de contratação e gestão de atendimentos oraculares",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace @marmoteiro/api",
+    "dev:web": "npm run dev --workspace @marmoteiro/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.2"
+  }
+}

@@ -1,0 +1,581 @@
+// Rascunho inicial do modelo de dados — Etapa de estruturação técnica.
+//
+// Fonte: o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md
+// Este schema transcreve os domínios/entidades da seção 33 ("Domínios
+// conceituais esperados") e os campos explicitamente descritos ao longo do
+// documento. Nomes de campo técnicos (id, createdAt/updatedAt) foram
+// adicionados por necessidade de implementação e não representam regra de
+// negócio nova.
+//
+// ⚠️ Pontos marcados como "ADR pendente" abaixo NÃO são regra de negócio
+// transcrita da especificação — são inferências técnicas necessárias para um
+// schema funcional, e devem ser revisados/decididos formalmente antes da
+// implementação (ver seção 38: "agentes de IA... não deverão inventar,
+// reinterpretar ou simplificar regras de negócio").
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// Domínio: identity (seção 7 — Autenticação)
+// ============================================================
+
+/// Credenciais de autenticação. Separado de Customer para isolar o domínio
+/// de identidade/autenticação do domínio de dados cadastrais (seção 34).
+/// ADR pendente: estratégia de sessão/token (seção 7.3, seção 38 item 7)
+/// ainda não modelada aqui.
+model Identity {
+  id           String   @id @default(uuid())
+  customerId   String   @unique
+  customer     Customer @relation(fields: [customerId], references: [id])
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============================================================
+// Domínio: customer (seções 6, 22.4)
+// ============================================================
+
+/// Dados cadastrais bloqueados para edição direta (seção 6.4). Alteração
+/// somente via DataCorrectionRequest aprovada.
+model Customer {
+  id             String   @id @default(uuid())
+  legalName      String // nome civil
+  socialName     String? // nome social
+  birthDate      DateTime // data de nascimento
+  motherName     String // nome da mãe
+  genderIdentity String // identidade de gênero
+  pronouns       String? // pronomes, quando informados
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  identity                Identity?
+  contact                 CustomerContact?
+  dataCorrectionRequests  DataCorrectionRequest[]
+  orders                  Order[]
+  legalAcceptances        LegalAcceptance[]
+  privacyRequests         PrivacyRequest[]
+}
+
+/// Dados editáveis diretamente pelo consulente (seção 6.3).
+model CustomerContact {
+  id         String   @id @default(uuid())
+  customerId String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id])
+  email      String
+  phone      String // telefone/WhatsApp
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
+
+/// Solicitação de correção cadastral (seção 6.4) — campos transcritos
+/// literalmente da especificação.
+model DataCorrectionRequest {
+  id                   String    @id @default(uuid())
+  customerId           String
+  customer             Customer  @relation(fields: [customerId], references: [id])
+  field                String // campo
+  currentValue         String // valor atual
+  requestedValue       String // valor solicitado
+  reason               String? // motivo opcional
+  status               String // status (ADR pendente: enum de status)
+  requestedAt          DateTime  @default(now())
+  decidedAt            DateTime?
+  decidedByAdminId     String?
+  decidedByAdmin       AdminUser? @relation(fields: [decidedByAdminId], references: [id])
+  decisionJustification String?
+}
+
+// ============================================================
+// Domínio: catalog (seções 5, 31, 37)
+// ============================================================
+
+enum ServiceOfferingType {
+  QUESTION // Pergunta avulsa (seção 5.1)
+  APPOINTMENT // Consulta online (seção 5.2)
+}
+
+/// Serviço comercializável. Preço/duração/SLA são parametrizáveis (seção 37)
+/// e não devem ser hardcoded no domínio.
+model ServiceOffering {
+  id         String              @id @default(uuid())
+  type       ServiceOfferingType
+  name       String
+  salesStatus String // status de venda (seção 31)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  prices     ServicePrice[]
+  orderItems OrderItem[]
+}
+
+enum ServicePriceKind {
+  BASE // preço da pergunta / preço da consulta
+  PRIORITY_ADDON // preço da prioridade (seção 12.4)
+}
+
+/// Preço versionado — alterar valores não deve exigir reconstrução do
+/// domínio (seção 37).
+model ServicePrice {
+  id                String           @id @default(uuid())
+  serviceOfferingId String
+  serviceOffering   ServiceOffering  @relation(fields: [serviceOfferingId], references: [id])
+  kind              ServicePriceKind
+  amount            Decimal          @db.Decimal(10, 2)
+  currency          String           @default("BRL")
+  validFrom         DateTime         @default(now())
+  validTo           DateTime?
+  createdAt         DateTime         @default(now())
+}
+
+// ============================================================
+// Domínio: ordering (seção 10)
+// ============================================================
+
+/// Representa o que foi contratado — eixo de estado independente de
+/// Pagamento e Atendimento (seção 10).
+/// ADR pendente: a especificação não enumera exaustivamente os estados do
+/// Pedido (apenas exemplos como CONFIRMADO/CANCELADO na seção 10); o enum
+/// completo deve ser definido em ADR próprio antes da implementação do
+/// módulo `ordering`.
+model Order {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  status      String // ADR pendente — ver seção 10
+  totalAmount Decimal  @db.Decimal(10, 2)
+  currency    String   @default("BRL")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items               OrderItem[]
+  paymentTransactions PaymentTransaction[]
+  questionRequest     QuestionRequest?
+  appointment         Appointment?
+  cancellationRequests CancellationRequest[]
+  refundDecisions     RefundDecision[]
+  legalAcceptances    LegalAcceptance[]
+  serviceExecution    ServiceExecution?
+}
+
+/// Item de pedido — permite discriminar pergunta e prioridade no checkout
+/// mas o valor total da contratação é o que vale para reembolso (seção 12.4).
+model OrderItem {
+  id                String           @id @default(uuid())
+  orderId           String
+  order             Order            @relation(fields: [orderId], references: [id])
+  serviceOfferingId String
+  serviceOffering   ServiceOffering  @relation(fields: [serviceOfferingId], references: [id])
+  kind              ServicePriceKind
+  amount            Decimal          @db.Decimal(10, 2)
+  createdAt         DateTime         @default(now())
+}
+
+// ============================================================
+// Domínio: payment (seção 21)
+// ============================================================
+
+/// Estados financeiros — enum transcrito literalmente da seção 21.2.
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  REFUND_PENDING
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+/// Movimentação financeira — confirmação deve ser orientada por informação
+/// confiável do provedor (webhook), nunca apenas pela tela de retorno
+/// (seção 21.3). `confirmedAt` é a referência oficial para o SLA da
+/// pergunta avulsa (seção 11.1: `payment.confirmedAt`).
+model PaymentTransaction {
+  id                 String        @id @default(uuid())
+  orderId            String
+  order              Order         @relation(fields: [orderId], references: [id])
+  provider            String // provedor externo (seção 21.1)
+  providerReference   String? // identificador na plataforma do provedor
+  status              PaymentStatus @default(PENDING)
+  amount              Decimal       @db.Decimal(10, 2)
+  currency            String        @default("BRL")
+  confirmedAt         DateTime? // payment.confirmedAt — seção 11.1
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  refunds Refund[]
+}
+
+model Refund {
+  id                   String             @id @default(uuid())
+  paymentTransactionId String
+  paymentTransaction   PaymentTransaction @relation(fields: [paymentTransactionId], references: [id])
+  amount               Decimal            @db.Decimal(10, 2)
+  requestedAt          DateTime           @default(now())
+  processedAt          DateTime?
+  createdAt            DateTime           @default(now())
+}
+
+// ============================================================
+// Domínio: question (seções 11, 12, 13)
+// ============================================================
+
+/// Estados funcionais — enum transcrito literalmente da seção 11.3.
+enum QuestionStatus {
+  CREATED
+  AWAITING_PAYMENT
+  PAID
+  QUEUED
+  IN_PROGRESS
+  DELIVERED
+  COMPLETED
+  CANCELLATION_REQUESTED
+  CANCELLED
+  REFUND_PENDING
+  REFUNDED
+  MANUAL_REVIEW
+}
+
+/// Pergunta avulsa. `Queue` (seção 33) é representada de forma implícita —
+/// não há tabela própria: a ordenação de fila é computada a partir de
+/// `hasPriority` + `queuedAt`/pagamento confirmado (regra determinística da
+/// seção 12.3), e não um estado persistido separadamente.
+/// `Priority` (seção 33) é representada pelo atributo `hasPriority`, com o
+/// valor cobrado via OrderItem(kind = PRIORITY_ADDON) — seção 12.
+model QuestionRequest {
+  id                        String         @id @default(uuid())
+  orderId                   String         @unique
+  order                     Order          @relation(fields: [orderId], references: [id])
+  status                    QuestionStatus @default(CREATED)
+  hasPriority               Boolean        @default(false)
+  queuedAt                  DateTime?
+  executionStartedAt        DateTime?
+  executionStartedByAdminId String?
+  executionStartedByAdmin   AdminUser?     @relation("QuestionExecutionStarted", fields: [executionStartedByAdminId], references: [id])
+  deliveredAt               DateTime?
+  deliveryChannel           String? // seção 11.6 — canal de entrega (ex.: WhatsApp)
+  deliveredByAdminId        String?
+  deliveredByAdmin          AdminUser?     @relation("QuestionDelivered", fields: [deliveredByAdminId], references: [id])
+  completedAt               DateTime?
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @updatedAt
+}
+
+// ============================================================
+// Domínio: scheduling (seções 14, 15)
+// ============================================================
+
+/// Estados do slot de agenda — enum transcrito literalmente da seção 14.2.
+enum AppointmentSlotStatus {
+  AVAILABLE
+  HELD
+  BOOKED
+}
+
+/// Garante que o mesmo horário não seja vendido para dois pedidos
+/// (regra invariante nº 8, seção 32).
+model AppointmentSlot {
+  id          String                @id @default(uuid())
+  startsAt    DateTime
+  endsAt      DateTime
+  status      AppointmentSlotStatus @default(AVAILABLE)
+  heldAt      DateTime?
+  heldUntil   DateTime? // tempo de hold configurável (seção 37)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  appointments      Appointment[]       @relation("AppointmentSlotBooked")
+  rescheduleRequestsFrom RescheduleRequest[] @relation("RescheduleOriginalSlot")
+  rescheduleRequestsTo   RescheduleRequest[] @relation("RescheduleNewSlot")
+}
+
+/// Consulta online.
+/// ADR pendente: a especificação não define um enum de status do
+/// agendamento em si (reagendamento/cancelamento tardio/no-show são
+/// tratados como eventos e regras financeiras — seções 15–17 — não como
+/// valores fechados de um único campo `status`). Definir em ADR próprio.
+model Appointment {
+  id              String           @id @default(uuid())
+  orderId         String           @unique
+  order           Order            @relation(fields: [orderId], references: [id])
+  slotId          String
+  slot            AppointmentSlot  @relation("AppointmentSlotBooked", fields: [slotId], references: [id])
+  status          String // ADR pendente — ver seção 14/15/16/17
+  rescheduleUsed  Boolean          @default(false) // seção 15.1 — um único reagendamento por iniciativa do consulente
+  noShowAt        DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  rescheduleRequests RescheduleRequest[]
+  recordingConsent   RecordingConsent?
+}
+
+/// Campos transcritos literalmente da seção 15.3.
+model RescheduleRequest {
+  id                   String           @id @default(uuid())
+  appointmentId        String
+  appointment          Appointment      @relation(fields: [appointmentId], references: [id])
+  originalSlotId       String
+  originalSlot         AppointmentSlot  @relation("RescheduleOriginalSlot", fields: [originalSlotId], references: [id])
+  requestedAt          DateTime         @default(now())
+  requestedByCustomerId String? // nulo quando provocado pelo prestador (seção 15.7)
+  status               String // status da solicitação (ADR pendente: enum)
+  optionsExpireAt       DateTime? // data/hora de expiração — seção 15.4 (48h)
+  newSlotId             String?
+  newSlot               AppointmentSlot? @relation("RescheduleNewSlot", fields: [newSlotId], references: [id])
+  causedByProvider       Boolean         @default(false) // seção 15.7
+  createdAt              DateTime        @default(now())
+}
+
+// ============================================================
+// Domínio: fulfillment (seção 11.5–11.7, 14)
+// ============================================================
+
+/// Execução do serviço — visão unificada entre modalidades (Fulfillment,
+/// seção 33/34). ADR pendente: fronteira exata entre este registro e os
+/// campos específicos já presentes em QuestionRequest/Appointment precisa
+/// ser reconciliada na etapa de arquitetura (risco de duplicidade).
+model ServiceExecution {
+  id                String              @id @default(uuid())
+  orderId           String              @unique
+  order             Order               @relation(fields: [orderId], references: [id])
+  modality          ServiceOfferingType
+  startedAt         DateTime?
+  completedAt       DateTime?
+  performedByAdminId String?
+  performedByAdmin   AdminUser?         @relation(fields: [performedByAdminId], references: [id])
+  createdAt          DateTime           @default(now())
+  updatedAt           DateTime          @updatedAt
+}
+
+// ============================================================
+// Domínio: cancellation (seções 13, 16, 17, 18, 19, 20)
+// ============================================================
+
+/// Decisões possíveis do Refund Policy Engine — enum transcrito
+/// literalmente da seção 20.3.
+enum RefundDecisionType {
+  FULL_REFUND
+  PARTIAL_REFUND
+  NO_REFUND
+  MANUAL_REVIEW_REQUIRED
+}
+
+/// Solicitação de cancelamento — campos transcritos literalmente da
+/// seção 20.1.
+model CancellationRequest {
+  id                       String    @id @default(uuid())
+  orderId                  String
+  order                    Order     @relation(fields: [orderId], references: [id])
+  customerId               String
+  requestedAt              DateTime  @default(now())
+  reason                   String? // motivo opcional
+  modality                 ServiceOfferingType
+  executionStatusAtRequest String // status do atendimento no momento da solicitação
+  orderCreatedAt           DateTime // data da contratação
+  serviceDate              DateTime? // data do atendimento, quando aplicável
+  legalContractualFraming  String? // enquadramento legal/contratual
+  refundDecisionId         String?
+  refundDecision           RefundDecision? @relation(fields: [refundDecisionId], references: [id])
+  justification            String?
+  decidedByAdminId         String?
+  decidedByAdmin           AdminUser? @relation(fields: [decidedByAdminId], references: [id])
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+/// Saída do Refund Policy Engine (seção 20.2) — centraliza a regra de
+/// reembolso (regra invariante nº 17, seção 32). Aplicável não apenas a
+/// cancelamentos, mas também a no-show, cancelamento tardio, reagendamento
+/// provocado pelo prestador e direito de arrependimento.
+/// `overrideOf` reflete o exemplo de auditoria da seção 29
+/// ("Automático: 50% / Override: 100%").
+model RefundDecision {
+  id                String             @id @default(uuid())
+  orderId           String
+  order             Order              @relation(fields: [orderId], references: [id])
+  decision          RefundDecisionType
+  calculatedAmount  Decimal            @db.Decimal(10, 2)
+  retainedAmount    Decimal            @db.Decimal(10, 2)
+  reasonCode        String? // ex.: NO_SHOW, LATE_CANCELLATION, WITHDRAWAL_RIGHT, PROVIDER_RESCHEDULE
+  automatic         Boolean            @default(true)
+  overrideOfId      String?            @unique
+  overrideOf        RefundDecision?    @relation("RefundDecisionOverride", fields: [overrideOfId], references: [id])
+  overriddenBy      RefundDecision?    @relation("RefundDecisionOverride")
+  justification     String?
+  decidedByAdminId  String?
+  decidedByAdmin    AdminUser?         @relation(fields: [decidedByAdminId], references: [id])
+  decidedAt         DateTime           @default(now())
+  createdAt         DateTime           @default(now())
+
+  cancellationRequests CancellationRequest[]
+}
+
+// ============================================================
+// Domínio: legal (seções 8, 26)
+// ============================================================
+
+/// Documento jurídico (seção 8.1): Termos, Privacidade, Sigilo, políticas
+/// específicas, autorização de gravação.
+model LegalDocument {
+  id        String   @id @default(uuid())
+  code      String   @unique // ex.: TERMS, PRIVACY, CONFIDENTIALITY, RECORDING_CONSENT
+  name      String
+  createdAt DateTime @default(now())
+
+  versions LegalDocumentVersion[]
+}
+
+/// Documentos jurídicos são versionados (seção 8.2).
+model LegalDocumentVersion {
+  id              String        @id @default(uuid())
+  legalDocumentId String
+  legalDocument   LegalDocument @relation(fields: [legalDocumentId], references: [id])
+  version         String
+  content         String
+  publishedAt     DateTime      @default(now())
+  discontinuedAt  DateTime?
+
+  acceptances LegalAcceptance[]
+}
+
+/// Cada aceite registra, no mínimo, os campos da seção 8.2. Nunca um
+/// booleano genérico (`acceptedTerms = true`).
+model LegalAcceptance {
+  id                     String               @id @default(uuid())
+  customerId             String
+  customer               Customer             @relation(fields: [customerId], references: [id])
+  orderId                String?
+  order                  Order?               @relation(fields: [orderId], references: [id])
+  legalDocumentVersionId String
+  legalDocumentVersion   LegalDocumentVersion @relation(fields: [legalDocumentVersionId], references: [id])
+  acceptedAt             DateTime             @default(now())
+  manifestation          String // manifestação registrada
+  technicalEvidence      Json? // informações técnicas p/ comprovação (ex.: IP, user agent)
+  createdAt              DateTime             @default(now())
+}
+
+/// Consentimento separado para gravação de consultas (seção 26.1). A
+/// recusa não impede ordinariamente a consulta (seção 26.2).
+model RecordingConsent {
+  id            String       @id @default(uuid())
+  appointmentId String       @unique
+  appointment   Appointment  @relation(fields: [appointmentId], references: [id])
+  granted       Boolean
+  grantedAt     DateTime?
+  refusedAt     DateTime?
+  createdAt     DateTime     @default(now())
+}
+
+// ============================================================
+// Domínio: privacy (seções 22.5, 23.8, 25, 26.4)
+// ============================================================
+
+/// Canal de direitos do titular (LGPD) — campos conforme seção 23.8.
+/// ADR pendente: tipos de solicitação (acesso/correção/exclusão/etc.) não
+/// são exaustivamente enumerados na especificação (seção 22.5 cita apenas
+/// exemplos); manter como texto livre até definição jurídica/técnica.
+model PrivacyRequest {
+  id            String    @id @default(uuid())
+  customerId    String
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  type          String // ADR pendente — ver seção 22.5/25
+  status        String
+  requestedAt   DateTime  @default(now())
+  respondedAt   DateTime?
+  responseNotes String?
+  createdAt     DateTime  @default(now())
+}
+
+/// Mecanismo equivalente a `legalHold = true` (seção 26.4). Modelado de
+/// forma genérica (subjectType/subjectId) para permitir aplicação a
+/// gravações ou outros registros que exijam preservação.
+model LegalHold {
+  id          String    @id @default(uuid())
+  subjectType String // ex.: RECORDING_CONSENT
+  subjectId   String
+  active      Boolean   @default(true)
+  reason      String
+  createdAt   DateTime  @default(now())
+  releasedAt  DateTime?
+}
+
+// ============================================================
+// Domínio: notification (seção 24)
+// ============================================================
+
+model NotificationTemplate {
+  id        String   @id @default(uuid())
+  eventCode String   @unique // ex.: PAYMENT_CONFIRMED, RESCHEDULE_REQUESTED
+  channel   String // ex.: EMAIL
+  subject   String?
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Registro técnico de outbox — não citado nominalmente na seção 33, mas
+/// necessário para a abordagem orientada a eventos/outbox exigida pela
+/// seção 24 (comunicação transacional não deve depender diretamente da
+/// transação principal de banco).
+model OutboxMessage {
+  id          String    @id @default(uuid())
+  eventCode   String
+  payload     Json
+  status      String    @default("PENDING")
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+}
+
+// ============================================================
+// Domínio: administration (seção 28)
+// ============================================================
+
+/// ADR pendente: `role` é um placeholder simples — a especificação exige
+/// que o modelo evolua para RBAC/permissões (seção 28), não modelado aqui.
+model AdminUser {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  dataCorrectionDecisions DataCorrectionRequest[]
+  questionExecutionsStarted QuestionRequest[] @relation("QuestionExecutionStarted")
+  questionDeliveries        QuestionRequest[] @relation("QuestionDelivered")
+  serviceExecutionsPerformed ServiceExecution[]
+  cancellationDecisions   CancellationRequest[]
+  refundDecisions          RefundDecision[]
+  auditLogs                AuditLog[]
+}
+
+// ============================================================
+// Domínio: audit (seção 29)
+// ============================================================
+
+/// Registro imutável ou protegido contra alteração administrativa
+/// ordinária (seção 29). `previousState`/`newState` guardam um retrato
+/// simplificado da transição para fins de trilha de auditoria.
+model AuditLog {
+  id            String    @id @default(uuid())
+  occurredAt    DateTime  @default(now())
+  actorAdminId  String?
+  actorAdmin    AdminUser? @relation(fields: [actorAdminId], references: [id])
+  entityType    String
+  entityId      String
+  action        String
+  previousState Json?
+  newState      Json?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+}
