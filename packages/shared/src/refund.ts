@@ -4,7 +4,7 @@
  * Fonte: o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md, seção 20.3.
  * `NO_REFUND` somente pode ocorrer quando juridicamente e contratualmente válido.
  */
-export enum RefundDecision {
+export enum RefundDecisionType {
   FULL_REFUND = 'FULL_REFUND',
   PARTIAL_REFUND = 'PARTIAL_REFUND',
   NO_REFUND = 'NO_REFUND',
