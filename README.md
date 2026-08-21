@@ -36,6 +36,16 @@ conceituais da especificação (seção 33/34): identity, customer, catalog,
 ordering, payment, scheduling, question, fulfillment, cancellation, legal,
 privacy, notification, administration e audit.
 
+As máquinas de estado do Pedido (`OrderStatus`) e do Atendimento
+(`AppointmentStatus`, `RescheduleRequestStatus`) já estão implementadas com
+XState (ADR 0001), como lógica pura de transição em
+`apps/api/src/modules/ordering/order-status.machine.ts` e
+`apps/api/src/modules/scheduling/appointment-status.machine.ts` /
+`reschedule-request-status.machine.ts`, expostas via os serviços NestJS
+`OrderStatusService`, `AppointmentStatusService` e
+`RescheduleRequestStatusService`. Controllers, DTOs, autenticação/RBAC e
+integrações externas (PIX, WhatsApp) continuam fora de escopo.
+
 ## Como rodar localmente
 
 Pré-requisitos: Node.js 22+, npm 10+ e Docker.

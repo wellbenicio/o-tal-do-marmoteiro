@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { OrderStatusService } from './order-status.service';
 
 /**
  * Domínio: Ordering (o que foi contratado).
@@ -6,5 +7,8 @@ import { Module } from '@nestjs/common';
  * são domínios distintos). Máquina de estado do Pedido (`OrderStatus`)
  * definida em docs/adr/0002-maquina-de-estado-do-pedido.md.
  */
-@Module({})
+@Module({
+  providers: [OrderStatusService],
+  exports: [OrderStatusService],
+})
 export class OrderingModule {}

@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { AppointmentStatusService } from './appointment-status.service';
+import { RescheduleRequestStatusService } from './reschedule-request-status.service';
 
 /**
  * Domínio: Scheduling (agenda da consulta online).
@@ -8,5 +10,8 @@ import { Module } from '@nestjs/common';
  * (`RescheduleRequestStatus`) definidas em
  * docs/adr/0003-maquina-de-estado-do-atendimento.md.
  */
-@Module({})
+@Module({
+  providers: [AppointmentStatusService, RescheduleRequestStatusService],
+  exports: [AppointmentStatusService, RescheduleRequestStatusService],
+})
 export class SchedulingModule {}
