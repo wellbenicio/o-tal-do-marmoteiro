@@ -2,4 +2,6 @@ export * from './domains';
 export * from './question-status';
 export * from './payment-status';
 export * from './appointment-slot-status';
+export * from './order-status';
+export * from './appointment-status';
 export * from './refund';

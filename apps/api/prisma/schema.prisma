@@ -139,21 +139,28 @@ model ServicePrice {
 // Domínio: ordering (seção 10)
 // ============================================================
 
+/// Estados do Pedido — enum definido em
+/// docs/adr/0002-maquina-de-estado-do-pedido.md. A especificação cita
+/// apenas CONFIRMADO/CANCELADO como exemplos (seção 10); CREATED e as
+/// transições completas são decisão técnica registrada na ADR.
+enum OrderStatus {
+  CREATED
+  CONFIRMED
+  CANCELLED
+}
+
 /// Representa o que foi contratado — eixo de estado independente de
-/// Pagamento e Atendimento (seção 10).
-/// ADR pendente: a especificação não enumera exaustivamente os estados do
-/// Pedido (apenas exemplos como CONFIRMADO/CANCELADO na seção 10); o enum
-/// completo deve ser definido em ADR próprio antes da implementação do
-/// módulo `ordering`.
+/// Pagamento e Atendimento (seção 10). Ver
+/// docs/adr/0002-maquina-de-estado-do-pedido.md.
 model Order {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id])
-  status      String // ADR pendente — ver seção 10
-  totalAmount Decimal  @db.Decimal(10, 2)
-  currency    String   @default("BRL")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  customer    Customer    @relation(fields: [customerId], references: [id])
+  status      OrderStatus @default(CREATED)
+  totalAmount Decimal     @db.Decimal(10, 2)
+  currency    String      @default("BRL")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   items               OrderItem[]
   paymentTransactions PaymentTransaction[]
@@ -296,42 +303,59 @@ model AppointmentSlot {
   rescheduleRequestsTo   RescheduleRequest[] @relation("RescheduleNewSlot")
 }
 
-/// Consulta online.
-/// ADR pendente: a especificação não define um enum de status do
-/// agendamento em si (reagendamento/cancelamento tardio/no-show são
-/// tratados como eventos e regras financeiras — seções 15–17 — não como
-/// valores fechados de um único campo `status`). Definir em ADR próprio.
+/// Estados do Atendimento da Consulta Online — enum definido em
+/// docs/adr/0003-maquina-de-estado-do-atendimento.md. Reagendamento,
+/// cancelamento tardio e no-show permanecem modelados como eventos e regras
+/// financeiras (RescheduleRequest, CancellationRequest, RefundDecision), não
+/// como estados adicionais fechados neste enum (seções 15–17).
+enum AppointmentStatus {
+  NOT_STARTED
+  SCHEDULED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+/// Consulta online. Ver docs/adr/0003-maquina-de-estado-do-atendimento.md.
 model Appointment {
-  id              String           @id @default(uuid())
-  orderId         String           @unique
-  order           Order            @relation(fields: [orderId], references: [id])
-  slotId          String
-  slot            AppointmentSlot  @relation("AppointmentSlotBooked", fields: [slotId], references: [id])
-  status          String // ADR pendente — ver seção 14/15/16/17
-  rescheduleUsed  Boolean          @default(false) // seção 15.1 — um único reagendamento por iniciativa do consulente
-  noShowAt        DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id             String            @id @default(uuid())
+  orderId        String            @unique
+  order          Order             @relation(fields: [orderId], references: [id])
+  slotId         String
+  slot           AppointmentSlot   @relation("AppointmentSlotBooked", fields: [slotId], references: [id])
+  status         AppointmentStatus @default(NOT_STARTED)
+  rescheduleUsed Boolean           @default(false) // seção 15.1 — um único reagendamento por iniciativa do consulente
+  noShowAt       DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   rescheduleRequests RescheduleRequest[]
   recordingConsent   RecordingConsent?
 }
 
+/// Estados da solicitação de reagendamento — decisão vinculada à ADR 0003
+/// (docs/adr/0003-maquina-de-estado-do-atendimento.md), seção 15.3–15.5.
+enum RescheduleRequestStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+}
+
 /// Campos transcritos literalmente da seção 15.3.
 model RescheduleRequest {
-  id                   String           @id @default(uuid())
-  appointmentId        String
-  appointment          Appointment      @relation(fields: [appointmentId], references: [id])
-  originalSlotId       String
-  originalSlot         AppointmentSlot  @relation("RescheduleOriginalSlot", fields: [originalSlotId], references: [id])
-  requestedAt          DateTime         @default(now())
+  id                    String                  @id @default(uuid())
+  appointmentId         String
+  appointment           Appointment             @relation(fields: [appointmentId], references: [id])
+  originalSlotId        String
+  originalSlot          AppointmentSlot         @relation("RescheduleOriginalSlot", fields: [originalSlotId], references: [id])
+  requestedAt           DateTime                @default(now())
   requestedByCustomerId String? // nulo quando provocado pelo prestador (seção 15.7)
-  status               String // status da solicitação (ADR pendente: enum)
+  status                RescheduleRequestStatus @default(PENDING)
   optionsExpireAt       DateTime? // data/hora de expiração — seção 15.4 (48h)
   newSlotId             String?
-  newSlot               AppointmentSlot? @relation("RescheduleNewSlot", fields: [newSlotId], references: [id])
-  causedByProvider       Boolean         @default(false) // seção 15.7
-  createdAt              DateTime        @default(now())
+  newSlot               AppointmentSlot?        @relation("RescheduleNewSlot", fields: [newSlotId], references: [id])
+  causedByProvider      Boolean                 @default(false) // seção 15.7
+  createdAt             DateTime                @default(now())
 }
 
 // ============================================================

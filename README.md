@@ -10,8 +10,14 @@ contradizê-lo.
 ## Arquitetura
 
 Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr).
-A stack escolhida (monólito modular Node.js/TypeScript) está detalhada em
-[`docs/adr/0001-escolha-da-stack-tecnologica.md`](./docs/adr/0001-escolha-da-stack-tecnologica.md).
+
+- A stack escolhida (monólito modular Node.js/TypeScript) está detalhada em
+  [`docs/adr/0001-escolha-da-stack-tecnologica.md`](./docs/adr/0001-escolha-da-stack-tecnologica.md).
+- A máquina de estado do Pedido (`OrderStatus`) está detalhada em
+  [`docs/adr/0002-maquina-de-estado-do-pedido.md`](./docs/adr/0002-maquina-de-estado-do-pedido.md).
+- A máquina de estado do Atendimento da Consulta Online (`AppointmentStatus`
+  e `RescheduleRequestStatus`) está detalhada em
+  [`docs/adr/0003-maquina-de-estado-do-atendimento.md`](./docs/adr/0003-maquina-de-estado-do-atendimento.md).
 
 ## Estrutura do monorepo
 
