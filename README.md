@@ -18,6 +18,14 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
 - A máquina de estado do Atendimento da Consulta Online (`AppointmentStatus`
   e `RescheduleRequestStatus`) está detalhada em
   [`docs/adr/0003-maquina-de-estado-do-atendimento.md`](./docs/adr/0003-maquina-de-estado-do-atendimento.md).
+- A máquina de estado do Pagamento (`PaymentStatus`) está detalhada em
+  [`docs/adr/0004-maquina-de-estado-do-pagamento.md`](./docs/adr/0004-maquina-de-estado-do-pagamento.md).
+- A máquina de estado do Slot de Agenda (`AppointmentSlotStatus`) está
+  detalhada em
+  [`docs/adr/0005-maquina-de-estado-do-slot-de-agenda.md`](./docs/adr/0005-maquina-de-estado-do-slot-de-agenda.md).
+- A máquina de estado da Pergunta Avulsa (`QuestionStatus`) está detalhada
+  em
+  [`docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md`](./docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md).
 
 ## Estrutura do monorepo
 
@@ -36,15 +44,22 @@ conceituais da especificação (seção 33/34): identity, customer, catalog,
 ordering, payment, scheduling, question, fulfillment, cancellation, legal,
 privacy, notification, administration e audit.
 
-As máquinas de estado do Pedido (`OrderStatus`) e do Atendimento
-(`AppointmentStatus`, `RescheduleRequestStatus`) já estão implementadas com
-XState (ADR 0001), como lógica pura de transição em
-`apps/api/src/modules/ordering/order-status.machine.ts` e
+As máquinas de estado do Pedido (`OrderStatus`), do Atendimento
+(`AppointmentStatus`, `RescheduleRequestStatus`), do Pagamento
+(`PaymentStatus`), do Slot de Agenda (`AppointmentSlotStatus`) e da
+Pergunta Avulsa (`QuestionStatus`) já estão implementadas com XState (ADR
+0001), como lógica pura de transição em
+`apps/api/src/modules/ordering/order-status.machine.ts`,
 `apps/api/src/modules/scheduling/appointment-status.machine.ts` /
-`reschedule-request-status.machine.ts`, expostas via os serviços NestJS
-`OrderStatusService`, `AppointmentStatusService` e
-`RescheduleRequestStatusService`. Controllers, DTOs, autenticação/RBAC e
-integrações externas (PIX, WhatsApp) continuam fora de escopo.
+`reschedule-request-status.machine.ts` /
+`appointment-slot-status.machine.ts`,
+`apps/api/src/modules/payment/payment-status.machine.ts` e
+`apps/api/src/modules/question/question-status.machine.ts`, expostas via
+os serviços NestJS `OrderStatusService`, `AppointmentStatusService`,
+`RescheduleRequestStatusService`, `AppointmentSlotStatusService`,
+`PaymentStatusService` e `QuestionStatusService`. Controllers, DTOs,
+autenticação/RBAC e integrações externas (PIX, WhatsApp) continuam fora de
+escopo.
 
 ## Como rodar localmente
 
