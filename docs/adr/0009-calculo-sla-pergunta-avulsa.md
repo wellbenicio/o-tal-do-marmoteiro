@@ -94,7 +94,7 @@ administrativo / catálogo, seções 23 e 31).
   `payment.confirmedAt`, que corresponde ao instante em que
   `PaymentStatus` transiciona para `APPROVED`, ADR 0004).
 - O ponto em que este prazo é efetivamente comparado (ex.: para alertas,
-  fila administrativa, ou characterização de descumprimento de SLA) não é
+  fila administrativa, ou caracterização de descumprimento de SLA) não é
   definido nesta ADR — a especificação não descreve consequência
   automática para o estouro do prazo (diferente de no-show/cancelamento
   tardio, que têm regras financeiras explícitas). Sinalizado como ponto em
