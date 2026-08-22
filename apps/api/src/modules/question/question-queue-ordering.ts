@@ -31,7 +31,6 @@ export function orderQuestionQueue(
 ): QuestionQueueItem[] {
   return items
     .filter((item) => item.status === QuestionStatus.QUEUED)
-    .slice()
     .sort((a, b) => {
       if (a.hasPriority !== b.hasPriority) {
         return a.hasPriority ? -1 : 1;
