@@ -33,6 +33,9 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
 - O cálculo do prazo de SLA da Pergunta Avulsa (48 horas úteis) está
   detalhado em
   [`docs/adr/0009-calculo-sla-pergunta-avulsa.md`](./docs/adr/0009-calculo-sla-pergunta-avulsa.md).
+- A elegibilidade e o prazo de reagendamento da Consulta Online estão
+  detalhados em
+  [`docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md`](./docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md).
 
 ## Estrutura do monorepo
 
@@ -83,6 +86,13 @@ NestJS `QuestionSlaService`. A definição concreta do calendário de horas
 úteis (expediente, feriados) é uma abstração (`BusinessHoursCalendar`)
 sem implementação de produção ainda, pois depende de configuração
 operacional futura (seção 37).
+
+A elegibilidade do reagendamento por iniciativa do consulente (24h de
+antecedência, único reagendamento contratual — ADR 0010) e o cálculo do
+prazo de 48 horas corridas para escolha de uma nova opção estão
+implementados como funções puras em
+`apps/api/src/modules/scheduling/reschedule-eligibility.ts`, expostos via
+o serviço NestJS `RescheduleEligibilityService`.
 
 Controllers, DTOs, autenticação/RBAC e integrações externas (PIX,
 WhatsApp) continuam fora de escopo.
