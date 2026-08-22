@@ -5,3 +5,4 @@ export * from './appointment-slot-status';
 export * from './order-status';
 export * from './appointment-status';
 export * from './refund';
+export * from './service-offering-type';

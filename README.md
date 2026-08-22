@@ -26,6 +26,8 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
 - A máquina de estado da Pergunta Avulsa (`QuestionStatus`) está detalhada
   em
   [`docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md`](./docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md).
+- O Motor de Política de Reembolso (Refund Policy Engine) está detalhado em
+  [`docs/adr/0007-motor-de-politica-de-reembolso.md`](./docs/adr/0007-motor-de-politica-de-reembolso.md).
 
 ## Estrutura do monorepo
 
@@ -57,9 +59,15 @@ Pergunta Avulsa (`QuestionStatus`) já estão implementadas com XState (ADR
 `apps/api/src/modules/question/question-status.machine.ts`, expostas via
 os serviços NestJS `OrderStatusService`, `AppointmentStatusService`,
 `RescheduleRequestStatusService`, `AppointmentSlotStatusService`,
-`PaymentStatusService` e `QuestionStatusService`. Controllers, DTOs,
-autenticação/RBAC e integrações externas (PIX, WhatsApp) continuam fora de
-escopo.
+`PaymentStatusService` e `QuestionStatusService`.
+
+O Motor de Política de Reembolso (ADR 0007) já está implementado como
+função pura de decisão (não uma máquina de estado) em
+`apps/api/src/modules/cancellation/refund-policy.ts`, exposto via o
+serviço NestJS `RefundPolicyService`.
+
+Controllers, DTOs, autenticação/RBAC e integrações externas (PIX,
+WhatsApp) continuam fora de escopo.
 
 ## Como rodar localmente
 
