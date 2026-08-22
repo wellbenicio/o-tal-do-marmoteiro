@@ -154,6 +154,7 @@ describe('evaluateRefundPolicy', () => {
       const result = evaluateRefundPolicy(
         baseAppointmentInput({
           providerCausedRescheduleRefundChosen: true,
+          isNoShow: true,
         }),
       );
 

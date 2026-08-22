@@ -28,6 +28,8 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
   [`docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md`](./docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md).
 - O Motor de Política de Reembolso (Refund Policy Engine) está detalhado em
   [`docs/adr/0007-motor-de-politica-de-reembolso.md`](./docs/adr/0007-motor-de-politica-de-reembolso.md).
+- A ordenação da fila de Perguntas Avulsas (prioridade) está detalhada em
+  [`docs/adr/0008-ordenacao-da-fila-de-perguntas.md`](./docs/adr/0008-ordenacao-da-fila-de-perguntas.md).
 
 ## Estrutura do monorepo
 
@@ -65,6 +67,11 @@ O Motor de Política de Reembolso (ADR 0007) já está implementado como
 função pura de decisão (não uma máquina de estado) em
 `apps/api/src/modules/cancellation/refund-policy.ts`, exposto via o
 serviço NestJS `RefundPolicyService`.
+
+A ordenação da fila de Perguntas Avulsas por prioridade (ADR 0008) também
+está implementada como função pura em
+`apps/api/src/modules/question/question-queue-ordering.ts`, exposta via o
+serviço NestJS `QuestionQueueOrderingService`.
 
 Controllers, DTOs, autenticação/RBAC e integrações externas (PIX,
 WhatsApp) continuam fora de escopo.
