@@ -30,6 +30,9 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
   [`docs/adr/0007-motor-de-politica-de-reembolso.md`](./docs/adr/0007-motor-de-politica-de-reembolso.md).
 - A ordenação da fila de Perguntas Avulsas (prioridade) está detalhada em
   [`docs/adr/0008-ordenacao-da-fila-de-perguntas.md`](./docs/adr/0008-ordenacao-da-fila-de-perguntas.md).
+- O cálculo do prazo de SLA da Pergunta Avulsa (48 horas úteis) está
+  detalhado em
+  [`docs/adr/0009-calculo-sla-pergunta-avulsa.md`](./docs/adr/0009-calculo-sla-pergunta-avulsa.md).
 
 ## Estrutura do monorepo
 
@@ -72,6 +75,14 @@ A ordenação da fila de Perguntas Avulsas por prioridade (ADR 0008) também
 está implementada como função pura em
 `apps/api/src/modules/question/question-queue-ordering.ts`, exposta via o
 serviço NestJS `QuestionQueueOrderingService`.
+
+O cálculo do prazo de SLA da Pergunta Avulsa (ADR 0009 — 48 horas úteis a
+partir da confirmação do pagamento) está implementado como função pura em
+`apps/api/src/modules/question/question-sla.ts`, exposto via o serviço
+NestJS `QuestionSlaService`. A definição concreta do calendário de horas
+úteis (expediente, feriados) é uma abstração (`BusinessHoursCalendar`)
+sem implementação de produção ainda, pois depende de configuração
+operacional futura (seção 37).
 
 Controllers, DTOs, autenticação/RBAC e integrações externas (PIX,
 WhatsApp) continuam fora de escopo.
