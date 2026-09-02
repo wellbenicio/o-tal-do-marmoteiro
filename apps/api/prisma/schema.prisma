@@ -184,7 +184,6 @@ model Order {
   cancellationRequests CancellationRequest[]
   refundDecisions     RefundDecision[]
   legalAcceptances    LegalAcceptance[]
-  serviceExecution    ServiceExecution?
 }
 
 /// Item de pedido — permite discriminar pergunta e prioridade no checkout
@@ -377,22 +376,16 @@ model RescheduleRequest {
 // Domínio: fulfillment (seção 11.5–11.7, 14)
 // ============================================================
 
-/// Execução do serviço — visão unificada entre modalidades (Fulfillment,
-/// seção 33/34). ADR pendente: fronteira exata entre este registro e os
-/// campos específicos já presentes em QuestionRequest/Appointment precisa
-/// ser reconciliada na etapa de arquitetura (risco de duplicidade).
-model ServiceExecution {
-  id                String              @id @default(uuid())
-  orderId           String              @unique
-  order             Order               @relation(fields: [orderId], references: [id])
-  modality          ServiceOfferingType
-  startedAt         DateTime?
-  completedAt       DateTime?
-  performedByAdminId String?
-  performedByAdmin   AdminUser?         @relation(fields: [performedByAdminId], references: [id])
-  createdAt          DateTime           @default(now())
-  updatedAt           DateTime          @updatedAt
-}
+// Fulfillment não possui model de persistência próprio. A seção 33/34
+// permite nomenclatura/estrutura técnica diferente da lista conceitual,
+// desde que os limites de domínio sejam preservados — decisão explícita
+// registrada em docs/adr/0016-reconciliacao-service-execution.md, que
+// remove o antigo model `ServiceExecution` (duplicava
+// QuestionRequest.executionStartedAt/deliveredAt/completedAt para
+// Pergunta Avulsa, e não tinha base textual para Consulta Online além do
+// que `AppointmentStatus.COMPLETED`, ADR 0003, já cobre). O domínio
+// permanece como módulo de orquestração (`FulfillmentModule`) sobre os
+// campos já existentes em `QuestionRequest` e `Appointment`.
 
 // ============================================================
 // Domínio: cancellation (seções 13, 16, 17, 18, 19, 20)
@@ -417,6 +410,12 @@ model CancellationRequest {
   requestedAt              DateTime  @default(now())
   reason                   String? // motivo opcional
   modality                 ServiceOfferingType
+  // Permanece String (não QuestionStatus/AppointmentStatus) por
+  // limitação técnica: o Prisma não oferece um tipo de coluna soma
+  // (union), e este campo precisa acomodar o snapshot de qualquer uma
+  // das duas modalidades a depender de `modality`. Resolução final
+  // registrada em docs/adr/0016-reconciliacao-service-execution.md
+  // (ponto sinalizado desde as ADRs 0002 e 0003).
   executionStatusAtRequest String // status do atendimento no momento da solicitação
   orderCreatedAt           DateTime // data da contratação
   serviceDate              DateTime? // data do atendimento, quando aplicável
@@ -602,7 +601,6 @@ model AdminUser {
   dataCorrectionDecisions DataCorrectionRequest[]
   questionExecutionsStarted QuestionRequest[] @relation("QuestionExecutionStarted")
   questionDeliveries        QuestionRequest[] @relation("QuestionDelivered")
-  serviceExecutionsPerformed ServiceExecution[]
   cancellationDecisions   CancellationRequest[]
   refundDecisions          RefundDecision[]
   auditLogs                AuditLog[]

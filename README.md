@@ -45,6 +45,14 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
 - As portas de integração externa (gateway de pagamento, envio de
   notificação) estão detalhadas em
   [`docs/adr/0013-portas-de-integracao-externa.md`](./docs/adr/0013-portas-de-integracao-externa.md).
+- A retenção de gravação de consulta e o legal hold estão detalhados em
+  [`docs/adr/0014-retencao-de-gravacao-e-legal-hold.md`](./docs/adr/0014-retencao-de-gravacao-e-legal-hold.md).
+- O status da solicitação de correção cadastral (`DataCorrectionRequestStatus`)
+  está detalhado em
+  [`docs/adr/0015-status-de-solicitacao-de-correcao-cadastral.md`](./docs/adr/0015-status-de-solicitacao-de-correcao-cadastral.md).
+- A reconciliação entre `ServiceExecution` e os campos de execução já
+  existentes em `QuestionRequest`/`Appointment` está detalhada em
+  [`docs/adr/0016-reconciliacao-service-execution.md`](./docs/adr/0016-reconciliacao-service-execution.md).
 
 ## Estrutura do monorepo
 
@@ -113,6 +121,23 @@ também já estão implementados (ADR 0012), em
 adapters fake/em memória (ADR 0013); a escolha e integração dos provedores
 reais (PIX/cartão, WhatsApp Business API) permanece fora de escopo — é
 decisão de negócio ainda pendente do dono do produto.
+
+O prazo de retenção da gravação de consulta e o efeito do legal hold (ADR
+0014 — até 90 dias corridos após o atendimento, salvo `legalHold = true`)
+estão implementados como funções puras em
+`apps/api/src/modules/legal/recording-retention.ts`, expostas via o
+serviço NestJS `RecordingRetentionService`.
+
+A validação da decisão de correção cadastral (ADR 0015 — justificativa
+obrigatória quando o administrador ajusta ou recusa a solicitação) está
+implementada como função pura em
+`apps/api/src/modules/customer/data-correction-decision.ts`, exposta via o
+serviço NestJS `DataCorrectionDecisionService`.
+
+O domínio `fulfillment` não possui model de persistência próprio (ADR
+0016) — opera sobre os campos de execução já existentes em
+`QuestionRequest` (pergunta avulsa) e sobre `AppointmentStatus`/
+`AppointmentSlot` (consulta online).
 
 ## Como rodar localmente
 
