@@ -36,6 +36,15 @@ Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr)
 - A elegibilidade e o prazo de reagendamento da Consulta Online estão
   detalhados em
   [`docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md`](./docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md).
+- O contrato de API/convenção REST (prefixo de versão, validação de entrada,
+  formato de erro RFC 7807, controllers finos) está detalhado em
+  [`docs/adr/0011-contrato-de-api-e-convencao-rest.md`](./docs/adr/0011-contrato-de-api-e-convencao-rest.md).
+- O mecanismo de autenticação/RBAC (hashing de senha, sessão por token
+  opaco, guards HTTP) está detalhado em
+  [`docs/adr/0012-autenticacao-e-rbac.md`](./docs/adr/0012-autenticacao-e-rbac.md).
+- As portas de integração externa (gateway de pagamento, envio de
+  notificação) estão detalhadas em
+  [`docs/adr/0013-portas-de-integracao-externa.md`](./docs/adr/0013-portas-de-integracao-externa.md).
 
 ## Estrutura do monorepo
 
@@ -94,8 +103,16 @@ implementados como funções puras em
 `apps/api/src/modules/scheduling/reschedule-eligibility.ts`, expostos via
 o serviço NestJS `RescheduleEligibilityService`.
 
-Controllers, DTOs, autenticação/RBAC e integrações externas (PIX,
-WhatsApp) continuam fora de escopo.
+Controllers HTTP finos (um por serviço de domínio acima), validação de
+entrada e formato de erro padrão (RFC 7807) já estão implementados (ADR
+0011). Autenticação/RBAC — hashing de senha (`PasswordHasher`), sessão por
+token opaco (`SessionStore`) e guards HTTP (`AuthGuard`, `RolesGuard`) —
+também já estão implementados (ADR 0012), em
+`apps/api/src/modules/identity/`. Portas de integração externa
+(`PaymentGatewayPort`, `NotificationPort`) já estão implementadas com
+adapters fake/em memória (ADR 0013); a escolha e integração dos provedores
+reais (PIX/cartão, WhatsApp Business API) permanece fora de escopo — é
+decisão de negócio ainda pendente do dono do produto.
 
 ## Como rodar localmente
 
