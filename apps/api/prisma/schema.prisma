@@ -27,8 +27,10 @@ datasource db {
 
 /// Credenciais de autenticação. Separado de Customer para isolar o domínio
 /// de identidade/autenticação do domínio de dados cadastrais (seção 34).
-/// ADR pendente: estratégia de sessão/token (seção 7.3, seção 38 item 7)
-/// ainda não modelada aqui.
+/// Estratégia de sessão/token definida em
+/// docs/adr/0012-autenticacao-e-rbac.md: token opaco validado via
+/// `SessionStore` (não persistido neste schema — apenas em memória nesta
+/// etapa, ver "Pontos em aberto" da ADR 0012).
 model Identity {
   id           String   @id @default(uuid())
   customerId   String   @unique
@@ -562,17 +564,27 @@ model OutboxMessage {
 // Domínio: administration (seção 28)
 // ============================================================
 
-/// ADR pendente: `role` é um placeholder simples — a especificação exige
-/// que o modelo evolua para RBAC/permissões (seção 28), não modelado aqui.
+/// Papel do AdminUser dentro do painel administrativo. Hoje um único
+/// valor (`ADMIN`), mas modelado como enum — não `String` — para permitir
+/// evolução futura para RBAC granular sem alterar o tipo da coluna,
+/// conforme a seção 28 exige ("a solução técnica deverá permitir
+/// evolução para RBAC/permissões"). Ver docs/adr/0012-autenticacao-e-rbac.md.
+enum AdminRole {
+  ADMIN
+}
+
+/// `role` evoluiu de placeholder `String` para o enum `AdminRole` (ver
+/// docs/adr/0012-autenticacao-e-rbac.md) — o modelo não assume que todo
+/// administrador futuro possui acesso irrestrito (seção 28).
 model AdminUser {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
-  role         String
-  active       Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  role         AdminRole @default(ADMIN)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   dataCorrectionDecisions DataCorrectionRequest[]
   questionExecutionsStarted QuestionRequest[] @relation("QuestionExecutionStarted")
