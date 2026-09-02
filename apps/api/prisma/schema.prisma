@@ -77,21 +77,34 @@ model CustomerContact {
   createdAt  DateTime @default(now())
 }
 
+/// Estados da decisão de correção cadastral — enum definido em
+/// docs/adr/0015-status-de-solicitacao-de-correcao-cadastral.md a partir
+/// da transcrição literal da seção 6.4 ("justificativa da decisão quando
+/// houver recusa ou ajuste").
+enum DataCorrectionRequestStatus {
+  PENDING
+  APPROVED
+  ADJUSTED
+  REJECTED
+}
+
 /// Solicitação de correção cadastral (seção 6.4) — campos transcritos
-/// literalmente da especificação.
+/// literalmente da especificação. `status` evoluiu de placeholder
+/// `String` para o enum `DataCorrectionRequestStatus` (ver
+/// docs/adr/0015-status-de-solicitacao-de-correcao-cadastral.md).
 model DataCorrectionRequest {
-  id                   String    @id @default(uuid())
-  customerId           String
-  customer             Customer  @relation(fields: [customerId], references: [id])
-  field                String // campo
-  currentValue         String // valor atual
-  requestedValue       String // valor solicitado
-  reason               String? // motivo opcional
-  status               String // status (ADR pendente: enum de status)
-  requestedAt          DateTime  @default(now())
-  decidedAt            DateTime?
-  decidedByAdminId     String?
-  decidedByAdmin       AdminUser? @relation(fields: [decidedByAdminId], references: [id])
+  id                    String                      @id @default(uuid())
+  customerId            String
+  customer              Customer                    @relation(fields: [customerId], references: [id])
+  field                 String // campo
+  currentValue          String // valor atual
+  requestedValue        String // valor solicitado
+  reason                String? // motivo opcional
+  status                DataCorrectionRequestStatus @default(PENDING)
+  requestedAt           DateTime                    @default(now())
+  decidedAt             DateTime?
+  decidedByAdminId      String?
+  decidedByAdmin        AdminUser?                  @relation(fields: [decidedByAdminId], references: [id])
   decisionJustification String?
 }
 
