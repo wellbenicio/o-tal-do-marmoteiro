@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { AppointmentStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado do Atendimento da Consulta Online (XState — ver ADR
@@ -49,14 +51,18 @@ export const appointmentStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003. */
-export class InvalidAppointmentStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
+ */
+export class InvalidAppointmentStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: AppointmentStatus,
     public readonly event: AppointmentStatusEvent['type'],
   ) {
     super(
       `Transição inválida do Atendimento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0003-maquina-de-estado-do-atendimento.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidAppointmentStatusTransitionError';
   }

@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { RescheduleRequestStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado da Solicitação de Reagendamento (XState — ver ADR 0001,
@@ -33,14 +35,18 @@ export const rescheduleRequestStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003. */
-export class InvalidRescheduleRequestStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
+ */
+export class InvalidRescheduleRequestStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: RescheduleRequestStatus,
     public readonly event: RescheduleRequestStatusEvent['type'],
   ) {
     super(
       `Transição inválida da Solicitação de Reagendamento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0003-maquina-de-estado-do-atendimento.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidRescheduleRequestStatusTransitionError';
   }

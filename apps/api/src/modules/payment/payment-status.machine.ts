@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { PaymentStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado do Pagamento (XState — ver ADR 0001, seção "Máquinas de
@@ -58,14 +60,18 @@ export const paymentStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0004. */
-export class InvalidPaymentStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0004.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
+ */
+export class InvalidPaymentStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: PaymentStatus,
     public readonly event: PaymentStatusEvent['type'],
   ) {
     super(
       `Transição inválida do Pagamento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0004-maquina-de-estado-do-pagamento.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidPaymentStatusTransitionError';
   }

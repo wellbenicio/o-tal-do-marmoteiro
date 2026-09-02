@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { RefundDecisionType, ServiceOfferingType } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Motor de Política de Reembolso (Refund Policy Engine) — ver ADR 0007
@@ -81,12 +83,15 @@ const NO_SHOW_RETENTION_RATIO = 0.5;
 /**
  * Erro lançado para combinações de entrada logicamente inconsistentes com
  * a especificação (não representa uma decisão de negócio — ver ADR 0007,
- * seção "Validações de entrada").
+ * seção "Validações de entrada"). Estende `DomainError` com HTTP 422
+ * (Unprocessable Entity) — ver ADR 0011: a entrada é sintaticamente válida,
+ * mas semanticamente inconsistente com as regras de domínio.
  */
-export class InvalidRefundPolicyInputError extends Error {
+export class InvalidRefundPolicyInputError extends DomainError {
   constructor(message: string) {
     super(
       `Entrada inválida para o Refund Policy Engine: ${message} (ver docs/adr/0007-motor-de-politica-de-reembolso.md).`,
+      HttpStatus.UNPROCESSABLE_ENTITY,
     );
     this.name = 'InvalidRefundPolicyInputError';
   }

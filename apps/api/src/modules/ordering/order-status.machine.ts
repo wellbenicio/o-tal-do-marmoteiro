@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { OrderStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado do Pedido (XState — ver ADR 0001, seção "Máquinas de
@@ -39,14 +41,19 @@ export const orderStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0002. */
-export class InvalidOrderStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0002.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011: o estado
+ * atual do Pedido conflita com o evento solicitado.
+ */
+export class InvalidOrderStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: OrderStatus,
     public readonly event: OrderStatusEvent['type'],
   ) {
     super(
       `Transição inválida do Pedido: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0002-maquina-de-estado-do-pedido.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidOrderStatusTransitionError';
   }

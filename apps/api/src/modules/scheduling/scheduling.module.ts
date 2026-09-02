@@ -3,6 +3,10 @@ import { AppointmentStatusService } from './appointment-status.service';
 import { RescheduleRequestStatusService } from './reschedule-request-status.service';
 import { AppointmentSlotStatusService } from './appointment-slot-status.service';
 import { RescheduleEligibilityService } from './reschedule-eligibility.service';
+import { AppointmentStatusController } from './appointment-status.controller';
+import { AppointmentSlotStatusController } from './appointment-slot-status.controller';
+import { RescheduleRequestStatusController } from './reschedule-request-status.controller';
+import { RescheduleEligibilityController } from './reschedule-eligibility.controller';
 
 /**
  * Domínio: Scheduling (agenda da consulta online).
@@ -14,9 +18,16 @@ import { RescheduleEligibilityService } from './reschedule-eligibility.service';
  * Slot de Agenda (`AppointmentSlotStatus`) definida em
  * docs/adr/0005-maquina-de-estado-do-slot-de-agenda.md. Elegibilidade e
  * prazo de reagendamento definidos em
- * docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md.
+ * docs/adr/0010-elegibilidade-e-prazo-de-reagendamento.md. Controllers HTTP
+ * finos conforme ADR 0011.
  */
 @Module({
+  controllers: [
+    AppointmentStatusController,
+    AppointmentSlotStatusController,
+    RescheduleRequestStatusController,
+    RescheduleEligibilityController,
+  ],
   providers: [
     AppointmentStatusService,
     RescheduleRequestStatusService,

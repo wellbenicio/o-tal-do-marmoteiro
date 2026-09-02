@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { QuestionStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado da Pergunta Avulsa (XState — ver ADR 0001, seção
@@ -119,14 +121,18 @@ export const questionStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0006. */
-export class InvalidQuestionStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0006.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
+ */
+export class InvalidQuestionStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: QuestionStatus,
     public readonly event: QuestionStatusEvent['type'],
   ) {
     super(
       `Transição inválida da Pergunta Avulsa: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0006-maquina-de-estado-da-pergunta-avulsa.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidQuestionStatusTransitionError';
   }

@@ -1,5 +1,7 @@
 import { createMachine, transition } from 'xstate';
+import { HttpStatus } from '@nestjs/common';
 import { AppointmentSlotStatus } from '@marmoteiro/shared';
+import { DomainError } from '../../common/errors/domain-error';
 
 /**
  * Máquina de estado do Slot de Agenda (XState — ver ADR 0001, seção
@@ -39,14 +41,18 @@ export const appointmentSlotStatusMachine = createMachine({
   },
 });
 
-/** Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0005. */
-export class InvalidAppointmentSlotStatusTransitionError extends Error {
+/**
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0005.
+ * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
+ */
+export class InvalidAppointmentSlotStatusTransitionError extends DomainError {
   constructor(
     public readonly currentStatus: AppointmentSlotStatus,
     public readonly event: AppointmentSlotStatusEvent['type'],
   ) {
     super(
       `Transição inválida do Slot de Agenda: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0005-maquina-de-estado-do-slot-de-agenda.md).`,
+      HttpStatus.CONFLICT,
     );
     this.name = 'InvalidAppointmentSlotStatusTransitionError';
   }
