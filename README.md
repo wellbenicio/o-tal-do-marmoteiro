@@ -7,6 +7,12 @@ regulatórias completas estão em
 — esse documento é a fonte da verdade; nenhuma decisão técnica deve
 contradizê-lo.
 
+### Para agentes de IA
+
+O ponto de entrada obrigatório é [`AGENTS.md`](./AGENTS.md). O pacote de contexto
+funcional está em [`docs/product/`](./docs/product), especialmente
+[`docs/product/HANDOFF-AGENTE-IA.md`](./docs/product/HANDOFF-AGENTE-IA.md).
+
 ## Arquitetura
 
 Decisões de arquitetura são registradas como ADRs em [`docs/adr/`](./docs/adr).
