@@ -2,8 +2,9 @@
 ## Especificação Funcional, Regras de Negócio e Requisitos Regulatórios
 
 **Versão do documento:** 1.0  
-**Data:** 21 de agosto de 2026  
+**Data:** 21 de setembro de 2026  
 **Status:** Fechado para levantamento técnico  
+**Papel:** fonte de verdade funcional e regulatória do produto; decisões técnicas não podem contradizer este documento sem decisão explícita do responsável pelo produto.  
 **Finalidade:** servir como fonte funcional e regulatória para a etapa de arquitetura, modelagem técnica, backlog e implementação por agentes de IA e desenvolvedores.
 
 ---
