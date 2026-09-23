@@ -25,7 +25,7 @@ export function CommunicationReadiness() {
       cache: "no-store",
     })
       .then(async (r) => {
-        if (!r.ok) throw new Error();
+        if (!r.ok) throw new Error("Status de integração indisponível.");
         setStatus(await r.json());
       })
       .catch(() => {

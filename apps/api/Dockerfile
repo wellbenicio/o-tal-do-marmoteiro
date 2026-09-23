@@ -8,7 +8,7 @@ COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci --workspace @marmoteiro/api --include-workspace-root
+RUN npm ci --ignore-scripts --workspace @marmoteiro/api --include-workspace-root
 COPY apps/api apps/api
 COPY packages/shared packages/shared
 RUN npm run prisma:generate --workspace @marmoteiro/api && npm run build --workspace @marmoteiro/api

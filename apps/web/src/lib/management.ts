@@ -90,14 +90,14 @@ export type ManagementState = {
   processedEvents: string[];
   settings: ManagementSettings;
 };
-const paidStatuses = [
+const paidStatuses = new Set([
   "APPROVED",
   "REFUND_PENDING",
   "PARTIALLY_REFUNDED",
   "REFUNDED",
-];
+]);
 export const isPaid = (b: DemoBooking) =>
-  paidStatuses.includes(b.paymentStatus) && !!b.paidAt;
+  paidStatuses.has(b.paymentStatus) && !!b.paidAt;
 export function dateAt(days: number, time = "10:00") {
   return `${shiftedDate(days)}T${time}:00-03:00`;
 }

@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci --workspace @marmoteiro/web --include-workspace-root
+RUN npm ci --ignore-scripts --workspace @marmoteiro/web --include-workspace-root
 COPY apps/web apps/web
 COPY packages/shared packages/shared
 RUN npm run build --workspace @marmoteiro/web

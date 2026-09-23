@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { PrivateQuestion } from "./PrivateQuestion";
-import { Video } from "lucide-react";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -11,6 +10,7 @@ import {
   Sparkles,
   Play,
   Send,
+  Video,
 } from "lucide-react";
 import { useManagement } from "./ManagementProvider";
 import { queueOrders } from "@/lib/management";

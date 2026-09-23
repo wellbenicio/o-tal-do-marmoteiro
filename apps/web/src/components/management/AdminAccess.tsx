@@ -7,10 +7,10 @@ const Context = createContext<AdminIdentity | null>(null);
 export function AdminAccess({
   admin,
   children,
-}: {
+}: Readonly<{
   admin: AdminIdentity;
   children: React.ReactNode;
-}) {
+}>) {
   const path = usePathname();
   const [valid, setValid] = useState(true);
   useEffect(() => {
@@ -20,7 +20,7 @@ export function AdminAccess({
         const res = await fetch("/api/admin/auth/session", {
           cache: "no-store",
         });
-        if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error("Sessão administrativa inválida.");
       } catch {
         if (!stopped) {
           setValid(false);

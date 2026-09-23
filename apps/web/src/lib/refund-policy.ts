@@ -71,7 +71,7 @@ export function decideRefund(context: RefundContext): RefundResult {
     );
   const hours =
     context.startsAt === undefined
-      ? NaN
+      ? Number.NaN
       : (context.startsAt - Date.parse(context.requestedAt)) / 3600000;
   if (context.modality === "APPOINTMENT" && hours >= 0 && hours < 24)
     return refund(

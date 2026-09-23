@@ -18,9 +18,9 @@ import {
   X,
   Sparkles,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 import { useAdminIdentity, adminLogout } from "./AdminAccess";
-import { LogOut } from "lucide-react";
 import { useManagement } from "./ManagementProvider";
 const nav = [
   { href: "/gestao", label: "Visão geral", icon: LayoutDashboard },
@@ -32,7 +32,9 @@ const nav = [
   { href: "/gestao/notificacoes", label: "Notificações e e-mails", icon: Bell },
   { href: "/gestao/integracoes", label: "Integrações", icon: Plug },
 ];
-export function ManagementShell({ children }: { children: React.ReactNode }) {
+export function ManagementShell({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const state = useManagement();
   const admin = useAdminIdentity();
   const pathname = usePathname();
