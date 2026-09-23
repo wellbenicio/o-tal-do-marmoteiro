@@ -315,6 +315,8 @@ model Appointment {
 
   rescheduleRequests RescheduleRequest[]
   recordingConsent   RecordingConsent?
+  communication AppointmentCommunication?
+  reminderConsent AppointmentReminderConsent?
 }
 
 /// Campos transcritos literalmente da seção 15.3.
@@ -532,6 +534,12 @@ model OutboxMessage {
   status      String    @default("PENDING")
   createdAt   DateTime  @default(now())
   processedAt DateTime?
+  deduplicationKey String? @unique
+  availableAt DateTime @default(now())
+  attempts Int @default(0)
+  leaseUntil DateTime?
+  lastErrorCode String?
+  @@index([status, availableAt])
 }
 
 // ============================================================
@@ -550,6 +558,7 @@ model AdminUser {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  sessions AdminSession[]
   dataCorrectionDecisions DataCorrectionRequest[]
   questionExecutionsStarted QuestionRequest[] @relation("QuestionExecutionStarted")
   questionDeliveries        QuestionRequest[] @relation("QuestionDelivered")
@@ -578,4 +587,43 @@ model AuditLog {
   newState      Json?
   metadata      Json?
   createdAt     DateTime  @default(now())
+}
+
+// Administrative sessions are independent from customer identities.
+model AdminSession {
+  id String @id @default(uuid())
+  tokenHash String @unique
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  @@index([adminId, expiresAt])
+}
+model AdminLoginBucket {
+  key String @id
+  attempts Int @default(0)
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+
+// Operational integration metadata; never question content.
+model AppointmentCommunication {
+  appointmentId String @id
+  appointment Appointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  calendarId String
+  eventId String
+  calendarUrl String?
+  meetUrl String?
+  syncedRevision String?
+  updatedAt DateTime @updatedAt
+}
+model AppointmentReminderConsent {
+  appointmentId String @id
+  appointment Appointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  granted Boolean
+  phone String
+  version String
+  decidedAt DateTime
+  revokedAt DateTime?
 }

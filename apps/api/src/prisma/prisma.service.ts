@@ -21,8 +21,14 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   constructor(configService: ConfigService) {
+    const poolMax = Number(configService.get<string>('DATABASE_POOL_MAX') || 3);
+    if (!Number.isInteger(poolMax) || poolMax < 1 || poolMax > 20)
+      throw new Error('DATABASE_POOL_MAX must be between 1 and 20');
     const adapter = new PrismaPg({
       connectionString: configService.getOrThrow<string>('DATABASE_URL'),
+      max: poolMax,
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 10000,
     });
     super({ adapter });
   }

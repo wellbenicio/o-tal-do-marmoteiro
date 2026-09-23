@@ -1,0 +1,21 @@
+# Optional App Hosting candidate, not yet remotely validated for Next 16/npm workspaces.
+# Backend app root: apps/web. Secret values are provisioned separately.
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 40
+  cpu: 1
+  memoryMiB: 512
+env:
+  - variable: ADMIN_API_URL
+    secret: marmoteiro-api-url
+    availability: [RUNTIME]
+  - variable: ADMIN_API_SECRET
+    secret: marmoteiro-admin-api-secret
+    availability: [RUNTIME]
+  - variable: APP_ORIGIN
+    secret: marmoteiro-app-origin
+    availability: [RUNTIME]
+  - variable: TRUST_PROXY_HEADERS
+    value: "false"
+    availability: [RUNTIME]
