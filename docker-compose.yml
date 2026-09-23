@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: marmoteiro
-      POSTGRES_PASSWORD: marmoteiro
-      POSTGRES_DB: marmoteiro
+      POSTGRES_USER: ${POSTGRES_USER:-marmoteiro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marmoteiro}
+      POSTGRES_DB: ${POSTGRES_DB:-marmoteiro}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
       - marmoteiro-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U marmoteiro"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-marmoteiro}"]
       interval: 5s
       timeout: 5s
       retries: 10
