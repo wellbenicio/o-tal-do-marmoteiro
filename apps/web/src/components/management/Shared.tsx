@@ -116,7 +116,7 @@ export function FlowChart({
         </div>
         <div className="mg-chart-bars">
           {values.map((value, i) => (
-            <div key={i}>
+            <div key={labels[i]}>
               <span className="mg-bar-tooltip">
                 {labels[i]} · {money(value)}
               </span>

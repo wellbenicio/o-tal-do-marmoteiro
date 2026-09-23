@@ -228,8 +228,8 @@ export function BookingDetails({
           Histórico do pedido <Clock3 size={16} />
         </summary>
         <ol className="order-timeline">
-          {b.timeline.map((event, i) => (
-            <li key={i}>
+          {b.timeline.map((event) => (
+            <li key={`${event.at}-${event.title}`}>
               <span>{prettyTimestamp(event.at)}</span>
               <p>{event.title}</p>
             </li>
