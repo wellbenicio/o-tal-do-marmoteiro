@@ -4,7 +4,7 @@ const N = 32768,
   p = 3;
 export const normalizeEmail = (value: string) => value.trim().toLowerCase();
 export const validEmail = (value: string) =>
-  value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  value.length <= 254 && /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(value);
 export const validPassword = (value: string) =>
   value.length >= 15 && value.length <= 128;
 function derive(password: string, salt: Buffer): Promise<Buffer> {
