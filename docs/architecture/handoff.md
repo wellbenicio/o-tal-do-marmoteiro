@@ -12,7 +12,7 @@ O responsável recebeu um [guia de criação das contas e primeira publicação]
 
 - ADR 0003 e análise de lacunas/custos com fontes oficiais e data.
 - Builds portáveis web/API, target separado de migração, configuração App Hosting e build Cloud Run.
-- CI com Postgres de teste, lint, testes e builds; execução remota depende de publicação do código no GitHub.
+- CI com Postgres de teste, lint, testes e builds; publicação e evidência de execução remota no [PR #5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5). Acompanhar o resultado do commit atual nos checks; não inferir sucesso de um commit anterior.
 - Redis deixou de ser requisito do módulo raiz; dependências continuam disponíveis para evolução, sem fila fictícia.
 - Outbox ganha executor por requisição autenticada com segredo próprio; sem disparos reais na prévia.
 - Pool PostgreSQL explícito/limitado; frontend deixa de consultar sessão periodicamente em aba oculta.
@@ -34,7 +34,11 @@ Não publicar somente a web dizendo que o painel está funcional: a verificaçã
 - Três migrações aplicadas em banco temporário; target de migração também verificado sem migrações pendentes.
 - Containers integrados testados em 3010/3011 com administrador temporário: SSR/assets, login responsivo a 375 px, páginas protegidas, rejeição de origem externa, cookie Secure/HttpOnly/SameSite Strict, login/logout/revogação, guard de job e envios desativados.
 - Nenhum ambiente local foi incluído nas imagens. Credenciais temporárias e banco de teste são removidos após validação; a conta administrativa original permanece no banco local.
-- CI remoto, deploy, domínio, carga sob Cloud Run e serviços externos **não foram homologados**. Não houve envio real de e-mail/WhatsApp, cobrança ou evento Google.
+- Deploy, domínio, carga sob Cloud Run e serviços externos **não foram homologados**. Não houve envio real de e-mail/WhatsApp, cobrança ou evento Google. A validação remota de código pelo GitHub Actions é independente dessas etapas; seu resultado fica nos checks do PR e de `dev`.
+
+## Histórico e trabalho paralelo preservado
+
+O [PR #5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5) consolida a plataforma construída e a política de Git Flow. O antigo PR #3 continua, com os mesmos 19 commits, no [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6), branch `feature/regras-de-negocio`. Esse rascunho ainda não foi integrado: conflita com contratos HTTP/autenticação, papéis administrativos, migrations e numeração das ADRs. Reconciliar em etapa própria, preservando o acesso atual e o baseline. Os detalhes e a preservação das branches históricas estão no [guia de versionamento](./git-flow.md).
 
 Prévia de desenvolvimento em `http://localhost:3008/`, API local em 3001. Artefatos de inspeção desta execução em `/tmp/marmoteiro-deploy-review/`; são temporários, não armazenamento de produção.
 

@@ -72,11 +72,13 @@ Hotfix parte de `main` e retorna a `main` e `dev` (e à release aberta, quando a
 
 Branches descartadas com commits exclusivos podem ser arquivadas em tags anotadas `archive/<descricao>-<data>` antes de sua remoção. Confirmar que a tag remota aponta exatamente para o antigo tip. Essas tags não são releases e não devem disparar deploy. A arquitetura MySQL do PR #1 foi substituída pela base PostgreSQL; não reintegrar esse código por conveniência de limpeza.
 
-O trabalho antigo de máquinas de estado do PR #3 é independente da prévia atual e exige reconciliação antes de merge: prefixo HTTP global, sessão em memória versus sessão persistida, papel `ADMIN` versus `OWNER`, migrations de enums e numeração das ADRs. Preservar seus commits em PR de feature em rascunho. Não afirmar que o código desse PR já está em `dev`.
+O trabalho antigo de máquinas de estado do PR #3 foi preservado, sem mudar seus 19 commits, em `feature/regras-de-negocio`, no [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6). Ele é independente da prévia atual e exige reconciliação antes de merge: prefixo HTTP global, sessão em memória versus sessão persistida, papel `ADMIN` versus `OWNER`, migrations de enums e numeração das ADRs. O PR #3 foi encerrado com link para o sucessor; não afirmar que esse código já está em `dev`.
+
+A antiga `features/mvp-implementation`, encerrada sem merge no PR #1, está preservada na tag remota `archive/implementacao-inicial-2026-09-22`, apontando para `776e5ed`. As branches dos PRs #2 e #4 foram removidas após confirmar a integração (ancestralidade no primeiro, equivalência da árvore do squash no segundo). A consolidação da plataforma e desta política está no [PR #5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5). Um stash local anterior permanece preservado; não o reaplicar automaticamente sobre a plataforma atual.
 
 ## Configuração e limites do GitHub
 
-Preferir merge commits, desabilitar squash/rebase como opções do repositório e habilitar exclusão automática de branches concluídas. O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
+Configuração aplicada e verificada: merge commits habilitados, squash/rebase desabilitados e exclusão automática de branches concluídas habilitada. O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
 
 Em 22/09/2026, a API de regras do repositório privado respondeu **403: requer GitHub Pro ou repositório público**. Portanto não há proteção efetiva contra push direto ou merge com check falhando no plano atual. O CI detecta problemas, mas não impede sozinho o administrador de ignorá-los. O repositório permanece privado; nenhuma troca de plano foi realizada.
 
