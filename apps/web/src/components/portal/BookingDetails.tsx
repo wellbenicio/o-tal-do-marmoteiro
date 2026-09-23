@@ -203,7 +203,11 @@ export function BookingDetails({
         </p>
         {b.acceptances.map((a) => (
           <div key={a.documentId}>
-            <Link href={`/documentos/${a.documentId}`} target="_blank">
+            <Link
+              href={`/documentos/${a.documentId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {a.title}
             </Link>
             <small>{a.version}</small>

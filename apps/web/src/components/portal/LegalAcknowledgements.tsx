@@ -18,7 +18,11 @@ export function LegalAcknowledgements({
       <div className="legal-acceptances">
         {legalDocuments.map((doc) => (
           <div className="legal-acceptance" key={doc.id}>
-            <Link href={`/documentos/${doc.id}`} target="_blank">
+            <Link
+              href={`/documentos/${doc.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FileText size={20} />
               <span>
                 <strong>{doc.title}</strong>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { formString } from "@/lib/form";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -33,7 +34,7 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
     enterDemo(
       signup
         ? profileFromForm(data)
-        : { ...defaultProfile, email: String(data.get("email")).trim() },
+        : { ...defaultProfile, email: formString(data, "email").trim() },
       !signup,
     );
     router.push(destination());
@@ -188,7 +189,11 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
                 <input type="checkbox" required />
                 <span>
                   Li as{" "}
-                  <Link href="/termos" target="_blank">
+                  <Link
+                    href="/termos"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     orientações da prévia
                   </Link>{" "}
                   e entendo que este cadastro é demonstrativo.

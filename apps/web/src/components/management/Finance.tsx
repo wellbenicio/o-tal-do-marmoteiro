@@ -1,5 +1,6 @@
 "use client";
 import { useState, type FormEvent } from "react";
+import { formString } from "@/lib/form";
 import {
   ArrowDownToLine,
   Plus,
@@ -99,9 +100,9 @@ export function Finance() {
     e.preventDefault();
     const d = new FormData(e.currentTarget);
     s.addExpense({
-      title: String(d.get("title")).trim(),
-      category: String(d.get("category")),
-      date: String(d.get("date")),
+      title: formString(d, "title").trim(),
+      category: formString(d, "category"),
+      date: formString(d, "date"),
       amount: Math.round(Number(d.get("amount")) * 100),
     });
     setExpense(false);

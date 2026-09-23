@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { CommunicationReadiness } from "./CommunicationReadiness";
+import { formString } from "@/lib/form";
 import { useState, type FormEvent } from "react";
 import {
   ArrowRight,
@@ -360,7 +361,7 @@ export function Integrations() {
               const form = new FormData(e.currentTarget);
               s.updateSettings({
                 googleDemo: true,
-                googleCalendar: String(form.get("calendar")).trim(),
+                googleCalendar: formString(form, "calendar").trim(),
               });
               setConnect(false);
             }}

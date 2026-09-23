@@ -8,6 +8,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useDemo } from "./DemoProvider";
+import { formString } from "@/lib/form";
 import {
   prettyTimestamp,
   prettyDate,
@@ -29,8 +30,8 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     updateContact(
-      String(data.get("email")).trim(),
-      String(data.get("phone")).trim(),
+      formString(data, "email").trim(),
+      formString(data, "phone").trim(),
     );
   }
   function submitCorrection(e: FormEvent<HTMLFormElement>) {
@@ -43,8 +44,8 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
         (protectedFields.find((f) => f.key === field)?.label || field),
       field,
       currentValue: profile![field],
-      requestedValue: String(data.get("newValue")).trim(),
-      reason: String(data.get("reason")).trim(),
+      requestedValue: formString(data, "newValue").trim(),
+      reason: formString(data, "reason").trim(),
     });
     setCorrection(false);
   }
@@ -53,8 +54,8 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
     const data = new FormData(e.currentTarget);
     addRequest({
       type: "PRIVACY",
-      title: String(data.get("type")),
-      reason: String(data.get("message")).trim(),
+      title: formString(data, "type"),
+      reason: formString(data, "message").trim(),
     });
     e.currentTarget.reset();
   }

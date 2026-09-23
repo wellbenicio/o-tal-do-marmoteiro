@@ -1,6 +1,7 @@
 import { localDate, type DemoProfile } from "@/lib/demo-bookings";
+import { formString } from "@/lib/form";
 export function profileFromForm(data: FormData): DemoProfile {
-  const value = (name: string) => String(data.get(name) || "").trim();
+  const value = (name: string) => formString(data, name).trim();
   return {
     name: value("socialName") || value("legalName"),
     legalName: value("legalName"),

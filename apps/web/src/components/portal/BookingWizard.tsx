@@ -682,7 +682,11 @@ function BookingJourney({
                   Você pode solicitar cancelamento na sua área. O direito legal
                   aplicável prevalece sobre retenções; os valores dependem da
                   avaliação do caso.{" "}
-                  <Link href="/documentos/terms" target="_blank">
+                  <Link
+                    href="/documentos/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Rever condições
                   </Link>
                   .

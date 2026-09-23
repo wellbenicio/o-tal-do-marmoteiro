@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { formString } from "@/lib/form";
 import {
   ChevronLeft,
   ChevronRight,
@@ -44,10 +45,10 @@ export function Agenda() {
     const d = new FormData(e.currentTarget);
     if (
       s.addBlock({
-        date: String(d.get("date")),
-        start: String(d.get("start")),
-        end: String(d.get("end")),
-        label: String(d.get("label")).trim() || "Indisponível",
+        date: formString(d, "date"),
+        start: formString(d, "start"),
+        end: formString(d, "end"),
+        label: formString(d, "label").trim() || "Indisponível",
         source: "MANUAL",
       })
     ) {
