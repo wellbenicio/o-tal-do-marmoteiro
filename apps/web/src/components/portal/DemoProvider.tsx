@@ -482,13 +482,13 @@ export function DemoProvider({
     >
       {children}
       {message && (
-        <div className="portal-toast" role="status">
+        <output className="portal-toast">
           <span />
           {message}
           <button aria-label="Fechar mensagem" onClick={() => setMessage("")}>
             ×
           </button>
-        </div>
+        </output>
       )}
     </DemoContext.Provider>
   );

@@ -221,10 +221,10 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
               </button>
             )}
             {sent && (
-              <p className="inline-info" role="status">
+              <output className="inline-info">
                 Fluxo de recuperação demonstrado. Nenhum e-mail foi enviado; a
                 autenticação real ainda será integrada.
-              </p>
+              </output>
             )}
           </form>
           <div className="auth-divider">
