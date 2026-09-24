@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, Mail } from "lucide-react";
 import { legalDocuments, type LegalDocumentId } from "@/lib/preview-legal";
-export function LegalPreview({ documentId }: { documentId?: LegalDocumentId }) {
+export function LegalPreview({
+  documentId,
+}: Readonly<{ documentId?: LegalDocumentId }>) {
   const documents = documentId
     ? legalDocuments.filter((d) => d.id === documentId)
     : legalDocuments;

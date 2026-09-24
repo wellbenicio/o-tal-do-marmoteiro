@@ -5,9 +5,9 @@ import { AdminAccess } from "@/components/management/AdminAccess";
 export const dynamic = "force-dynamic";
 export default async function Layout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const admin = await requireAdmin();
   return (
     <AdminAccess admin={admin}>

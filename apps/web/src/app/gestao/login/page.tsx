@@ -9,9 +9,9 @@ export const metadata = {
 };
 export default async function Page({
   searchParams,
-}: {
+}: Readonly<{
   searchParams: Promise<{ next?: string }>;
-}) {
+}>) {
   const target = safeAdminReturn((await searchParams).next);
   if (await getAdmin()) redirect(target);
   return <AdminLogin returnTo={target} />;

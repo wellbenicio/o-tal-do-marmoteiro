@@ -4,10 +4,10 @@ import { legalDocuments, type LegalDocumentId } from "@/lib/preview-legal";
 export function LegalAcknowledgements({
   accepted,
   onChange,
-}: {
+}: Readonly<{
   accepted: LegalDocumentId[];
   onChange: (value: LegalDocumentId[]) => void;
-}) {
+}>) {
   return (
     <>
       <p className="pending-policy">

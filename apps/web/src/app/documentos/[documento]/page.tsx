@@ -6,9 +6,9 @@ export function generateStaticParams() {
 }
 export default async function Page({
   params,
-}: {
+}: Readonly<{
   params: Promise<{ documento: string }>;
-}) {
+}>) {
   const { documento } = await params;
   const doc = legalDocuments.find((d) => d.id === documento);
   if (!doc) notFound();
