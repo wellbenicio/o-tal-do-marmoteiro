@@ -9,10 +9,10 @@ import { Avatar, MgBadge } from "./Shared";
 export function OrderModal({
   id,
   onClose,
-}: {
+}: Readonly<{
   id: string;
   onClose: () => void;
-}) {
+}>) {
   const s = useManagement();
   const order = s.orders.find((o) => o.booking.id === id);
   const [amount, setAmount] = useState(

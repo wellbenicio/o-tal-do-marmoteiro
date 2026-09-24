@@ -21,7 +21,7 @@ const protectedFields = [
   { key: "motherName", label: "Nome da mãe" },
   { key: "genderIdentity", label: "Identidade de gênero" },
 ] as const;
-export function AccountPanels({ view }: { view: "account" | "privacy" }) {
+export function AccountPanels({ view }: Readonly<{ view: "account" | "privacy" }>) {
   const { profile, updateContact, addRequest, requests, notify } = useDemo();
   const [correction, setCorrection] = useState(false);
   const [field, setField] = useState<keyof DemoProfile>("legalName");

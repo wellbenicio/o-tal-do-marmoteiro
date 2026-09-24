@@ -35,10 +35,10 @@ const steps = ["Seu acesso", "Documentos", "Seu atendimento", "Pagamento"];
 export function BookingWizard({
   initialModality = "APPOINTMENT",
   resumeId,
-}: {
+}: Readonly<{
   initialModality?: DemoBooking["modality"];
   resumeId?: string;
-}) {
+}>) {
   const { ready, bookings } = useDemo();
   if (!ready)
     return (
@@ -58,10 +58,10 @@ export function BookingWizard({
 function BookingJourney({
   initial,
   initialModality,
-}: {
+}: Readonly<{
   initial?: DemoBooking;
   initialModality: DemoBooking["modality"];
-}) {
+}>) {
   const { profile, bookings, addBooking, payBooking, now, enterDemo } =
     useDemo();
   const [step, setStep] = useState(initial ? 5 : 1);

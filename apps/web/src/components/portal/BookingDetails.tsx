@@ -23,13 +23,13 @@ export function BookingDetails({
   booking: b,
   onAction,
   readOnly = false,
-}: {
+}: Readonly<{
   booking: DemoBooking;
   readOnly?: boolean;
   onAction: (
     action: "cancel" | "reschedule" | "notes" | "refund" | "join",
   ) => void;
-}) {
+}>) {
   const eligibility = rescheduleEligibility(b);
   return (
     <>
@@ -239,7 +239,9 @@ export function BookingDetails({
     </>
   );
 }
-export function RefundDetails({ booking: b }: { booking: DemoBooking }) {
+export function RefundDetails({
+  booking: b,
+}: Readonly<{ booking: DemoBooking }>) {
   const result = b.cancellation?.result;
   const manual = result?.decision === "MANUAL_REVIEW_REQUIRED";
   const refunded = ["REFUNDED", "PARTIALLY_REFUNDED"].includes(b.paymentStatus);

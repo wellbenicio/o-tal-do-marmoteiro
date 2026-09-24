@@ -58,7 +58,9 @@ type ManagementContextValue = ManagementState & {
   dailyDigest: () => void;
 };
 const Context = createContext<ManagementContextValue | null>(null);
-export function ManagementProvider({ children }: { children: ReactNode }) {
+export function ManagementProvider({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   const demo = useDemo();
   const [state, setState] = useState<ManagementState>(() => managementSeed());
   const [ready, setReady] = useState(false);

@@ -132,7 +132,7 @@ const titles: Record<View, string> = {
   payments: "Pagamentos e reembolsos",
   help: "Como podemos ajudar?",
 };
-function Status({ booking }: { booking: DemoBooking }) {
+function Status({ booking }: Readonly<{ booking: DemoBooking }>) {
   return (
     <span className={`status-badge status-${booking.status.toLowerCase()}`}>
       <span />
@@ -144,7 +144,7 @@ function Status({ booking }: { booking: DemoBooking }) {
     </span>
   );
 }
-function DateTile({ date }: { date: string }) {
+function DateTile({ date }: Readonly<{ date: string }>) {
   const d = new Date(date + "T12:00:00");
   return (
     <div className="date-tile">
@@ -155,7 +155,7 @@ function DateTile({ date }: { date: string }) {
     </div>
   );
 }
-export function ClientArea({ view }: { view: View }) {
+export function ClientArea({ view }: Readonly<{ view: View }>) {
   const {
     profile,
     bookings,

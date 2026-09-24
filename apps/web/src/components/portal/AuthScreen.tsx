@@ -17,7 +17,7 @@ import {
 import { defaultProfile } from "@/lib/demo-bookings";
 import { ProfileFields, profileFromForm } from "./ProfileFields";
 import { useDemo } from "./DemoProvider";
-export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
+export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
   const signup = mode === "signup";
   const [visible, setVisible] = useState(false);
   const [reset, setReset] = useState(false);

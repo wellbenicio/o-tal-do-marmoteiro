@@ -22,11 +22,11 @@ export function Orders({
   initialQuery = "",
   initialFilter = "all",
   initialOrder,
-}: {
+}: Readonly<{
   initialQuery?: string;
   initialFilter?: string;
   initialOrder?: string;
-}) {
+}>) {
   const s = useManagement();
   const [query, setQuery] = useState(initialQuery);
   const [modality, setModality] = useState("all");

@@ -12,7 +12,7 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { clearAdminPreview } from "@/lib/preview-events";
-export function AdminLogin({ returnTo }: { returnTo: string }) {
+export function AdminLogin({ returnTo }: Readonly<{ returnTo: string }>) {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);

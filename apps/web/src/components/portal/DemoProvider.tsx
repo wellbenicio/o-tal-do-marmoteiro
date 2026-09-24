@@ -114,7 +114,9 @@ function validStoredState(value: unknown): value is DemoState {
     )
   );
 }
-export function DemoProvider({ children }: { children: ReactNode }) {
+export function DemoProvider({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   const [state, setState] = useState<DemoState>(empty);
   const [busyBlocks, setBusyBlocks] = useState<AvailabilityBlock[]>([]);
   useEffect(() => {

@@ -17,9 +17,9 @@ import { Avatar, Empty, Kpi, MgBadge, SectionTitle } from "./Shared";
 import { Modal } from "@/components/portal/Modal";
 export function Customers({
   initialFilter = "all",
-}: {
+}: Readonly<{
   initialFilter?: string;
-}) {
+}>) {
   const s = useManagement();
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState("");

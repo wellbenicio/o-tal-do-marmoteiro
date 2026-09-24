@@ -3,10 +3,10 @@ import { money } from "@/lib/demo-bookings";
 export function MgBadge({
   children,
   tone = "neutral",
-}: {
+}: Readonly<{
   children: React.ReactNode;
   tone?: "neutral" | "green" | "orange" | "blue" | "red";
-}) {
+}>) {
   return (
     <span className={`mg-badge mg-badge-${tone}`}>
       <i />
@@ -17,10 +17,10 @@ export function MgBadge({
 export function Avatar({
   name,
   small = false,
-}: {
+}: Readonly<{
   name: string;
   small?: boolean;
-}) {
+}>) {
   return (
     <span className={`mg-avatar ${small ? "small" : ""}`}>
       {name
@@ -37,13 +37,13 @@ export function Kpi({
   detail,
   icon: Icon,
   accent = false,
-}: {
+}: Readonly<{
   label: string;
   value: string;
   detail: string;
   icon: React.ElementType;
   accent?: boolean;
-}) {
+}>) {
   return (
     <article className={`mg-kpi ${accent ? "accent" : ""}`}>
       <div>
@@ -55,7 +55,7 @@ export function Kpi({
     </article>
   );
 }
-export function Empty({ title, text }: { title: string; text: string }) {
+export function Empty({ title, text }: Readonly<{ title: string; text: string }>) {
   return (
     <div className="mg-empty">
       <Inbox size={30} />
@@ -68,11 +68,11 @@ export function SectionTitle({
   title,
   detail,
   action,
-}: {
+}: Readonly<{
   title: string;
   detail?: string;
   action?: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="mg-section-title">
       <div>
@@ -95,11 +95,11 @@ export function FlowChart({
   values,
   labels,
   compact = false,
-}: {
+}: Readonly<{
   values: number[];
   labels: string[];
   compact?: boolean;
-}) {
+}>) {
   const max = Math.max(1, ...values);
   return (
     <div className={`mg-chart ${compact ? "compact" : ""}`}>

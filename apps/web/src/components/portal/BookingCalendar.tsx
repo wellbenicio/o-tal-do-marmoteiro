@@ -16,14 +16,14 @@ export function BookingCalendar({
   onTime,
   bookings = [],
   except,
-}: {
+}: Readonly<{
   date: string;
   time: string;
   onDate: (v: string) => void;
   onTime: (v: string) => void;
   bookings?: DemoBooking[];
   except?: string;
-}) {
+}>) {
   const { now, busyBlocks } = useDemo();
   const today = localDate();
   const initial = new Date((date || today) + "T12:00:00-03:00");
