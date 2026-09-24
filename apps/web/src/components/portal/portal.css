@@ -999,6 +999,9 @@
   gap: 12px;
 }
 .portal-filters {
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: flex;
   gap: 6px;
   margin: 27px 0 20px;
@@ -1955,6 +1958,10 @@
   color: #a59275;
 }
 .payment-methods {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: grid;
   gap: 13px;
 }
@@ -3002,6 +3009,10 @@
   padding-bottom: 30px;
 }
 .service-choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;

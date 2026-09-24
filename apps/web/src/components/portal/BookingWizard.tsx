@@ -242,9 +242,8 @@ function BookingJourney({
                   <h2>Um atendimento do seu jeito.</h2>
                   <p>Escolha a modalidade e acesse sua conta para continuar.</p>
                 </div>
-                <div
+                <fieldset
                   className="service-choice"
-                  role="group"
                   aria-label="Modalidade"
                 >
                   {[
@@ -272,7 +271,7 @@ function BookingJourney({
                       <span>{desc}</span>
                     </button>
                   ))}
-                </div>
+                </fieldset>
                 {profile ? (
                   <div className="checkout-profile">
                     <span className="profile-avatar">{profile.name[0]}</span>
@@ -619,9 +618,8 @@ function BookingJourney({
                     </strong>
                   </div>
                 </div>
-                <div
+                <fieldset
                   className="payment-methods"
-                  role="group"
                   aria-label="Forma de pagamento"
                 >
                   {(
@@ -662,7 +660,7 @@ function BookingJourney({
                       </span>
                     </button>
                   ))}
-                </div>
+                </fieldset>
                 <div className="inline-info">
                   <ShieldCheck size={18} />
                   <p>

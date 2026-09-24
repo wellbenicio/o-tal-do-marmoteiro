@@ -641,9 +641,8 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
           )}
           {view === "bookings" && (
             <>
-              <div
+              <fieldset
                 className="portal-filters"
-                role="group"
                 aria-label="Filtrar consultas"
               >
                 {[
@@ -661,7 +660,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                     {f.label}
                   </button>
                 ))}
-              </div>
+              </fieldset>
               <div className="portal-card consultation-list">
                 {bookings
                   .filter((b) => b.modality === "APPOINTMENT")
