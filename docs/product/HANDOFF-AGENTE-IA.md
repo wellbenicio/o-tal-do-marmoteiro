@@ -2,6 +2,12 @@
 
 Use este arquivo como ponto de partida operacional.
 
+## Continuidade técnica — 22/09/2026
+
+Após a leitura obrigatória do baseline, consulte o [mapa técnico](../architecture/README.md), [fluxos e contratos](../architecture/fluxos-e-contratos.md), [custos](../architecture/custos.md), [deploy e operação](../architecture/deploy.md) e [handoff de implementação](../architecture/handoff.md). Esses documentos distinguem capacidade demonstrativa, código funcional e integração ainda pendente. As ADRs 0002/0003 complementam a ADR 0001. A precedência funcional/regulatória permanece inalterada.
+
+O repositório evoluiu além do scaffold: há interface pública, área do cliente demonstrativa, painel com autenticação administrativa real, outbox/adaptadores desativados e preparação de infraestrutura. Isso não significa que pagamento, contratação, agenda, Firebase ou comunicações já operem em produção. O deploy remoto ainda depende das contas/projeto/banco do responsável.
+
 ## Missão
 
 Produzir o levantamento técnico do sistema sem alterar o comportamento funcional aprovado.

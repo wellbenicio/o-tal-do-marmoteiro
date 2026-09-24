@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-
-/**
- * Domínio: Identity (autenticação/credenciais).
- * Fonte: especificação funcional, seção 7 (Autenticação).
- */
-@Module({})
+import { AdminAuthService } from './admin/admin-auth.service';
+import { AdminAuthController } from './admin/admin-auth.controller';
+import { AdminSessionGuard, InternalApiGuard } from './admin/admin-auth.guard';
+@Module({
+  controllers: [AdminAuthController],
+  providers: [AdminAuthService, AdminSessionGuard, InternalApiGuard],
+  exports: [AdminAuthService, AdminSessionGuard, InternalApiGuard],
+})
 export class IdentityModule {}

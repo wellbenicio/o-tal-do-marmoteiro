@@ -1,24 +1,873 @@
 @import "tailwindcss";
+@theme {
+  --color-marmoteiro-black: #000000;
+  --color-marmoteiro-charcoal: #111111;
+  --color-marmoteiro-panel: #171717;
+  --color-marmoteiro-card: #3b2700;
+  --color-marmoteiro-amber: #ff9700;
+  --color-marmoteiro-amberDark: #9b6000;
+  --color-marmoteiro-yellow: #ffb21a;
+  --color-marmoteiro-red: #f51f28;
+  --color-marmoteiro-text: #f8f7f4;
+  --color-marmoteiro-muted: #b7b2aa;
+  --shadow-amber: 0 0 22px rgba(255, 151, 0, 0.36);
+  --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.34);
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-sans: var(--font-poppins), Arial, sans-serif;
+  --font-display: var(--font-poppins), Arial, sans-serif;
+  --orange: #ff9700;
+  --page-black: #000;
+  --charcoal: #111;
+  --card-brown: #4b3100;
+  color: #f8f7f4;
+  background: #000;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 30px;
+}
+body {
+  --font-sans: var(--font-poppins), Arial, sans-serif;
+  --font-display: var(--font-sans);
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+::selection {
+  background: #ff9700;
+  color: #000;
+}
+:focus-visible {
+  outline: 2px solid #ffb21a;
+  outline-offset: 5px;
+}
+em {
+  color: var(--orange);
+  font-style: normal;
+}
+.figma-shell {
+  width: min(calc(100% - 48px), 1122px);
+  margin-inline: auto;
+}
+.orange-cta {
+  background: linear-gradient(100deg, #ff9700 10%, #fa9200 42%, #815000 100%);
+}
+.figma-glow {
+  box-shadow: 0 0 20px #eddf0040;
+}
+.card-pattern {
+  background-image:
+    linear-gradient(135deg, #ff97002e 25%, transparent 25%),
+    linear-gradient(225deg, #ff97001f 25%, transparent 25%);
+  background-size: 20px 20px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* The same appointment button sits across the frame on three sections. */
+.booking-link {
+  display: flex;
+  width: 488px;
+  max-width: 100%;
+  min-height: 68px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border: 2px solid #f1dd00;
+  border-radius: 100px;
+  background: linear-gradient(100deg, #ff9700 10%, #fa9200 42%, #815000 100%);
+  box-shadow:
+    0 0 9px #ff007b80,
+    0 0 14px #ff007b33;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  transition:
+    filter 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.booking-link > span {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  color: #f39600;
+  background: white;
+}
+.booking-link:hover {
+  filter: brightness(1.13);
+  box-shadow: 0 0 15px #ff007b70;
+  transform: translateY(-2px);
+}
+.hero {
+  height: 800px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero-art {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  width: 1109px;
+  height: 800px;
+  overflow: hidden;
+}
+.hero-art img {
+  width: 1109px;
+  max-width: none;
+  height: 1231px;
+  object-fit: contain;
+}
+.hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #000 0%, #0009 10%, #0000 31%),
+    linear-gradient(0deg, #000 0%, #0000 23%);
+}
+.hero-inner {
+  padding-top: 98px;
+}
+.hero-logo {
+  width: 167px;
+  height: 80px;
+  object-fit: contain;
+}
+.hero-copy {
+  margin-top: 44px;
+  width: 570px;
+  max-width: 100%;
+}
+.hero h1 {
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: -2.2px;
+  line-height: 1.29;
+  margin: 0;
+}
+.hero h1 > span {
+  display: block;
+}
+.hero h1 em {
+  font-weight: 500;
+}
+.hero-copy > p {
+  width: 492px;
+  max-width: 100%;
+  margin: 17px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.hero-actions {
+  width: 488px;
+  max-width: 100%;
+  margin-top: 42px;
+}
+.hero-explain {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 28px;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+.hero-explain:hover {
+  color: var(--orange);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.service-section {
+  padding: 50px 0 118px;
+  overflow: hidden;
+}
+.service-stage {
+  height: 440px;
+  position: relative;
+}
+.service-phone {
+  position: absolute;
+  left: 61px;
+  right: 71px;
+  top: 85px;
+  height: 485px;
+  border: 5px solid #17121f;
+  border-radius: 88px;
+  background: linear-gradient(100deg, #a1341b 0%, #ffa600 62%);
+  box-shadow:
+    0 0 0 2px #bbb0d4,
+    0 0 0 5px #383446,
+    inset 0 0 0 10px #000;
+}
+.service-phone::before,
+.service-phone::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: 66px;
+  height: 4px;
+  border-radius: 4px;
+  background: #a69bbb;
+}
+.service-phone::before {
+  right: 280px;
+}
+.service-phone::after {
+  right: 193px;
+}
+.service-camera {
+  position: absolute;
+  right: 29px;
+  top: 172px;
+  width: 40px;
+  height: 128px;
+  border-radius: 40px;
+  background: #000;
+}
+.service-camera::after {
+  content: "";
+  position: absolute;
+  bottom: 15px;
+  left: 12px;
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #263141 10%, #080b13 45%, #000 75%);
+  border-radius: 100%;
+}
+.service-illustration {
+  position: absolute;
+  top: 0;
+  left: 49px;
+  width: 480px;
+  height: 440px;
+}
+.service-illustration img {
+  width: 100%;
+  height: 100%;
+  mask-image: linear-gradient(90deg, #000 92%, transparent 100%);
+}
+.service-copy {
+  position: absolute;
+  top: 178px;
+  left: 542px;
+  width: 365px;
+}
+.service-copy h2 {
+  margin: 0;
+  font-size: 50px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -1.7px;
+}
+.service-copy p {
+  margin: 24px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.service-cards {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.service-card {
+  min-height: 188px;
+  padding: 26px 24px 24px;
+  border: 1px solid #b1a000;
+  border-radius: 12px;
+  background: var(--card-brown);
+  box-shadow: 0 9px 21px #e9e30036;
+}
+.service-card > svg {
+  color: var(--orange);
+}
+.service-card h3 {
+  line-height: 24px;
+  margin: 24px 0 0;
+  color: var(--orange);
+  font-size: 18px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.service-card p {
+  margin: 20px 0 0;
+  font-size: 13.5px;
+  line-height: 21px;
+}
+
+.steps-section {
+  padding: 90px 0 135px;
+  background: var(--charcoal);
+}
+.framed-panel {
+  position: relative;
+  padding: 58px 60px 88px;
+  border: 1px solid #a66d00;
+  border-radius: 30px;
+}
+.framed-panel > h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.4;
+  letter-spacing: -1.7px;
+  font-weight: 400;
+  text-align: center;
+}
+.framed-panel > h2 em {
+  font-weight: 500;
+}
+.numbered-grid {
+  list-style: none;
+  padding: 0;
+  margin: 56px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 34px 30px;
+}
+.numbered-card {
+  min-height: 194px;
+  border: 1px solid #986200;
+  border-radius: 10px;
+  padding: 24px;
+}
+.numbered-badge {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #000;
+  background: var(--orange);
+  font-size: 15px;
+  font-weight: 700;
+}
+.numbered-card h3 {
+  margin: 23px 0 0;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.8px;
+}
+.numbered-card p {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 23px;
+  color: #f8f7f4dc;
+}
+.numbered-card-active {
+  background: #f89500;
+  border-color: #f89500;
+}
+.numbered-card-active .numbered-badge {
+  background: #fff;
+  color: #f89500;
+}
+.panel-action {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 608px;
+  max-width: calc(100% - 48px);
+  padding: 0 60px;
+}
+.steps-panel .panel-action {
+  background: var(--charcoal);
+}
+.benefits-panel .panel-action {
+  background: #000;
+}
+.benefits-section {
+  padding: 145px 0 0;
+}
+.benefits-panel {
+  padding-bottom: 122px;
+}
+.benefits-panel > h2 {
+  font-size: 40px;
+}
+.benefits-panel .numbered-grid {
+  margin-top: 56px;
+  gap: 30px;
+}
+.benefit-card {
+  min-height: 232px;
+  background: var(--card-brown);
+  border-color: #9a8300;
+  box-shadow: 0 0 17px #ebdc0059;
+}
+.benefit-card h3 {
+  margin-top: 22px;
+}
+.benefit-card p {
+  font-size: 14px;
+}
+
+@media (min-width: 1700px) {
+  .hero-art {
+    right: calc((100% - 1565px) / 2);
+  }
+}
+@media (max-width: 1190px) {
+  .hero h1 {
+    font-size: 46px;
+  }
+  .hero-art {
+    right: -140px;
+  }
+  .hero-art::after {
+    background:
+      linear-gradient(90deg, #000 0%, #000b 18%, #0000 55%),
+      linear-gradient(0deg, #000 0%, #0000 25%);
+  }
+  .service-copy {
+    left: 51%;
+    width: 35%;
+  }
+  .service-copy h2 {
+    font-size: clamp(34px, 4vw, 46px);
+  }
+  .service-copy p {
+    font-size: 14px;
+  }
+  .service-illustration {
+    left: 20px;
+    width: 450px;
+    height: 413px;
+    top: 27px;
+  }
+  .service-phone {
+    left: 26px;
+    right: 26px;
+  }
+  .service-camera {
+    right: 20px;
+  }
+  .service-card {
+    padding: 22px 17px;
+  }
+  .service-card h3 {
+    white-space: normal;
+    font-size: 16px;
+  }
+  .framed-panel {
+    padding-left: 42px;
+    padding-right: 42px;
+  }
+  .numbered-card h3 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 900px) {
+  .hero {
+    height: 800px;
+  }
+  .hero-inner {
+    padding-top: 65px;
+  }
+  .hero-copy {
+    margin-top: 55px;
+  }
+  .hero-art {
+    right: -230px;
+    opacity: 0.7;
+  }
+  .service-section {
+    padding-top: 15px;
+    padding-bottom: 90px;
+  }
+  .service-stage {
+    height: 402px;
+  }
+  .service-phone {
+    height: 396px;
+    top: 50px;
+    border-radius: 65px;
+  }
+  .service-illustration {
+    top: 30px;
+    left: 20px;
+    width: 405px;
+    height: 372px;
+  }
+  .service-copy {
+    top: 133px;
+    left: 53%;
+    width: 35%;
+  }
+  .service-copy h2 {
+    font-size: 33px;
+  }
+  .service-copy p {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .service-camera {
+    top: 143px;
+    right: 13px;
+    width: 25px;
+    height: 87px;
+  }
+  .service-camera::after {
+    left: 5px;
+  }
+  .service-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .service-card {
+    padding: 24px;
+  }
+  .service-card h3 {
+    font-size: 18px;
+  }
+  .service-card p {
+    margin-top: 16px;
+  }
+  .framed-panel {
+    padding: 48px 30px 75px;
+  }
+  .framed-panel > h2 {
+    font-size: 32px;
+  }
+  .numbered-grid {
+    gap: 22px;
+    margin-top: 38px;
+  }
+  .numbered-card {
+    padding: 22px;
+  }
+  .numbered-card h3 {
+    font-size: 23px;
+  }
+  .numbered-card p {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .steps-section {
+    padding: 70px 0 80px;
+  }
+  .benefits-section {
+    padding-top: 95px;
+  }
+  .panel-action {
+    padding: 0 28px;
+  }
+}
+@media (max-width: 600px) {
+  html {
+    scroll-padding-top: 20px;
+  }
+  .figma-shell {
+    width: calc(100% - 40px);
+  }
+  .hero {
+    height: auto;
+    min-height: 870px;
+  }
+  .hero-inner {
+    padding-top: 32px;
+    padding-bottom: 46px;
+  }
+  .hero-logo {
+    width: 128px;
+    height: auto;
+  }
+  .hero-art {
+    right: 50%;
+    transform: translateX(50%);
+    top: 36px;
+    width: 670px;
+    height: 640px;
+    opacity: 1;
+  }
+  .hero-art img {
+    width: 670px;
+    height: auto;
+  }
+  .hero-art::after {
+    background:
+      linear-gradient(0deg, #000 0%, #000 9%, #000a 32%, #0000 65%),
+      linear-gradient(90deg, #0006, transparent 30%, transparent 70%, #0005);
+  }
+  .hero-copy {
+    width: 100%;
+    margin-top: 303px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(29px, 8.2vw, 44px);
+    line-height: 1.23;
+    letter-spacing: -1.25px;
+  }
+  .hero-copy > p {
+    width: 100%;
+    margin-top: 21px;
+    max-width: 410px;
+    font-size: 14px;
+    line-height: 23px;
+    color: #eee;
+  }
+  .hero-actions {
+    margin-top: 28px;
+    width: 100%;
+  }
+  .booking-link {
+    min-height: 56px;
+    font-size: 14px;
+    padding-inline: 15px;
+  }
+  .hero-explain {
+    margin-top: 22px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .hero-explain svg {
+    width: 17px;
+  }
+  .service-section {
+    padding-top: 25px;
+    padding-bottom: 72px;
+  }
+  .service-stage {
+    height: 580px;
+  }
+  .service-phone {
+    left: 4px;
+    right: 4px;
+    top: 16px;
+    height: 642px;
+    border-radius: 48px;
+    background: linear-gradient(140deg, #ffac00, #ffa000 55%, #b84418);
+  }
+  .service-phone::before,
+  .service-phone::after,
+  .service-camera {
+    display: none;
+  }
+  .service-copy {
+    top: 63px;
+    left: 29px;
+    right: 29px;
+    width: auto;
+    text-align: center;
+  }
+  .service-copy h2 {
+    font-size: 38px;
+    line-height: 1.2;
+    letter-spacing: -1.2px;
+  }
+  .service-copy p {
+    font-size: 13px;
+    line-height: 21px;
+    max-width: 310px;
+    margin: 18px auto 0;
+  }
+  .service-illustration {
+    left: 50%;
+    top: 258px;
+    transform: translateX(-50%);
+    width: 355px;
+    height: 325px;
+    max-width: calc(100% - 26px);
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
+  }
+  .service-illustration img {
+    object-fit: cover;
+  }
+  .service-cards {
+    gap: 13px;
+  }
+  .service-card {
+    padding: 19px 15px;
+    min-height: 205px;
+    border-radius: 9px;
+  }
+  .service-card h3 {
+    font-size: 14px;
+    margin-top: 19px;
+    line-height: 1.5;
+    min-height: 42px;
+  }
+  .service-card p {
+    font-size: 12px;
+    line-height: 20px;
+    margin-top: 11px;
+  }
+  .service-card > svg {
+    width: 23px;
+  }
+  .steps-section {
+    padding: 55px 0 55px;
+  }
+  .framed-panel {
+    padding: 35px 18px 65px;
+    border-radius: 22px;
+  }
+  .framed-panel > h2 {
+    font-size: 25px;
+    line-height: 1.4;
+    letter-spacing: -1px;
+  }
+  .numbered-grid {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+    gap: 17px;
+  }
+  .numbered-card {
+    min-height: 174px;
+    padding: 21px;
+  }
+  .numbered-badge {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+  .numbered-card h3 {
+    margin-top: 19px;
+    font-size: 22px;
+  }
+  .numbered-card p {
+    margin-top: 9px;
+    font-size: 13px;
+  }
+  .panel-action {
+    bottom: -28px;
+    width: 100%;
+    max-width: calc(100% - 34px);
+    padding-inline: 12px;
+  }
+  .benefits-section {
+    padding-top: 72px;
+  }
+  .benefits-panel .numbered-grid {
+    margin-top: 32px;
+    gap: 20px;
+  }
+  .benefit-card {
+    min-height: 196px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 600px) {
+  .service-illustration {
+    top: 232px;
+    width: 380px;
+    height: 348px;
+    max-width: none;
+    clip-path: polygon(
+      52.5% 6%,
+      47% 7%,
+      43.5% 12%,
+      42.5% 19%,
+      42.5% 24%,
+      40.5% 25%,
+      40.8% 31%,
+      42.5% 35%,
+      43.2% 41%,
+      43% 45%,
+      38% 48%,
+      28% 52%,
+      25% 56%,
+      22% 65%,
+      19.5% 74%,
+      18.5% 79%,
+      16% 80%,
+      17.5% 84%,
+      15% 87%,
+      13.5% 94%,
+      12.8% 100%,
+      94% 100%,
+      94% 90%,
+      92% 85%,
+      92% 81%,
+      90.7% 79%,
+      89% 80%,
+      88% 76%,
+      86% 69%,
+      83% 63%,
+      81% 58%,
+      76% 54%,
+      69% 49%,
+      64% 45%,
+      63% 40%,
+      66% 35%,
+      66.5% 29%,
+      66.5% 26%,
+      65.5% 25%,
+      65.5% 18%,
+      65% 12%,
+      61% 9%,
+      56% 7%
+    );
+  }
+  .service-illustration img {
+    mask-image: none;
+  }
+}
+
+/* The reference pairs neutral display lettering with the rounder body copy. */
+.hero h1,
+.service-copy h2,
+.framed-panel > h2,
+.numbered-card h3,
+.contact-copy h2,
+.notes-heading-card h2,
+.faq-heading,
+.faq-question {
+  font-family: var(--font-inter), Arial, sans-serif;
+}
+@media (min-width: 1191px) {
+  .hero h1 {
+    font-size: 50px;
+    line-height: 1.24;
+    letter-spacing: -2.2px;
+  }
+  .hero-copy {
+    margin-top: 48px;
+  }
+  .numbered-card h3 {
+    font-size: 32px;
+  }
 }

@@ -44,3 +44,15 @@ A implementação existente NÃO é fonte de verdade quando divergir do baseline
 ## Estado técnico atual
 
 O repositório já contém scaffold de monorepo com Next.js, NestJS, Prisma e módulos de domínio. Antes de implementar novas funcionalidades, faça gap analysis entre o código atual e a documentação acima.
+
+## Versionamento obrigatório — Git Flow
+
+- Consulte `docs/architecture/git-flow.md` antes de criar branch, integrar ou publicar alterações.
+- `dev` é a integração; `main` recebe releases. Não implementar diretamente nessas branches.
+- Novas funcionalidades, ajustes de UI, documentação e infraestrutura partem de `dev` em `feature/<descricao>` (singular).
+- Use `release/<versao>` para preparar uma versão e `hotfix/<descricao>` para correções da versão estável; reintegre em `dev`.
+- Atualize referências com `git fetch origin --prune`; sincronize branches permanentes com `--ff-only`. Nunca sobrescreva trabalho local para sincronizar.
+- Integre por PR e merge commit, depois das verificações. Não fazer force push em branches compartilhadas.
+- Exclua branches concluídas apenas depois de verificar a integração. Trabalho abandonado deve continuar recuperável por referência arquivada; PR em rascunho não significa trabalho concluído.
+- Segredos, bancos, sessões, arquivos de ambiente reais e credenciais não entram no Git.
+- Publicação de código no GitHub não significa deploy nem homologação comercial.
