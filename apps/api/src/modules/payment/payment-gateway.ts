@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { PaymentStatus } from '@marmoteiro/shared';
 
 /** Insumos para iniciar uma cobrança junto ao provedor externo (seção 21.1). */

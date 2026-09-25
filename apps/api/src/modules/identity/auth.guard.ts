@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
 
   private extractToken(request: RequestWithPrincipal): string | undefined {
     const header = request.headers.authorization;
-    if (!header || !header.startsWith(BEARER_PREFIX)) {
+    if (!header?.startsWith(BEARER_PREFIX)) {
       return undefined;
     }
 

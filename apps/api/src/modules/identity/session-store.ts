@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import { AuthRole } from '@marmoteiro/shared';
 
 /** Token opaco de sessão emitido no login e revogável a qualquer momento (seção 7.3). */
