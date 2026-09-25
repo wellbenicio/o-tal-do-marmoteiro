@@ -10,22 +10,22 @@ const steps = [
   {
     icon: CalendarDays,
     title: "Escolha seu atendimento",
-    text: "Uma consulta online ou uma pergunta pelo WhatsApp.",
+    text: "Decida entre uma consulta completa ou uma pergunta avulsa.",
   },
   {
     icon: UserRound,
-    title: "Entre no seu espaço",
-    text: "Acesse sua conta, leia os documentos e configure seu atendimento.",
+    title: "Escolha seu horário",
+    text: "Veja os horários disponíveis e reserve o que funciona melhor para você.",
   },
   {
     icon: CreditCard,
     title: "Confirme o pagamento",
-    text: "Revise o resumo e escolha a forma de pagamento.",
+    text: "Finalize sua reserva pelo meio de pagamento disponível.",
   },
   {
     icon: Sparkles,
     title: "Chegue como você é",
-    text: "Acompanhe tudo e acesse sua consulta pela sua conta.",
+    text: "No horário marcado, entre na chamada e traga o que você quiser conversar.",
   },
 ];
 export function HowItWorksSection() {
@@ -33,10 +33,10 @@ export function HowItWorksSection() {
     <section id="como-funciona" className="home-steps">
       <div className="figma-shell">
         <div className="section-heading">
-          <span className="section-eyebrow">DO SEU JEITO, NO SEU TEMPO</span>
+          <span className="section-eyebrow">SEM COMPLICAÇÃO</span>
           <h2>Seu próximo passo pode ser simples.</h2>
           <p>
-            Da escolha do atendimento ao acompanhamento, tudo no mesmo lugar.
+            Da escolha do atendimento até a conversa, você resolve tudo online.
           </p>
         </div>
         <ol className="home-steps-grid">

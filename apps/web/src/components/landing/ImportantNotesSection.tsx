@@ -8,13 +8,13 @@ export function ImportantNotesSection() {
       <div>
         <h2>Acolhimento também é transparência.</h2>
         <p>
-          A consulta tem finalidade espiritual, intuitiva e reflexiva. Não
-          substitui orientação médica, psicológica, jurídica ou financeira. Seu
-          horário é confirmado após a aprovação do pagamento.
+          O atendimento é um espaço de escuta e orientação através do Baralho
+          Cigano. Não substitui acompanhamento médico, psicológico, jurídico
+          ou financeiro profissional.
         </p>
       </div>
       <Link href="/termos">
-        Orientações da consulta <ArrowUpRight size={16} />
+        Entenda como funciona <ArrowUpRight size={16} />
       </Link>
     </section>
   );

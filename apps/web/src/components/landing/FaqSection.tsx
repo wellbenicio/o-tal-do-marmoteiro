@@ -1,24 +1,31 @@
-import { previewConfig } from "@/lib/preview-config";
 import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import { ArrowDown } from "lucide-react";
 
 export function FaqSection() {
   const faqs = [
     {
-      q: "Quanto tempo dura e qual é o valor?",
-      a: `A consulta individual de Baralho Cigano por videochamada dura ${DEMO_DURATION} minutos e custa ${money(DEMO_PRICE)}. A pergunta avulsa custa ${money(previewConfig.question.amount)}, com resposta pelo WhatsApp. Os valores também aparecem no resumo antes do pagamento.`,
+      q: "Quanto tempo dura a consulta e qual é o valor?",
+      a: `A consulta individual dura ${DEMO_DURATION} minutos e custa ${money(DEMO_PRICE)}. Durante esse tempo, podemos conversar e abrir o Baralho Cigano para as questões que fizerem sentido dentro do atendimento.`,
     },
     {
       q: "Posso remarcar?",
       a: "Sim. Você tem um reagendamento por sua iniciativa, sem cobrança adicional, solicitado com pelo menos 24 horas de antecedência. Após receber as opções, há 48 horas para escolher. O direito só é consumido ao confirmar o novo horário. Alterações provocadas pelo prestador não consomem esse direito.",
     },
     {
-      q: "Onde ficam minhas consultas e anotações?",
-      a: "Na sua área, você acompanha os próximos horários, o histórico de consultas, os pagamentos e os materiais compartilhados. Cada consulta poderá ter seu próprio link de anotações no Notion.",
+      q: "Preciso saber exatamente o que perguntar?",
+      a: "Não. Você pode chegar com uma pergunta específica ou simplesmente explicar a situação que está vivendo. A partir da conversa, organizamos juntos os pontos que vale a pena olhar no jogo.",
     },
     {
       q: "Como funciona o atendimento?",
-      a: "O atendimento é online. Você escolhe a modalidade, acessa sua conta, lê os documentos, configura seu atendimento e realiza o pagamento. Depois da confirmação, é só se preparar para a consulta no horário agendado.",
+      a: "A consulta acontece online, individualmente e com horário reservado. Primeiro conversamos sobre a situação e, a partir dela, fazemos a leitura das cartas e aprofundamos os pontos que surgirem.",
+    },
+    {
+      q: "O Baralho Cigano prevê o futuro?",
+      a: "A leitura pode apontar tendências, possibilidades e dinâmicas presentes na situação, mas não trato as cartas como uma sentença definitiva. Escolhas, circunstâncias e caminhos podem mudar.",
+    },
+    {
+      q: "Que tipo de assunto posso levar para a consulta?",
+      a: "Relacionamentos, trabalho, dinheiro, decisões, conflitos, caminhos pessoais e questões espirituais são alguns exemplos. Se houver algum tema que eu não atenda, isso será informado com transparência.",
     },
   ];
 
@@ -29,7 +36,7 @@ export function FaqSection() {
           Perguntas frequentes
         </h2>
         <p className="faq-subtitle">
-          Confira as dúvidas mais comuns antes de agendar sua consulta online.
+          Confira as dúvidas mais comuns antes de agendar seu atendimento.
         </p>
         <div className="faq-list">
           {faqs.map((faq, index) => (

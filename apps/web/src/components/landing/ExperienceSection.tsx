@@ -30,26 +30,26 @@ export function ExperienceSection() {
           <em>espaço para você.</em>
         </h2>
         <p>
-          Tem pergunta que pede uma pausa. Aqui, o Baralho Cigano é um convite
-          para refletir sobre relacionamentos, trabalho e os caminhos que fazem
-          sentido para o seu momento.
+          Tem pergunta que pede uma resposta. Tem situação que precisa ser
+          olhada com mais calma.
         </p>
         <p>
-          Uma consulta individual, com leveza e acolhimento, sem sair de casa.
+          No atendimento, o Baralho Cigano entra como ferramenta para organizar
+          caminhos, possibilidades e pontos que talvez ainda não estejam tão claros.
         </p>
         <div className="experience-values">
           <span>
-            <HeartHandshake /> Escuta sem julgamento
+            <HeartHandshake /> Espaço para falar sem julgamento
           </span>
           <span>
-            <MessageCircle /> Conversa de verdade
+            <MessageCircle /> Conversa direta e individual
           </span>
           <span>
-            <LockKeyhole /> Um espaço reservado
+            <LockKeyhole /> Leitura focada na sua situação
           </span>
         </div>
         <Link href="/agendar" className="text-link">
-          Escolher meu horário <ArrowUpRight size={18} />
+          Entenda como funciona <ArrowUpRight size={18} />
         </Link>
       </div>
     </section>
