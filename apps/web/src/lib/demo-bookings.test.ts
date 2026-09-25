@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   appointmentTimestamp,
+  appointmentsOverlap,
   canManage,
   demoBookings,
   normalizeBookings,
@@ -196,4 +197,12 @@ test("appointment timestamps use Brasília and example notes are fictitious with
     assert.equal(b.status, "COMPLETED");
     assert.equal(Object.hasOwn(b.note!, "url"), false);
   }
+});
+
+test("one-hour appointments block both half-hour overlaps but allow adjacent sessions", () => {
+  for (const time of ["08:30", "09:00", "09:30"])
+    assert.equal(appointmentsOverlap(pending, pending.date, time), true);
+  for (const time of ["08:00", "10:00"])
+    assert.equal(appointmentsOverlap(pending, pending.date, time), false);
+  assert.equal(appointmentsOverlap(pending, "2026-09-23", "09:00"), false);
 });

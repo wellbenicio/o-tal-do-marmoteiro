@@ -5,6 +5,8 @@ import { previewConfig } from "@/lib/preview-config";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
 import {
+  DEMO_DURATION,
+  appointmentsOverlap,
   appointmentTimestamp,
   localDate,
   type DemoBooking,
@@ -104,8 +106,7 @@ export function BookingCalendar({
           })}
         </div>
         <p className="calendar-footnote">
-          <span />
-          {" "}Agenda demonstrativa · horário de Brasília
+          <span /> Agenda demonstrativa · horário de Brasília
         </p>
       </div>
       <div className="time-picker">
@@ -124,13 +125,18 @@ export function BookingCalendar({
             <div className="time-grid">
               {slots.map((slot) => {
                 const occupied =
-                  overlapsBlock(busyBlocks, date, slot, 30, except) ||
+                  overlapsBlock(
+                    busyBlocks,
+                    date,
+                    slot,
+                    DEMO_DURATION,
+                    except,
+                  ) ||
                   bookings.some(
                     (b) =>
                       b.id !== except &&
                       b.modality === "APPOINTMENT" &&
-                      b.date === date &&
-                      b.time === slot &&
+                      appointmentsOverlap(b, date, slot) &&
                       (b.status === "BOOKED" ||
                         b.orderStatus === "CANCELLATION_REQUESTED" ||
                         (b.orderStatus === "AWAITING_PAYMENT" &&

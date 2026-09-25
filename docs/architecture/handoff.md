@@ -8,6 +8,12 @@ Leia `AGENTS.md`, o baseline e [mapa técnico](./README.md). Confira arquivos de
 
 O responsável recebeu um [guia de criação das contas e primeira publicação](./configuracao-das-contas.md). Sua existência não comprova que as etapas foram executadas. Confirmar recursos/IDs reais antes de publicar. A região sugerida no guia é São Paulo quando disponível no plano escolhido; exemplos antigos em `us-central1` não são uma decisão já aplicada. Domínio próprio ainda exige escolha/homologação da frente HTTPS; Firebase Hosting filtra cookies e não é compatível automaticamente com o cookie administrativo atual.
 
+## Preços e duração — 25/09/2026
+
+A decisão comercial D-024 estabelece videochamada de 60 minutos por R$ 50,00 e pergunta avulsa por R$ 10,00. A fonte central da interface é `apps/web/src/lib/preview-config.ts`, em centavos; landing page, checkout, exemplos do cliente/painel e restituições demonstrativas consomem essa configuração. Agenda, bloqueios, conclusão e exportação ICS usam a mesma duração. Horários iniciados a cada meia hora não podem sobrepor consultas de uma hora.
+
+O catálogo persistente ainda será integrado. A prioridade de R$ 20,00 permanece demonstrativa. Dados já armazenados na sessão do navegador preservam seus valores de contratação; para explorar exemplos novos, saia e entre novamente na demonstração. Fixtures de testes financeiros podem manter valores anteriores para verificar que histórico e reembolsos não são recalculados pelo preço atual. Não há migração de preços no banco nesta alteração.
+
 ## Entregue nesta etapa de infraestrutura
 
 - ADR 0003 e análise de lacunas/custos com fontes oficiais e data.

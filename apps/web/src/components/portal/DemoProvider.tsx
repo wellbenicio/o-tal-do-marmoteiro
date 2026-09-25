@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import {
+  DEMO_DURATION,
+  appointmentsOverlap,
   appointmentTimestamp,
   canManage,
   defaultProfile,
@@ -179,13 +181,12 @@ export function DemoProvider({ children }: Readonly<{ children: ReactNode }>) {
     }
     function slotOccupied(date: string, time: string, except?: string) {
       return (
-        overlapsBlock(busyBlocks, date, time, 30, except) ||
+        overlapsBlock(busyBlocks, date, time, DEMO_DURATION, except) ||
         normalizeBookings(state.bookings).some(
           (b) =>
             b.id !== except &&
             b.modality === "APPOINTMENT" &&
-            b.date === date &&
-            b.time === time &&
+            appointmentsOverlap(b, date, time) &&
             (b.status === "BOOKED" ||
               b.orderStatus === "AWAITING_PAYMENT" ||
               b.orderStatus === "CANCELLATION_REQUESTED"),

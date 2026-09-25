@@ -1,4 +1,5 @@
 "use client";
+import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,7 +26,10 @@ export function MobileBookingBar() {
   return visible ? (
     <div className="mobile-booking-bar">
       <span>
-        Um momento só seu<strong>30 min · R$ 70</strong>
+        Um momento só seu{" "}
+        <strong>
+          {DEMO_DURATION} min · {money(DEMO_PRICE)}
+        </strong>
       </span>
       <Link href="/agendar">
         Ver horários <ArrowUpRight size={16} />

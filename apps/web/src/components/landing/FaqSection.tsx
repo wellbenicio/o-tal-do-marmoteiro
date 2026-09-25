@@ -1,10 +1,12 @@
+import { previewConfig } from "@/lib/preview-config";
+import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import { ArrowDown } from "lucide-react";
 
 export function FaqSection() {
   const faqs = [
     {
       q: "Quanto tempo dura e qual é o valor?",
-      a: "A consulta individual de Baralho Cigano dura 30 minutos. O valor de referência desta versão é R$ 70, também exibido no resumo antes do pagamento.",
+      a: `A consulta individual de Baralho Cigano por videochamada dura ${DEMO_DURATION} minutos e custa ${money(DEMO_PRICE)}. A pergunta avulsa custa ${money(previewConfig.question.amount)}, com resposta pelo WhatsApp. Os valores também aparecem no resumo antes do pagamento.`,
     },
     {
       q: "Posso remarcar?",

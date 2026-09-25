@@ -12,6 +12,7 @@ import {
   orderLabels,
   paymentLabels,
   methodLabels,
+  DEMO_DURATION,
   money,
   prettyDate,
   prettyTimestamp,
@@ -68,7 +69,7 @@ export function BookingDetails({
           <dd>
             {b.modality === "QUESTION"
               ? "48 horas úteis após confirmação financeira"
-              : "30 minutos · Online"}
+              : `${DEMO_DURATION} minutos · Online`}
           </dd>
         </div>
         <div>
@@ -246,7 +247,10 @@ export function RefundDetails({
   const manual = result?.decision === "MANUAL_REVIEW_REQUIRED";
   const refunded = ["REFUNDED", "PARTIALLY_REFUNDED"].includes(b.paymentStatus);
   const stages = [
-    { label: "Solicitação recebida", description: "Protocolo registrado na sua área." },
+    {
+      label: "Solicitação recebida",
+      description: "Protocolo registrado na sua área.",
+    },
     {
       label: "Avaliação do caso",
       description: manual

@@ -530,11 +530,11 @@ Para fins de cancelamento e reembolso, o valor considerado será o valor total d
 Exemplo:
 
 ```text
-Pergunta: R$ 50
-Prioridade: R$ 20
-Total pago: R$ 70
+Pergunta: R$ 10
+Prioridade: R$ 20 (adicional ilustrativo)
+Total pago: R$ 30
 
-Reembolso integral aplicável: R$ 70
+Reembolso integral aplicável: R$ 30
 ```
 
 ---
@@ -1260,6 +1260,8 @@ O cliente verá apenas eventos apropriados à sua área.
 ---
 
 # 31. Catálogo e parâmetros comerciais
+
+Atualização comercial autorizada em 25/09/2026: consulta por videochamada de 1 hora por **R$ 50,00** e pergunta avulsa por **R$ 10,00**. Ver decisão D-024 em `docs/product/decisoes-e-premissas.md`. Valores ilustrativos de prioridade não representam homologação do adicional.
 
 Serviços deverão ser administráveis sem alteração de código sempre que razoável.
 

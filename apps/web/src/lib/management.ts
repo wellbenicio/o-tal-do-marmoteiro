@@ -1,4 +1,6 @@
 import {
+  DEMO_DURATION,
+  DEMO_PRICE,
   appointmentTimestamp,
   defaultProfile,
   localDate,
@@ -6,6 +8,7 @@ import {
   type DemoBooking,
   type DemoProfile,
 } from "./demo-bookings";
+import { previewConfig } from "./preview-config";
 import { decideRefund } from "./refund-policy";
 import { previewAcceptances } from "./preview-legal";
 import {
@@ -149,8 +152,13 @@ export function managementSeed(): ManagementState {
     options: Partial<DemoBooking> = {},
   ) {
     const paidAt = dateAt(Math.min(days - 1, -1));
+    const priorityAmount = options.priority
+      ? previewConfig.question.priorityAmount
+      : 0;
     const amount =
-      modality === "APPOINTMENT" || options.priority ? 7000 : 5000;
+      modality === "APPOINTMENT"
+        ? DEMO_PRICE
+        : previewConfig.question.amount + priorityAmount;
     const booking: DemoBooking = {
       id: `ORA-${3100 + index}`,
       modality,
@@ -256,7 +264,7 @@ export function managementSeed(): ManagementState {
       protocol: "CAN-DEMO-3171",
       result: {
         decision: "FULL_REFUND",
-        amount: 7000,
+        amount: DEMO_PRICE,
         retained: 0,
         reason:
           "Exemplo de restituição aprovada por indisponibilidade do prestador.",
@@ -271,7 +279,7 @@ export function managementSeed(): ManagementState {
       protocol: "CAN-DEMO-3172",
       result: {
         decision: "FULL_REFUND",
-        amount: 7000,
+        amount: DEMO_PRICE,
         retained: 0,
         reason: "Exemplo de devolução concluída.",
       },
@@ -409,7 +417,7 @@ export function availabilityFor(
         id: b.id,
         date: b.date,
         start: b.time,
-        end: addMinutes(b.time, 30),
+        end: addMinutes(b.time, DEMO_DURATION),
         label: "Horário indisponível",
         source: "APPOINTMENT" as const,
       })),
@@ -615,21 +623,22 @@ export function withCommunication(
     : ["CUSTOMER"];
   const reference = event.orderId ? `Referência: ${event.orderId}.\n` : "";
   const emails = audiences.map((audience) => {
-    const greeting = audience === "OWNER"
-      ? "Olá, Marmoteiro."
-      : `Olá, ${event.customer.name.split(" ")[0]}.`;
+    const greeting =
+      audience === "OWNER"
+        ? "Olá, Marmoteiro."
+        : `Olá, ${event.customer.name.split(" ")[0]}.`;
     return {
-    id: `${event.id}:${audience}`,
-    eventId: event.id,
-    at: event.at,
-    recipient:
-      audience === "OWNER" ? state.settings.ownerEmail : event.customer.email,
-    audience,
-    subject: audience === "OWNER" ? event.title : event.customerTitle,
-    body: `${greeting}\n\n${event.description}\n${reference}\nOs detalhes ficam na sua área. Por privacidade, não incluímos o conteúdo da consulta nesta mensagem.\n\nO Tal do Marmoteiro\nfalecom@marmoteiro.com\n\n[Prévia: nenhum e-mail foi enviado.]`,
-    status: "PREVIEW" as const,
-    orderId: event.orderId,
-    attempts: 0,
+      id: `${event.id}:${audience}`,
+      eventId: event.id,
+      at: event.at,
+      recipient:
+        audience === "OWNER" ? state.settings.ownerEmail : event.customer.email,
+      audience,
+      subject: audience === "OWNER" ? event.title : event.customerTitle,
+      body: `${greeting}\n\n${event.description}\n${reference}\nOs detalhes ficam na sua área. Por privacidade, não incluímos o conteúdo da consulta nesta mensagem.\n\nO Tal do Marmoteiro\nfalecom@marmoteiro.com\n\n[Prévia: nenhum e-mail foi enviado.]`,
+      status: "PREVIEW" as const,
+      orderId: event.orderId,
+      attempts: 0,
     };
   });
   return {
@@ -648,7 +657,10 @@ function clientEventDescription(event: ClientEvent) {
   }
   const protocol = event.reference ? `Protocolo: ${event.reference}.` : "";
   let channels = "";
-  if (booking?.modality === "APPOINTMENT" && event.kind === "PAYMENT_APPROVED") {
+  if (
+    booking?.modality === "APPOINTMENT" &&
+    event.kind === "PAYMENT_APPROVED"
+  ) {
     const reminders = booking.whatsappReminderConsent?.granted
       ? "autorizados para esta consulta; envio não conectado."
       : "não ativados pelo consulente.";

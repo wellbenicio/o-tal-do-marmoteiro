@@ -160,6 +160,18 @@ export function money(amount: number) {
 export function appointmentTimestamp(date: string, time: string) {
   return new Date(`${date}T${time}:00-03:00`).getTime();
 }
+export function appointmentsOverlap(
+  b: DemoBooking,
+  date: string,
+  time: string,
+) {
+  return (
+    Math.abs(
+      appointmentTimestamp(b.date, b.time) - appointmentTimestamp(date, time),
+    ) <
+    DEMO_DURATION * 60000
+  );
+}
 export function canManage(b: DemoBooking) {
   return (
     !b.cancellation && ["CONFIRMED", "AWAITING_PAYMENT"].includes(b.orderStatus)

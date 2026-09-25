@@ -1,3 +1,4 @@
+import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 export function ClosingSection() {
@@ -9,7 +10,9 @@ export function ClosingSection() {
       <div>
         <span className="section-eyebrow">VAMOS CONVERSAR?</span>
         <h2>Reserve um momento para você.</h2>
-        <p>30 minutos · Atendimento online · R$ 70</p>
+        <p>
+          {DEMO_DURATION} minutos · Atendimento online · {money(DEMO_PRICE)}
+        </p>
       </div>
       <Link href="/agendar" className="product-button">
         Escolher meu horário <ArrowUpRight size={18} />

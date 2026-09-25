@@ -23,6 +23,7 @@ import { BookingCalendar } from "./BookingCalendar";
 import { LegalAcknowledgements } from "./LegalAcknowledgements";
 import {
   methodLabels,
+  DEMO_DURATION,
   money,
   prettyDate,
   prettyTimestamp,
@@ -657,7 +658,7 @@ function BookingJourney({
             <strong>
               {question
                 ? "Pergunta avulsa pelo WhatsApp"
-                : "Consulta online · 30 minutos"}
+                : `Consulta online · ${DEMO_DURATION} minutos`}
             </strong>
           </div>
           <div>
@@ -809,8 +810,8 @@ function BookingJourney({
         <div className="demo-banner compact">
           <Sparkles size={16} />
           <span>
-            Prévia interativa · conta, preços, agenda e pagamentos de exemplo.
-            Use dados fictícios.
+            Prévia interativa · conta, agenda e pagamentos de exemplo. Use dados
+            fictícios.
           </span>
         </div>
         {step < 5 && (
@@ -855,7 +856,7 @@ function BookingJourney({
                   <Clock3 size={16} />
                   {question
                     ? "Até 48 horas úteis após pagamento"
-                    : "30 minutos de conversa"}
+                    : `${DEMO_DURATION} minutos de conversa`}
                 </span>
                 <span>
                   {question ? <MessageCircle size={16} /> : <Video size={16} />}

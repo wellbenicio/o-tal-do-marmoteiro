@@ -19,7 +19,12 @@ import {
   queueOrders,
   inPeriod,
 } from "@/lib/management";
-import { localDate, money, shiftedDate } from "@/lib/demo-bookings";
+import {
+  DEMO_DURATION,
+  localDate,
+  money,
+  shiftedDate,
+} from "@/lib/demo-bookings";
 import { Avatar, FlowChart, Kpi, MgBadge, SectionTitle } from "./Shared";
 export function Overview() {
   const s = useManagement();
@@ -130,7 +135,7 @@ export function Overview() {
                 >
                   <div className="mg-time">
                     <strong>{o.booking.time}</strong>
-                    <small>30 min</small>
+                    <small>{DEMO_DURATION} min</small>
                   </div>
                   <div className="mg-agenda-line" />
                   <Avatar name={c.name} />

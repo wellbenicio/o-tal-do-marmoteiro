@@ -13,7 +13,11 @@ import {
   type ManagementState,
   type ManagedOrder,
 } from "./management";
-import { defaultProfile, type DemoBooking } from "./demo-bookings";
+import {
+  defaultProfile,
+  demoBookings,
+  type DemoBooking,
+} from "./demo-bookings";
 import { overlapsBlock, type ClientEvent } from "./preview-events";
 const now = Date.parse("2026-09-21T15:00:00Z");
 function empty(): ManagementState {
@@ -177,9 +181,9 @@ test("blocks prevent any overlap, allow boundary adjacency, and honor the resche
   const s = empty();
   s.orders = [order("existing")];
   assert.equal(overlapsBlock(availabilityFor(s), "2026-09-25", "13:45"), true);
-  assert.equal(overlapsBlock(availabilityFor(s), "2026-09-25", "14:30"), false);
+  assert.equal(overlapsBlock(availabilityFor(s), "2026-09-25", "14:30"), true);
   assert.equal(
-    overlapsBlock(availabilityFor(s), "2026-09-25", "14:00", 30, "existing"),
+    overlapsBlock(availabilityFor(s), "2026-09-25", "14:00", 60, "existing"),
     false,
   );
   const block = {
@@ -191,7 +195,10 @@ test("blocks prevent any overlap, allow boundary adjacency, and honor the resche
     source: "MANUAL" as const,
   };
   assert.equal(canAddBlock(s, block), false);
-  assert.equal(canAddBlock(s, { ...block, start: "14:30" }), true);
+  assert.equal(
+    canAddBlock(s, { ...block, start: "15:00", end: "16:00" }),
+    true,
+  );
   assert.equal(canAddBlock(s, { ...block, end: "14:00" }), false);
 });
 test("personal availability can be excluded without excluding manual blocks", () => {
@@ -294,11 +301,13 @@ test("communication text preserves greetings, service details and protocols", ()
     { description: "Recebemos seu pedido.  Protocolo: PROTO-1." },
     {
       booking: order("appointment").booking,
-      description: "Recebemos seu pedido. Atendimento: 2026-09-25 às 14:00 (Brasília). Protocolo: PROTO-1.",
+      description:
+        "Recebemos seu pedido. Atendimento: 2026-09-25 às 14:00 (Brasília). Protocolo: PROTO-1.",
     },
     {
       booking: order("question", { modality: "QUESTION" }).booking,
-      description: "Recebemos seu pedido. Modalidade: pergunta avulsa. Protocolo: PROTO-1.",
+      description:
+        "Recebemos seu pedido. Modalidade: pergunta avulsa. Protocolo: PROTO-1.",
     },
   ];
   for (const scenario of cases) {
@@ -312,8 +321,15 @@ test("communication text preserves greetings, service details and protocols", ()
     });
     assert.equal(next.notices[0].description, scenario.description);
     assert.ok(next.emails[0].body.startsWith("Olá, Marmoteiro.\n\n"));
-    assert.ok(next.emails[1].body.startsWith(`Olá, ${defaultProfile.name.split(" ")[0]}.\n\n`));
-    assert.equal(next.emails[1].body.includes("Referência:"), !!scenario.booking);
+    assert.ok(
+      next.emails[1].body.startsWith(
+        `Olá, ${defaultProfile.name.split(" ")[0]}.\n\n`,
+      ),
+    );
+    assert.equal(
+      next.emails[1].body.includes("Referência:"),
+      !!scenario.booking,
+    );
     assert.equal(next.emails[1].body.includes("Google Meet"), false);
   }
 });
@@ -402,4 +418,21 @@ test("provider agenda changes preserve rescheduling rights and fully refund unpe
     null,
   );
   assert.equal(providerAgendaChange(b, "cancel", "", now), null);
+});
+
+test("client and management examples use approved prices and refund the full original amount", () => {
+  const bookings = [
+    ...demoBookings(),
+    ...managementSeed().orders.map((order) => order.booking),
+  ];
+  assert.ok(bookings.some((b) => b.modality === "QUESTION" && !b.priority));
+  for (const booking of bookings) {
+    const expected =
+      booking.modality === "APPOINTMENT"
+        ? 5000
+        : 1000 + (booking.priority ? 2000 : 0);
+    assert.equal(booking.amount, expected, booking.id);
+    if (booking.cancellation?.result.decision === "FULL_REFUND")
+      assert.equal(booking.cancellation.result.amount, booking.amount);
+  }
 });
