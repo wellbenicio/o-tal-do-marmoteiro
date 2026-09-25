@@ -29,8 +29,8 @@ export function HeroSection() {
             <em>E aquele axé.</em>
           </h1>
           <p>
-            Baralho Cigano, escuta e bom humor para olhar com mais carinho para
-            o seu momento.
+            Baralho Cigano, escuta e uma conversa direta para ajudar você a olhar
+            sua situação com mais clareza.
           </p>
           <div className="hero-facts">
             <span>
@@ -43,8 +43,8 @@ export function HeroSection() {
           <div className="hero-actions">
             <BookingLink />
             <p className="hero-price">
-              Sua consulta por <strong>{money(DEMO_PRICE)}</strong>
-              <span>Horários de Brasília</span>
+              Consulta online • <strong>{money(DEMO_PRICE)}</strong>
+              <span>Você escolhe o melhor horário na agenda.</span>
             </p>
           </div>
           <a className="hero-explain" href="#sobre">

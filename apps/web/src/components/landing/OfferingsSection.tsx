@@ -7,13 +7,13 @@ export function OfferingsSection() {
     <section className="home-offerings" id="modalidades">
       <div className="figma-shell">
         <div className="section-heading">
-          <span className="section-eyebrow">DOIS JEITOS DE SE ENCONTRAR</span>
+          <span className="section-eyebrow">DO SEU JEITO, NO SEU TEMPO</span>
           <h2>
             Às vezes, uma pergunta.
             <br />
             Às vezes, uma conversa.
           </h2>
-          <p>Escolha o espaço que faz sentido para o seu momento.</p>
+          <p>Escolha o formato que faz mais sentido para o que você precisa agora.</p>
         </div>
         <div className="offering-grid">
           <article>
@@ -22,8 +22,8 @@ export function OfferingsSection() {
             <h3>Consulta online</h3>
             <strong>{money(DEMO_PRICE)} por videochamada</strong>
             <p>
-              Uma conversa individual de {DEMO_DURATION} minutos, com horário
-              marcado e espaço para aprofundar seus caminhos.
+              Uma conversa individual de {DEMO_DURATION} minutos para olhar sua
+              situação com calma, abrir o jogo e aprofundar as questões que surgirem.
             </p>
             <Link href="/agendar">
               Escolher meu horário <ArrowUpRight size={19} />
@@ -31,15 +31,16 @@ export function OfferingsSection() {
           </article>
           <article>
             <MessageCircle size={28} />
-            <span>UM NOVO OLHAR</span>
+            <span>UMA QUESTÃO DIRETA</span>
             <h3>Pergunta avulsa</h3>
             <strong>{money(previewConfig.question.amount)} por pergunta</strong>
             <p>
-              Receba pelo WhatsApp a foto do jogo e um áudio com a
-              interpretação. Até 48 horas úteis após confirmar o pagamento.
+              Para quando você tem uma questão específica e quer uma leitura
+              objetiva, sem precisar marcar uma consulta completa. A resposta é
+              enviada por áudio, acompanhada da leitura realizada para a sua pergunta.
             </p>
             <Link href="/agendar?modalidade=pergunta">
-              Conhecer a pergunta avulsa <ArrowUpRight size={19} />
+              Fazer uma pergunta <ArrowUpRight size={19} />
             </Link>
           </article>
         </div>

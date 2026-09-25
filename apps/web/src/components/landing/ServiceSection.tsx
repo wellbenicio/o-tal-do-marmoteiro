@@ -1,23 +1,22 @@
-import { DEMO_DURATION } from "@/lib/demo-bookings";
 import Image from "next/image";
 import { MonitorSmartphone } from "lucide-react";
 
 const services = [
   {
     title: "Relacionamentos",
-    text: "Entenda sentimentos, intenções e próximos passos.",
+    text: "Entenda melhor vínculos, conflitos, sentimentos e possibilidades.",
   },
   {
-    title: "Trabalho e Finanças",
-    text: "Clareza para decisões profissionais e oportunidades.",
+    title: "Trabalho e finanças",
+    text: "Olhe para decisões profissionais, dinheiro, oportunidades e caminhos possíveis.",
   },
   {
-    title: "Orientação Espiritual",
-    text: "Mensagens e direcionamentos para seu momento.",
+    title: "Orientação espiritual",
+    text: "Questões espirituais tratadas com respeito, responsabilidade e sem alarmismo.",
   },
   {
     title: "Atendimento online",
-    text: "Receba sua consulta sem sair de casa.",
+    text: "Faça sua consulta de onde estiver, com privacidade e horário reservado.",
   },
 ];
 
@@ -48,8 +47,8 @@ export function ServiceSection() {
               <br />e online.
             </h2>
             <p>
-              Encontre respostas para o amor, trabalho e suas principais dúvidas
-              em uma sessão de cartomancia online de {DEMO_DURATION} minutos.
+              Você traz a situação. A gente conversa, abre o jogo e olha para o que
+              as cartas mostram — com tempo para aprofundar o que realmente importa.
             </p>
           </div>
         </div>
