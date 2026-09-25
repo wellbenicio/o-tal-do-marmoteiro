@@ -115,3 +115,15 @@ Refund policy deve ser automatizável, mas preservar MANUAL_REVIEW/MANUAL_OVERRI
 ## D-023 — Calendário de horas úteis é configuração
 
 Não fixar em código dias e horários ainda sujeitos à operação. O sistema deve possuir calendário operacional.
+
+
+## D-024 — Preços-base e duração aprovados em 25/09/2026
+
+Por decisão explícita do responsável:
+
+- consulta individual por videochamada: **R$ 50,00 por 1 hora (60 minutos)**;
+- pergunta avulsa, respondida pelo WhatsApp: **R$ 10,00 por pergunta**.
+
+A prioridade continua sendo adicional opcional da pergunta. Seu valor demonstrativo de R$ 20,00 não foi alterado nem homologado por esta decisão. Na prévia, pergunta com prioridade totaliza R$ 30,00.
+
+Aplicar os preços à oferta e às novas contratações. Preservar valores já registrados em pedidos/pagamentos; reembolsos e relatórios usam o total da contratação, sem recalcular pelo catálogo vigente. O calendário de horas úteis e a disponibilidade operacional continuam pendentes de configuração.

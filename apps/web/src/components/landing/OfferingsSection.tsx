@@ -1,3 +1,5 @@
+import { previewConfig } from "@/lib/preview-config";
+import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import Link from "next/link";
 import { ArrowUpRight, MessageCircle, Video } from "lucide-react";
 export function OfferingsSection() {
@@ -18,9 +20,10 @@ export function OfferingsSection() {
             <Video size={28} />
             <span>UM TEMPO SÓ SEU</span>
             <h3>Consulta online</h3>
+            <strong>{money(DEMO_PRICE)} por videochamada</strong>
             <p>
-              Uma conversa individual de 30 minutos, com horário marcado e
-              espaço para aprofundar seus caminhos.
+              Uma conversa individual de {DEMO_DURATION} minutos, com horário
+              marcado e espaço para aprofundar seus caminhos.
             </p>
             <Link href="/agendar">
               Escolher meu horário <ArrowUpRight size={19} />
@@ -30,6 +33,7 @@ export function OfferingsSection() {
             <MessageCircle size={28} />
             <span>UM NOVO OLHAR</span>
             <h3>Pergunta avulsa</h3>
+            <strong>{money(previewConfig.question.amount)} por pergunta</strong>
             <p>
               Receba pelo WhatsApp a foto do jogo e um áudio com a
               interpretação. Até 48 horas úteis após confirmar o pagamento.

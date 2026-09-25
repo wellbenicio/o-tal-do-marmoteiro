@@ -15,7 +15,12 @@ import {
 import { useManagement } from "./ManagementProvider";
 import { Modal } from "@/components/portal/Modal";
 import { OrderModal } from "./OrderModal";
-import { localDate, prettyDate, type DemoBooking } from "@/lib/demo-bookings";
+import {
+  DEMO_DURATION,
+  localDate,
+  prettyDate,
+  type DemoBooking,
+} from "@/lib/demo-bookings";
 import { addMinutes } from "@/lib/management";
 import { MgBadge, SectionTitle } from "./Shared";
 function shift(date: string, days: number) {
@@ -79,7 +84,7 @@ export function Agenda() {
                 onClick={() => setOrder(o.booking.id)}
               >
                 <span>
-                  {o.booking.time} – {addMinutes(o.booking.time, 30)}
+                  {o.booking.time} – {addMinutes(o.booking.time, DEMO_DURATION)}
                   <ArrowUpRight size={12} />
                 </span>
                 <strong>{c.name}</strong>
@@ -243,16 +248,13 @@ export function Agenda() {
         )}
         <div className="mg-calendar-legend">
           <span>
-            <i />
-            {" "}Consulta confirmada
+            <i /> Consulta confirmada
           </span>
           <span>
-            <i className="personal" />
-            {" "}Bloqueio / pessoal
+            <i className="personal" /> Bloqueio / pessoal
           </span>
           <span>
-            <i className="pending" />
-            {" "}Pagamento pendente
+            <i className="pending" /> Pagamento pendente
           </span>
           <span>America/Sao_Paulo</span>
         </div>

@@ -1,3 +1,4 @@
+import { DEMO_DURATION, DEMO_PRICE, money } from "@/lib/demo-bookings";
 import Image from "next/image";
 import { ArrowDown, Clock3, Video, Sparkles } from "lucide-react";
 import { BookingLink } from "./BookingLink";
@@ -33,7 +34,7 @@ export function HeroSection() {
           </p>
           <div className="hero-facts">
             <span>
-              <Clock3 size={16} /> 30 minutos
+              <Clock3 size={16} /> {DEMO_DURATION} minutos
             </span>
             <span>
               <Video size={17} /> Online e individual
@@ -42,7 +43,7 @@ export function HeroSection() {
           <div className="hero-actions">
             <BookingLink />
             <p className="hero-price">
-              Sua consulta por <strong>R$ 70</strong>
+              Sua consulta por <strong>{money(DEMO_PRICE)}</strong>
               <span>Horários de Brasília</span>
             </p>
           </div>

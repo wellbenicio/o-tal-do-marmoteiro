@@ -8,7 +8,11 @@ import {
   type ReactNode,
 } from "react";
 import { useDemo } from "@/components/portal/DemoProvider";
-import { normalizeBookings, type DemoBooking } from "@/lib/demo-bookings";
+import {
+  DEMO_DURATION,
+  normalizeBookings,
+  type DemoBooking,
+} from "@/lib/demo-bookings";
 import {
   applyClientEvent,
   availabilityFor,
@@ -395,7 +399,8 @@ export function ManagementProvider({
         (b.modality === "QUESTION"
           ? b.status === "DELIVERED"
           : b.status === "BOOKED" &&
-            Date.parse(`${b.date}T${b.time}:00-03:00`) + 30 * 60000 <=
+            Date.parse(`${b.date}T${b.time}:00-03:00`) +
+              DEMO_DURATION * 60000 <=
               Date.now());
       if (!eligible) return false;
       changeOrder(

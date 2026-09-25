@@ -36,6 +36,7 @@ import {
   bookingLabels,
   paymentLabels,
   methodLabels,
+  DEMO_DURATION,
   money,
   prettyDate,
   appointmentTimestamp,
@@ -186,7 +187,9 @@ function ClientHeading({ view, name }: Readonly<{ view: View; name: string }>) {
               Olá, {name.split(" ")[0]}
               <span className="greeting-dot">.</span>
             </>
-          ) : titles[view]}
+          ) : (
+            titles[view]
+          )}
         </h1>
         <p>{descriptions[view]}</p>
       </div>
@@ -274,14 +277,21 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
     setNewTime("");
   }
   function bookingAction(booking: DemoBooking) {
-    if (booking.orderStatus === "AWAITING_PAYMENT") return (
-      <Link href={`/agendar?retomar=${booking.id}`} className="product-button small">
-        Continuar pagamento
-      </Link>
-    );
+    if (booking.orderStatus === "AWAITING_PAYMENT")
+      return (
+        <Link
+          href={`/agendar?retomar=${booking.id}`}
+          className="product-button small"
+        >
+          Continuar pagamento
+        </Link>
+      );
     if (!booking.note) return null;
     return (
-      <button className="product-button secondary small" onClick={() => open("notes", booking)}>
+      <button
+        className="product-button secondary small"
+        onClick={() => open("notes", booking)}
+      >
         <FileText size={14} /> Ver anotações
       </button>
     );
@@ -295,7 +305,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
           <h3>Consulta de Baralho Cigano</h3>
           <p>
             <Clock3 size={13} />
-            {b.time} · 30 minutos<span>Online</span>
+            {b.time} · {DEMO_DURATION} minutos<span>Online</span>
           </p>
           {b.previousDate && (
             <small>
@@ -536,7 +546,10 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                         <DateTile date={next.date} />
                         <div>
                           <strong>{prettyDate(next.date)}</strong>
-                          <p>{next.time} · 30 minutos · Horário de Brasília</p>
+                          <p>
+                            {next.time} · {DEMO_DURATION} minutos · Horário de
+                            Brasília
+                          </p>
                           <span>
                             <Video size={14} /> Atendimento online e individual
                           </span>
@@ -1011,10 +1024,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
         </div>
       </div>
       {modal && selected && (
-        <Modal
-          title={modalTitles[modal.type]}
-          onClose={() => setModal(null)}
-        >
+        <Modal title={modalTitles[modal.type]} onClose={() => setModal(null)}>
           {modal.type === "details" && (
             <BookingDetails
               booking={selected}

@@ -4,7 +4,11 @@ import { useState } from "react";
 import { Modal } from "@/components/portal/Modal";
 import { BookingDetails } from "@/components/portal/BookingDetails";
 import { useManagement } from "./ManagementProvider";
-import { appointmentTimestamp, money } from "@/lib/demo-bookings";
+import {
+  DEMO_DURATION,
+  appointmentTimestamp,
+  money,
+} from "@/lib/demo-bookings";
 import { Avatar, MgBadge } from "./Shared";
 export function OrderModal({
   id,
@@ -48,7 +52,8 @@ export function OrderModal({
       {b.modality === "APPOINTMENT" &&
         b.status === "BOOKED" &&
         b.orderStatus === "CONFIRMED" &&
-        appointmentTimestamp(b.date, b.time) + 30 * 60000 <= s.now && (
+        appointmentTimestamp(b.date, b.time) + DEMO_DURATION * 60000 <=
+          s.now && (
           <section className="mg-review-box">
             <h3>Registrar atendimento realizado</h3>
             <p>

@@ -15,7 +15,11 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useManagement } from "./ManagementProvider";
-import { appointmentTimestamp, prettyDate } from "@/lib/demo-bookings";
+import {
+  DEMO_DURATION,
+  appointmentTimestamp,
+  prettyDate,
+} from "@/lib/demo-bookings";
 import { downloadFile, MgBadge, SectionTitle } from "./Shared";
 import { Modal } from "@/components/portal/Modal";
 export function Integrations() {
@@ -52,7 +56,7 @@ export function Integrations() {
         `UID:${b.id.toLowerCase()}@preview.marmoteiro.com`,
         `DTSTAMP:${stamp(s.now)}`,
         `DTSTART:${stamp(start)}`,
-        `DTEND:${stamp(start + 30 * 60000)}`,
+        `DTEND:${stamp(start + DEMO_DURATION * 60000)}`,
         "SUMMARY:Compromisso - O Tal do Marmoteiro",
         `DESCRIPTION:Pedido ${b.id}. Evento ficticio exportado da demonstracao.`,
         "CLASS:PRIVATE",

@@ -1,8 +1,9 @@
 // Fixture configuration for visual validation; replace with Catalog/Scheduling API.
-// These are examples, not the operation's approved prices or calendar.
+// Base prices and duration approved on 2026-09-25; amounts are in BRL cents.
+// Priority surcharge and calendar remain demonstration settings.
 export const previewConfig = {
-  appointment: { amount: 7000, durationMinutes: 30, holdMinutes: 15 },
-  question: { amount: 5000, priorityAmount: 2000 },
+  appointment: { amount: 5000, durationMinutes: 60, holdMinutes: 15 },
+  question: { amount: 1000, priorityAmount: 2000 },
   calendar: {
     timezone: "America/Sao_Paulo",
     slots: [

@@ -1,4 +1,8 @@
-import type { DemoBooking, DemoProfile } from "./demo-bookings";
+import {
+  DEMO_DURATION,
+  type DemoBooking,
+  type DemoProfile,
+} from "./demo-bookings";
 export const MANAGEMENT_KEY = "marmoteiro-management-preview-v1";
 export const MANAGEMENT_RESET_EVENT = "marmoteiro:management-reset";
 export const CLIENT_EVENTS_KEY = "marmoteiro-client-events-v1";
@@ -66,7 +70,7 @@ export function overlapsBlock(
   blocks: AvailabilityBlock[],
   date: string,
   time: string,
-  duration = 30,
+  duration = DEMO_DURATION,
   except?: string,
 ) {
   const minutes = (s: string) =>

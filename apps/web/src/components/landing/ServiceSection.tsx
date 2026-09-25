@@ -1,3 +1,4 @@
+import { DEMO_DURATION } from "@/lib/demo-bookings";
 import Image from "next/image";
 import { MonitorSmartphone } from "lucide-react";
 
@@ -48,7 +49,7 @@ export function ServiceSection() {
             </h2>
             <p>
               Encontre respostas para o amor, trabalho e suas principais dúvidas
-              em uma sessão de cartomancia online de 30 minutos.
+              em uma sessão de cartomancia online de {DEMO_DURATION} minutos.
             </p>
           </div>
         </div>
