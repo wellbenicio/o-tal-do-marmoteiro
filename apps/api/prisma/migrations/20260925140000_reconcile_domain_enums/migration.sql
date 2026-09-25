@@ -25,24 +25,21 @@ BEGIN
 
   ALTER TABLE "Order" ALTER COLUMN "status" DROP DEFAULT;
   EXECUTE format(
-    'ALTER TABLE "Order" ALTER COLUMN "status" TYPE "OrderStatus"
-      USING (CASE WHEN "status" = ''CANCELED'' THEN %L ELSE "status" END)::"OrderStatus"',
+    'ALTER TABLE "Order" ALTER COLUMN "status" TYPE "OrderStatus" USING (CASE WHEN "status" = ''CANCELED'' THEN %L ELSE "status" END)::"OrderStatus"',
     cancelled_status
   );
   ALTER TABLE "Order" ALTER COLUMN "status" SET DEFAULT 'CREATED';
 
   ALTER TABLE "Appointment" ALTER COLUMN "status" DROP DEFAULT;
   EXECUTE format(
-    'ALTER TABLE "Appointment" ALTER COLUMN "status" TYPE "AppointmentStatus"
-      USING (CASE "status" WHEN ''BOOKED'' THEN ''SCHEDULED'' WHEN ''CANCELED'' THEN %L ELSE "status" END)::"AppointmentStatus"',
+    'ALTER TABLE "Appointment" ALTER COLUMN "status" TYPE "AppointmentStatus" USING (CASE "status" WHEN ''BOOKED'' THEN ''SCHEDULED'' WHEN ''CANCELED'' THEN %L ELSE "status" END)::"AppointmentStatus"',
     cancelled_status
   );
   ALTER TABLE "Appointment" ALTER COLUMN "status" SET DEFAULT 'NOT_STARTED';
 
   ALTER TABLE "RescheduleRequest" ALTER COLUMN "status" DROP DEFAULT;
   EXECUTE format(
-    'ALTER TABLE "RescheduleRequest" ALTER COLUMN "status" TYPE "RescheduleRequestStatus"
-      USING (CASE WHEN "status" = ''OPEN'' THEN %L ELSE "status" END)::"RescheduleRequestStatus"',
+    'ALTER TABLE "RescheduleRequest" ALTER COLUMN "status" TYPE "RescheduleRequestStatus" USING (CASE WHEN "status" = ''OPEN'' THEN %L ELSE "status" END)::"RescheduleRequestStatus"',
     pending_status
   );
   EXECUTE format('ALTER TABLE "RescheduleRequest" ALTER COLUMN "status" SET DEFAULT %L', pending_status);
@@ -53,8 +50,7 @@ BEGIN
 
   ALTER TABLE "DataCorrectionRequest" ALTER COLUMN "status" DROP DEFAULT;
   EXECUTE format(
-    'ALTER TABLE "DataCorrectionRequest" ALTER COLUMN "status" TYPE "DataCorrectionRequestStatus"
-      USING (CASE WHEN "status" = ''RECEIVED'' THEN %L ELSE "status" END)::"DataCorrectionRequestStatus"',
+    'ALTER TABLE "DataCorrectionRequest" ALTER COLUMN "status" TYPE "DataCorrectionRequestStatus" USING (CASE WHEN "status" = ''RECEIVED'' THEN %L ELSE "status" END)::"DataCorrectionRequestStatus"',
     pending_status
   );
   EXECUTE format('ALTER TABLE "DataCorrectionRequest" ALTER COLUMN "status" SET DEFAULT %L', pending_status);
