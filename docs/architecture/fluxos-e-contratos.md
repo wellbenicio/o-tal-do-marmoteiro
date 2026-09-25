@@ -18,6 +18,8 @@ Estado em 22/09/2026. Regras funcionais completas: [fluxos operacionais](../prod
 
 Não existem endpoints reais de signup administrativo, checkout, confirmação de pagamento, refund ou agendamento nesta etapa. CLI de provisionamento é o canal restrito de criação de administradores. Novas APIs de negócio exigirão seus próprios guards/validação; não basta colocar uma URL sob `/admin`.
 
+Os contratos de cálculo do PR #6 estão sob `/api/v1`: máquinas de estado, ordenação de fila, elegibilidade de reagendamento e avaliação de reembolso. Recebem dados informados e retornam cálculos; não leem recursos privados, persistem estados nem fazem chamadas financeiras. `withdrawal` no cálculo de reembolso exige enquadramento explícito; omitido ou indeterminado não autoriza retenção. A verificação real de usuário/recurso e fatos financeiros deve ocorrer no futuro caso de uso persistente. As URLs da tabela acima e `GET /` são preservadas pela configuração compartilhada de HTTP.
+
 ## Login administrativo atual
 
 ```mermaid

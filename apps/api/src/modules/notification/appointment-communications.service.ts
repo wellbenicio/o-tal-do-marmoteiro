@@ -176,13 +176,13 @@ export class AppointmentCommunicationsService
     revision: string,
   ) {
     if (
-      appointment.status === 'CANCELED' ||
-      appointment.order.status === 'CANCELED'
+      appointment.status === 'CANCELLED' ||
+      appointment.order.status === 'CANCELLED'
     )
       return this.cancelCalendar(appointment, revision);
     if (
       payload.revision !== revision ||
-      appointment.status !== 'BOOKED' ||
+      appointment.status !== 'SCHEDULED' ||
       !['CONFIRMED', 'CANCELLATION_REQUESTED'].includes(
         appointment.order.status,
       ) ||
@@ -222,8 +222,8 @@ export class AppointmentCommunicationsService
       return 'SKIPPED';
     }
     if (
-      latest.status !== 'BOOKED' ||
-      latest.order.status === 'CANCELED' ||
+      latest.status !== 'SCHEDULED' ||
+      latest.order.status === 'CANCELLED' ||
       slotRevision(latest.slot) !== revision
     ) {
       await this.db.$transaction((transaction) =>
@@ -279,7 +279,7 @@ export class AppointmentCommunicationsService
     const consent = appointment.reminderConsent;
     const phone = appointment.order.customer.contact?.phone;
     if (
-      appointment.status !== 'BOOKED' ||
+      appointment.status !== 'SCHEDULED' ||
       appointment.order.status !== 'CONFIRMED' ||
       appointment.slot.startsAt <= new Date() ||
       payload.revision !== revision ||

@@ -58,6 +58,7 @@ jobs:
       - run: npm run prisma:deploy --workspace @marmoteiro/api
       - run: npm run lint
       - run: npm run test --workspace @marmoteiro/api -- --runInBand
+      - run: npm run test:e2e --workspace @marmoteiro/api -- --runInBand
       - run: npm run test --workspace @marmoteiro/web
       - run: npm run typecheck --workspace @marmoteiro/shared
       - run: npm run build

@@ -1,6 +1,6 @@
 # Mapa técnico — O Tal do Marmoteiro
 
-Atualizado em 22/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
+Atualizado em 25/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
 
 ## Leitura rápida
 
@@ -21,6 +21,7 @@ Para configurar as contas como proprietário, comece pelo [passo a passo de conf
 | Site | Landing e identidade visual do Figma; assets/fontes locais | Domínio/hosting remoto; conteúdo final |
 | Cliente | Cadastro/login, checkout, histórico, solicitações e notas demonstrativos | Firebase Auth, sessão, autorização e persistência da conta real |
 | Admin | Login real, hash scrypt, sessões PostgreSQL, proteção BFF/API, provisionamento restrito | Publicação do banco/API e criação/associação do acesso remoto; RBAC ampliado |
+| Domínio | Máquinas de estado, fila/SLA por calendário injetado, reagendamento, reembolso, retenção e correção cadastral com testes e contratos de cálculo `/api/v1` | Orquestração transacional autorizada, auditoria dos comandos, calendário e integrações reais |
 | Gestão | Oito telas com dados fictícios, filtros, métricas, agenda, fila e ações locais | Comandos de domínio autorizados no backend; indicadores calculados sobre ledger real |
 | Perguntas | Pergunta/contexto no checkout e visualização administrativa restrita; foto/áudio como confirmação simulada | Persistência cifrada, auditoria de leitura e entrega real |
 | Pagamento | Estados e regras de prévia separados | Gateway, webhook assinado, idempotência, reconciliação e estorno real |
@@ -78,7 +79,7 @@ Setas desse segundo desenho representam a arquitetura de destino, não integraç
 | `apps/api/src/modules/identity/admin` | Credenciais, limites de tentativas, sessões e guards |
 | `apps/api/scripts/admin.ts` | Criar/redefinir/desativar administrador com senha oculta e auditoria |
 | `apps/api/src/modules/notification` | Worker de outbox, endpoint de jobs e adaptadores externos |
-| `apps/api/prisma/schema.prisma` | Modelo relacional; vários estados de domínio ainda aguardam decisão formal |
+| `apps/api/prisma/schema.prisma` | Modelo relacional; enums de domínio reconciliados e histórico de execução preservado |
 | `apps/api/prisma/migrations` | Migrações incrementais; não usar reset/db push em ambiente compartilhado |
 | `packages/shared/src` | Tipos e contratos compartilhados, sem SDK de provedor |
 | `apps/*/Dockerfile`, `infra/`, `.github/workflows` | Build portável e validação; não contêm segredos |

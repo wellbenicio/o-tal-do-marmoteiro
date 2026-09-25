@@ -1,6 +1,6 @@
 # Handoff técnico e sequência de produção
 
-Atualizado em 22/09/2026. Branch de integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
+Atualizado em 25/09/2026. Branch padrão/produção: `main`; integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
 
 ## Primeiro minuto de outro desenvolvedor/agente
 
@@ -38,7 +38,21 @@ Não publicar somente a web dizendo que o painel está funcional: a verificaçã
 
 ## Histórico e trabalho paralelo preservado
 
-O [PR #5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5) consolida a plataforma construída e a política de Git Flow. O antigo PR #3 continua, com os mesmos 19 commits, no [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6), branch `feature/regras-de-negocio`. Esse rascunho ainda não foi integrado: conflita com contratos HTTP/autenticação, papéis administrativos, migrations e numeração das ADRs. Reconciliar em etapa própria, preservando o acesso atual e o baseline. Os detalhes e a preservação das branches históricas estão no [guia de versionamento](./git-flow.md).
+Os PRs [#5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5) e [#7](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/7) foram integrados em `dev`; suas features foram removidas após confirmação. O #7 reúne a limpeza de qualidade e acessibilidade, com CI e Sonar aprovados.
+
+O [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6) preserva os 19 commits do antigo #3 e recebe a reconciliação com esse `dev`. Conferir o estado final do merge no próprio PR. As incompatibilidades de código foram resolvidas com:
+
+- `/api/v1` para cálculos novos, preservando `/admin/*`, `/internal/*` e `GET /`;
+- autenticação administrativa existente, sessão persistida e formato único de hashing;
+- `OWNER` autorizado, `ADMIN` histórico sem escalada de privilégio;
+- migration transacional sem remoção de colunas ou do histórico `ServiceExecution`;
+- reembolso com enquadramento legal explícito e revisão manual nos casos indeterminados, sem percentual presumido;
+- ADRs 0017/0018 renumeradas, mantendo as 0002/0003 vigentes;
+- testes com PostgreSQL isolado para dados anteriores à migration, rollback, sessões e rotas; e2e incluído no CI.
+
+As quatro migrations destrutivas que só existiam na feature antiga foram substituídas por `20260925140000_reconcile_domain_enums`; migrations já integradas não foram alteradas. Caso alguém tenha aplicado experimentalmente as migrations antigas fora de `dev`, interromper a atualização e reconciliar esse histórico em uma cópia com backup, sem apagar registros de `_prisma_migrations` nem executar reset. Valores desconhecidos de papel/status fazem a nova migration falhar transacionalmente e exigem revisão.
+
+Os endpoints novos continuam sem persistência de recursos e não confirmam pagamentos, estornos ou autorização de clientes. A implantação comercial permanece sujeita às etapas abaixo. Os detalhes das branches históricas estão no [guia de versionamento](./git-flow.md).
 
 Prévia de desenvolvimento em `http://localhost:3008/`, API local em 3001. Artefatos de inspeção desta execução em `/tmp/marmoteiro-deploy-review/`; são temporários, não armazenamento de produção.
 

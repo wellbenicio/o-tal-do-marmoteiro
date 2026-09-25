@@ -43,8 +43,8 @@ Resolver conflitos não é escolher todos os arquivos de um lado: preservar cont
 
 1. Revisar diff, escopo e ausência de segredos; abrir PR `feature/*` → `dev`.
 2. Explicar comportamento entregue, validação, migração e limitações. Rascunho preserva trabalho ainda não pronto.
-3. Concluir os checks `git-flow` e `validate`: direção das branches, instalação reproduzível, auditoria de dependências de produção, Prisma/migrations em Postgres de teste, lint, testes e builds.
-4. Conferir revisão e base atualizadas. Integrar por **merge commit**, preservando a ancestralidade da feature. Não usar squash/rebase como método de merge nesta política.
+3. Concluir os checks `git-flow`, `validate` e o **Quality Gate do Sonar** no commit atual: direção das branches, instalação reproduzível, auditoria de dependências de produção, Prisma/migrations em Postgres de teste, lint, testes, builds e análise de qualidade. Corrigir achados na origem, sem desabilitar regras ou aceitar issues para contornar o gate. Aprovação de um commit anterior não valida mudanças posteriores.
+4. Conferir revisão e base atualizadas. Por instrução do responsável em 25/09/2026, **concluir o merge assim que a entrega estiver aprovada**, sem pedir nova confirmação nem deixar PR concluído aberto ou em rascunho apenas aguardando autorização. Retirar o rascunho e integrar por **merge commit**, verificando o SHA aprovado e preservando a ancestralidade da feature. Não usar squash/rebase. Conflitos, checks em andamento/reprovados ou revisões obrigatórias pendentes devem ser resolvidos; não são motivo para ignorar validações.
 5. Atualizar a cópia local de `dev` e remover a feature concluída:
 
 ```bash
@@ -74,7 +74,7 @@ Hotfix parte de `main` e retorna a `main` e `dev` (e à release aberta, quando a
 
 Branches descartadas com commits exclusivos podem ser arquivadas em tags anotadas `archive/<descricao>-<data>` antes de sua remoção. Confirmar que a tag remota aponta exatamente para o antigo tip. Essas tags não são releases e não devem disparar deploy. A arquitetura MySQL do PR #1 foi substituída pela base PostgreSQL; não reintegrar esse código por conveniência de limpeza.
 
-O trabalho antigo de máquinas de estado do PR #3 foi preservado, sem mudar seus 19 commits, em `feature/regras-de-negocio`, no [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6). Ele é independente da prévia atual e exige reconciliação antes de merge: prefixo HTTP global, sessão em memória versus sessão persistida, papel `ADMIN` versus `OWNER`, migrations de enums e numeração das ADRs. O PR #3 foi encerrado com link para o sucessor; não afirmar que esse código já está em `dev`.
+O trabalho antigo de máquinas de estado do PR #3 foi preservado, sem reescrever seus 19 commits, no [PR #6](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/6), `feature/regras-de-negocio`. A reconciliação com o `dev` do PR #7 preserva as URLs administrativas, usa sessões PostgreSQL e hashing compatível, mantém `OWNER`, substitui migrations não integradas destrutivas por conversão transacional e renumera as ADRs de pedido/atendimento para 0017/0018. O histórico de execução não é removido, e o reembolso preserva avaliação legal e revisão manual. O status de integração é o registrado no PR; antes de excluir a feature, confirmar o merge e a ancestralidade. O PR #3 foi encerrado com link para o sucessor.
 
 A antiga `features/mvp-implementation`, encerrada sem merge no PR #1, está preservada na tag remota `archive/implementacao-inicial-2026-09-22`, apontando para `776e5ed`. As branches dos PRs #2 e #4 foram removidas após confirmar a integração (ancestralidade no primeiro, equivalência da árvore do squash no segundo). A consolidação da plataforma e desta política está no [PR #5](https://github.com/wellbenicio/o-tal-do-marmoteiro/pull/5). Um stash local anterior permanece preservado; não o reaplicar automaticamente sobre a plataforma atual.
 

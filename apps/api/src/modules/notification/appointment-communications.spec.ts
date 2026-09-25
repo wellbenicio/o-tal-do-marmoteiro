@@ -24,7 +24,7 @@ function fixture(eventCode = 'APPOINTMENT_WHATSAPP_REMINDER', enabled = true) {
   };
   const appointment = {
     id: 'appointment',
-    status: 'BOOKED',
+    status: 'SCHEDULED',
     slot,
     communication: {
       calendarId: 'calendar',
@@ -133,7 +133,7 @@ describe('appointment communications worker', () => {
     'suppresses a %s reminder at dispatch time',
     async (condition) => {
       const f = fixture();
-      if (condition === 'canceled') f.appointment.status = 'CANCELED';
+      if (condition === 'canceled') f.appointment.status = 'CANCELLED';
       if (condition === 'cancellation-review')
         f.appointment.order.status = 'CANCELLATION_REQUESTED';
       if (condition === 'rescheduled') f.payload.revision = 'old';
@@ -216,7 +216,7 @@ describe('appointment communications worker', () => {
   });
   it('removes the calendar event and queued reminders after effective cancellation', async () => {
     const f = fixture('APPOINTMENT_CALENDAR_SYNC');
-    f.appointment.status = 'CANCELED';
+    f.appointment.status = 'CANCELLED';
     await f.service.processDue();
     expect(f.google.cancel).toHaveBeenCalledWith('calendar', 'event');
     expect(f.google.upsert).not.toHaveBeenCalled();
@@ -228,7 +228,7 @@ describe('appointment communications worker', () => {
     const f = fixture('APPOINTMENT_CALENDAR_SYNC');
     f.db.appointment.findUnique
       .mockResolvedValueOnce(f.appointment)
-      .mockResolvedValueOnce({ ...f.appointment, status: 'CANCELED' });
+      .mockResolvedValueOnce({ ...f.appointment, status: 'CANCELLED' });
     await f.service.processDue();
     expect(f.google.upsert).toHaveBeenCalledTimes(1);
     expect(f.db.$transaction).toHaveBeenCalledWith(expect.any(Function));
