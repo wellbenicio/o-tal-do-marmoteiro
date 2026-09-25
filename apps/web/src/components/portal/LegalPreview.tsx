@@ -72,7 +72,7 @@ export function LegalPreview({
           <a className="text-link" href="mailto:falecom@marmoteiro.com">
             falecom@marmoteiro.com
           </a>
-          . O cancelamento também estará disponível na própria área do cliente.
+          {" "}. O cancelamento também estará disponível na própria área do cliente.
         </p>
       </section>
       <Link href="/agendar" className="product-button">

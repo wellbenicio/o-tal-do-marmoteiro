@@ -164,7 +164,7 @@ export function Integrations() {
           </p>
           <form className="portal-form" onSubmit={saveEmail}>
             <label>
-              Seu e-mail para alertas
+              Seu e-mail para alertas{" "}
               <input
                 type="email"
                 value={email}
@@ -177,7 +177,7 @@ export function Integrations() {
             </button>
           </form>
           <div className="mg-settings-switches">
-            <label>
+            <label aria-label="Receber alertas operacionais">
               <span>
                 <strong>Receber alertas operacionais</strong>
                 <small>Pagamentos, agenda, perguntas e solicitações.</small>
@@ -190,7 +190,7 @@ export function Integrations() {
                 }
               />
             </label>
-            <label>
+            <label aria-label="Resumo diário para mim">
               <span>
                 <strong>Resumo diário para mim</strong>
                 <small>Agenda, fila e pendências em uma mensagem.</small>
@@ -291,7 +291,7 @@ export function Integrations() {
             </select>
           </div>
           <div className="mg-settings-switches">
-            <label>
+            <label aria-label="Considerar horários pessoais">
               <span>
                 <strong>Considerar horários pessoais</strong>
                 <small>
@@ -367,7 +367,7 @@ export function Integrations() {
             }}
           >
             <label>
-              Nome do calendário de exemplo
+              Nome do calendário de exemplo{" "}
               <input
                 name="calendar"
                 defaultValue={s.settings.googleCalendar}

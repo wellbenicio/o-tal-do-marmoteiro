@@ -132,6 +132,24 @@ const titles: Record<View, string> = {
   payments: "Pagamentos e reembolsos",
   help: "Como podemos ajudar?",
 };
+const descriptions: Record<View, string> = {
+  overview: "Que bom ter você por aqui. Vamos cuidar dos seus próximos passos?",
+  account: "Seus dados, contatos e solicitações de correção.",
+  privacy: "Acompanhe suas solicitações e conheça seus direitos.",
+  questions: "Sua pergunta, o andamento e cada próximo passo.",
+  bookings: "Sua história de encontros, organizada em um só lugar.",
+  notes: "Reflexões para revisitar, sempre que fizer sentido.",
+  payments: "Acompanhe cada pagamento, cancelamento e reembolso.",
+  help: "Encontre orientações para aproveitar sua experiência.",
+};
+const modalTitles: Record<NonNullable<ModalState>["type"], string> = {
+  cancel: "Solicitar cancelamento",
+  reschedule: "Um novo momento para você",
+  notes: "Anotações da consulta",
+  refund: "Acompanhar reembolso",
+  join: "Seu encontro online",
+  details: "Detalhes do atendimento",
+};
 function Status({ booking }: Readonly<{ booking: DemoBooking }>) {
   return (
     <span className={`status-badge status-${booking.status.toLowerCase()}`}>
@@ -152,6 +170,29 @@ function DateTile({ date }: Readonly<{ date: string }>) {
         {d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
       </span>
       <strong>{d.getDate()}</strong>
+    </div>
+  );
+}
+function ClientHeading({ view, name }: Readonly<{ view: View; name: string }>) {
+  return (
+    <div className="portal-page-heading">
+      <div>
+        <span className="portal-eyebrow">
+          {view === "overview" ? "UM MOMENTO SÓ SEU" : "ÁREA DO CLIENTE"}
+        </span>
+        <h1>
+          {view === "overview" ? (
+            <>
+              Olá, {name.split(" ")[0]}
+              <span className="greeting-dot">.</span>
+            </>
+          ) : titles[view]}
+        </h1>
+        <p>{descriptions[view]}</p>
+      </div>
+      <Link href="/agendar" className="product-button">
+        <Plus size={17} /> Nova consulta
+      </Link>
     </div>
   );
 }
@@ -232,6 +273,19 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
     setNewDate(booking.date);
     setNewTime("");
   }
+  function bookingAction(booking: DemoBooking) {
+    if (booking.orderStatus === "AWAITING_PAYMENT") return (
+      <Link href={`/agendar?retomar=${booking.id}`} className="product-button small">
+        Continuar pagamento
+      </Link>
+    );
+    if (!booking.note) return null;
+    return (
+      <button className="product-button secondary small" onClick={() => open("notes", booking)}>
+        <FileText size={14} /> Ver anotações
+      </button>
+    );
+  }
   function bookingCard(b: DemoBooking) {
     return (
       <article className="consultation-row" key={b.id}>
@@ -251,21 +305,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
           )}
         </div>
         <div className="consultation-row-actions">
-          {b.orderStatus === "AWAITING_PAYMENT" ? (
-            <Link
-              href={`/agendar?retomar=${b.id}`}
-              className="product-button small"
-            >
-              Continuar pagamento
-            </Link>
-          ) : b.note ? (
-            <button
-              className="product-button secondary small"
-              onClick={() => open("notes", b)}
-            >
-              <FileText size={14} /> Ver anotações
-            </button>
-          ) : null}
+          {bookingAction(b)}
           <button
             className="icon-button"
             aria-label={`Ver detalhes da consulta ${b.id}`}
@@ -409,43 +449,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
           </Link>
         </header>
         <div className="portal-content">
-          <div className="portal-page-heading">
-            <div>
-              <span className="portal-eyebrow">
-                {view === "overview" ? "UM MOMENTO SÓ SEU" : "ÁREA DO CLIENTE"}
-              </span>
-              <h1>
-                {view === "overview" ? (
-                  <>
-                    Olá, {profile.name.split(" ")[0]}
-                    <span className="greeting-dot">.</span>
-                  </>
-                ) : (
-                  titles[view]
-                )}
-              </h1>
-              <p>
-                {view === "overview"
-                  ? "Que bom ter você por aqui. Vamos cuidar dos seus próximos passos?"
-                  : view === "account"
-                    ? "Seus dados, contatos e solicitações de correção."
-                    : view === "privacy"
-                      ? "Acompanhe suas solicitações e conheça seus direitos."
-                      : view === "questions"
-                        ? "Sua pergunta, o andamento e cada próximo passo."
-                        : view === "bookings"
-                          ? "Sua história de encontros, organizada em um só lugar."
-                          : view === "notes"
-                            ? "Reflexões para revisitar, sempre que fizer sentido."
-                            : view === "payments"
-                              ? "Acompanhe cada pagamento, cancelamento e reembolso."
-                              : "Encontre orientações para aproveitar sua experiência."}
-              </p>
-            </div>
-            <Link href="/agendar" className="product-button">
-              <Plus size={17} /> Nova consulta
-            </Link>
-          </div>
+          <ClientHeading view={view} name={profile.name} />
           <div className="demo-banner compact">
             <Sparkles size={15} />
             <span>
@@ -467,7 +471,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                     <CalendarDays size={21} />
                   </span>
                   <span>
-                    Próximas consultas
+                    Próximas consultas{" "}
                     <strong>
                       {upcoming.length.toString().padStart(2, "0")}
                     </strong>
@@ -478,7 +482,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                     <CheckCircle2 size={21} />
                   </span>
                   <span>
-                    Consultas realizadas
+                    Consultas realizadas{" "}
                     <strong>
                       {completed.length.toString().padStart(2, "0")}
                     </strong>
@@ -489,7 +493,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                     <FileText size={21} />
                   </span>
                   <span>
-                    Perguntas pendentes
+                    Perguntas pendentes{" "}
                     <strong>
                       {bookings
                         .filter(
@@ -628,7 +632,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
                     >
                       <RefreshCcw size={19} />
                       <span>
-                        Você tem solicitações para acompanhar.
+                        Você tem solicitações para acompanhar.{" "}
                         <strong>
                           Acompanhar solicitação <ArrowRight size={13} />
                         </strong>
@@ -1008,19 +1012,7 @@ export function ClientArea({ view }: Readonly<{ view: View }>) {
       </div>
       {modal && selected && (
         <Modal
-          title={
-            modal.type === "cancel"
-              ? "Solicitar cancelamento"
-              : modal.type === "reschedule"
-                ? "Um novo momento para você"
-                : modal.type === "notes"
-                  ? "Anotações da consulta"
-                  : modal.type === "refund"
-                    ? "Acompanhar reembolso"
-                    : modal.type === "join"
-                      ? "Seu encontro online"
-                      : "Detalhes do atendimento"
-          }
+          title={modalTitles[modal.type]}
           onClose={() => setModal(null)}
         >
           {modal.type === "details" && (

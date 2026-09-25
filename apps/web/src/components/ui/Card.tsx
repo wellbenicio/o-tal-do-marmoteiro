@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
 import { clsx } from "clsx";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function Card({ className, ...props }: Readonly<HTMLAttributes<HTMLDivElement>>) {
   return (
     <div
       className={clsx(

@@ -34,8 +34,8 @@ export function Questions() {
       o.booking.modality === "QUESTION" &&
       ["DELIVERED", "COMPLETED"].includes(o.booking.status),
   );
-  const rows =
-    filter === "queue" ? queue : filter === "progress" ? progress : delivered;
+  const rowsByFilter: Record<string, typeof queue> = { queue, progress, delivered };
+  const rows = rowsByFilter[filter] ?? delivered;
   return (
     <>
       <div className="mg-page-heading">
@@ -119,6 +119,9 @@ export function Questions() {
         {rows.map((o, i) => {
           const b = o.booking,
             c = s.customers.find((c) => c.id === o.customerId)!;
+          let tone: "orange" | "green" | "neutral" = "neutral";
+          if (b.priority) tone = "orange";
+          else if (b.status === "COMPLETED") tone = "green";
           return (
             <article className="mg-card mg-question" key={b.id}>
               <div className="mg-question-top">
@@ -136,15 +139,7 @@ export function Questions() {
                     <p>{b.id} · Pergunta avulsa · WhatsApp</p>
                   </div>
                 </div>
-                <MgBadge
-                  tone={
-                    b.priority
-                      ? "orange"
-                      : b.status === "COMPLETED"
-                        ? "green"
-                        : "neutral"
-                  }
-                >
+                <MgBadge tone={tone}>
                   {b.priority ? "Fila prioritária" : bookingLabels[b.status]}
                 </MgBadge>
               </div>

@@ -105,7 +105,7 @@ export function BookingCalendar({
         </div>
         <p className="calendar-footnote">
           <span />
-          Agenda demonstrativa · horário de Brasília
+          {" "}Agenda demonstrativa · horário de Brasília
         </p>
       </div>
       <div className="time-picker">

@@ -289,6 +289,34 @@ test("client events update projections once and generate minimal owner/customer 
   assert.equal(quiet.emails.length, 1);
   assert.equal(quiet.emails[0].audience, "CUSTOMER");
 });
+test("communication text preserves greetings, service details and protocols", () => {
+  const cases: { booking?: DemoBooking; description: string }[] = [
+    { description: "Recebemos seu pedido.  Protocolo: PROTO-1." },
+    {
+      booking: order("appointment").booking,
+      description: "Recebemos seu pedido. Atendimento: 2026-09-25 às 14:00 (Brasília). Protocolo: PROTO-1.",
+    },
+    {
+      booking: order("question", { modality: "QUESTION" }).booking,
+      description: "Recebemos seu pedido. Modalidade: pergunta avulsa. Protocolo: PROTO-1.",
+    },
+  ];
+  for (const scenario of cases) {
+    const next = applyClientEvent(empty(), {
+      id: "communication",
+      kind: "ORDER_CREATED",
+      at: new Date(now).toISOString(),
+      profile: defaultProfile,
+      reference: "PROTO-1",
+      booking: scenario.booking,
+    });
+    assert.equal(next.notices[0].description, scenario.description);
+    assert.ok(next.emails[0].body.startsWith("Olá, Marmoteiro.\n\n"));
+    assert.ok(next.emails[1].body.startsWith(`Olá, ${defaultProfile.name.split(" ")[0]}.\n\n`));
+    assert.equal(next.emails[1].body.includes("Referência:"), !!scenario.booking);
+    assert.equal(next.emails[1].body.includes("Google Meet"), false);
+  }
+});
 test("CSV matches cash ledger, excludes unpaid fees, escapes textual formulas and preserves numeric negative amounts", () => {
   const s = empty();
   s.orders = [

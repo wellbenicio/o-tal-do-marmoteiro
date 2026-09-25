@@ -17,6 +17,29 @@ import {
 import { defaultProfile } from "@/lib/demo-bookings";
 import { ProfileFields, profileFromForm } from "./ProfileFields";
 import { useDemo } from "./DemoProvider";
+const authCopy = {
+  reset: {
+    title: "Vamos recuperar seu acesso?",
+    description: "Informe o e-mail usado no seu cadastro.",
+    action: "Testar recuperação",
+  },
+  signup: {
+    title: "Seu próximo capítulo começa aqui.",
+    description: "Crie seu espaço para acompanhar cada consulta.",
+    action: "Testar cadastro",
+  },
+  login: {
+    title: "Que bom te ver de novo.",
+    description: "Entre para cuidar dos seus próximos encontros.",
+    action: "Testar acesso",
+  },
+};
+function destination() {
+  const next = new URLSearchParams(window.location.search).get("continuar");
+  return next && (next === "/agendar" || next.startsWith("/agendar?"))
+    ? next
+    : "/minha-conta";
+}
 export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
   const signup = mode === "signup";
   const [visible, setVisible] = useState(false);
@@ -24,6 +47,7 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
   const [sent, setSent] = useState(false);
   const { enterDemo, profile } = useDemo();
   const router = useRouter();
+  const copy = authCopy[reset ? "reset" : mode];
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (reset) {
@@ -38,12 +62,6 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
       !signup,
     );
     router.push(destination());
-  }
-  function destination() {
-    const next = new URLSearchParams(window.location.search).get("continuar");
-    return next && (next === "/agendar" || next.startsWith("/agendar?"))
-      ? next
-      : "/minha-conta";
   }
   function switchMode(
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -107,20 +125,8 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
         </Link>
         <div className="auth-form-wrap">
           <span className="portal-eyebrow">ÁREA DO CLIENTE</span>
-          <h2>
-            {reset
-              ? "Vamos recuperar seu acesso?"
-              : signup
-                ? "Seu próximo capítulo começa aqui."
-                : "Que bom te ver de novo."}
-          </h2>
-          <p className="auth-description">
-            {reset
-              ? "Informe o e-mail usado no seu cadastro."
-              : signup
-                ? "Crie seu espaço para acompanhar cada consulta."
-                : "Entre para cuidar dos seus próximos encontros."}
-          </p>
+          <h2>{copy.title}</h2>
+          <p className="auth-description">{copy.description}</p>
           <div className="auth-tabs">
             <Link
               href="/login"
@@ -144,7 +150,7 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
           <form onSubmit={submit} className="portal-form">
             {signup && !reset && <ProfileFields />}
             <label>
-              E-mail
+              E-mail{" "}
               <input
                 name="email"
                 type="email"
@@ -201,11 +207,7 @@ export function AuthScreen({ mode }: Readonly<{ mode: "login" | "signup" }>) {
               </label>
             )}
             <button className="product-button full" type="submit">
-              {reset
-                ? "Testar recuperação"
-                : signup
-                  ? "Testar cadastro"
-                  : "Testar acesso"}
+              {copy.action}
               <ArrowUpRight size={18} />
             </button>
             {reset && (

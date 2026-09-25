@@ -89,7 +89,7 @@ export function AdminLogin({ returnTo }: Readonly<{ returnTo: string }>) {
           <p>Entre com o acesso administrativo autorizado.</p>
           <form className="portal-form" onSubmit={submit}>
             <label>
-              E-mail administrativo
+              E-mail administrativo{" "}
               <input
                 name="email"
                 type="email"

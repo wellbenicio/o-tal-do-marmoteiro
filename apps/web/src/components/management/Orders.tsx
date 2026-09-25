@@ -154,6 +154,9 @@ export function Orders({
           <tbody>
             {filtered.map(({ booking: b, customerId }) => {
               const c = s.customers.find((c) => c.id === customerId)!;
+              let serviceDetail = "";
+              if (b.modality === "APPOINTMENT") serviceDetail = " · " + b.time;
+              else if (b.priority) serviceDetail = " · Prioritária";
               return (
                 <tr key={b.id}>
                   <td>
@@ -173,11 +176,7 @@ export function Orders({
                     </strong>
                     <small>
                       {prettyDate(b.date, true)}
-                      {b.modality === "APPOINTMENT"
-                        ? " · " + b.time
-                        : b.priority
-                          ? " · Prioritária"
-                          : ""}
+                      {serviceDetail}
                     </small>
                   </td>
                   <td>

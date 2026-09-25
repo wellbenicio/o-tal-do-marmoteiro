@@ -117,7 +117,7 @@ export function OrderModal({
                 }}
               >
                 <label>
-                  Motivo da alteração pelo prestador
+                  Motivo da alteração pelo prestador{" "}
                   <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
@@ -200,7 +200,7 @@ export function OrderModal({
                 />
               </label>
               <label>
-                Fundamentação da decisão
+                Fundamentação da decisão{" "}
                 <textarea
                   minLength={10}
                   required

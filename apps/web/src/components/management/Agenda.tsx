@@ -15,13 +15,18 @@ import {
 import { useManagement } from "./ManagementProvider";
 import { Modal } from "@/components/portal/Modal";
 import { OrderModal } from "./OrderModal";
-import { localDate, prettyDate } from "@/lib/demo-bookings";
+import { localDate, prettyDate, type DemoBooking } from "@/lib/demo-bookings";
 import { addMinutes } from "@/lib/management";
 import { MgBadge, SectionTitle } from "./Shared";
 function shift(date: string, days: number) {
   const d = new Date(date + "T12:00:00Z");
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
+}
+function calendarEventLabel(booking: DemoBooking) {
+  if (booking.paymentStatus === "PENDING") return "Reserva temporária";
+  if (booking.status === "COMPLETED") return "Consulta realizada";
+  return "Videochamada · Google Meet";
 }
 export function Agenda() {
   const s = useManagement();
@@ -78,13 +83,7 @@ export function Agenda() {
                   <ArrowUpRight size={12} />
                 </span>
                 <strong>{c.name}</strong>
-                <small>
-                  {o.booking.paymentStatus === "PENDING"
-                    ? "Reserva temporária"
-                    : o.booking.status === "COMPLETED"
-                      ? "Consulta realizada"
-                      : "Videochamada · Google Meet"}
-                </small>
+                <small>{calendarEventLabel(o.booking)}</small>
               </button>
             );
           })}
@@ -227,7 +226,7 @@ export function Agenda() {
         ) : (
           <div className="mg-day-view">
             <label>
-              Dia
+              Dia{" "}
               <input
                 type="date"
                 value={selected}
@@ -245,15 +244,15 @@ export function Agenda() {
         <div className="mg-calendar-legend">
           <span>
             <i />
-            Consulta confirmada
+            {" "}Consulta confirmada
           </span>
           <span>
             <i className="personal" />
-            Bloqueio / pessoal
+            {" "}Bloqueio / pessoal
           </span>
           <span>
             <i className="pending" />
-            Pagamento pendente
+            {" "}Pagamento pendente
           </span>
           <span>America/Sao_Paulo</span>
         </div>
@@ -313,7 +312,7 @@ export function Agenda() {
           </p>
           <form className="portal-form" onSubmit={block}>
             <label>
-              Identificação do bloqueio
+              Identificação do bloqueio{" "}
               <input
                 name="label"
                 placeholder="Ex.: pausa, compromisso pessoal"
@@ -322,7 +321,7 @@ export function Agenda() {
               />
             </label>
             <label>
-              Data
+              Data{" "}
               <input
                 name="date"
                 type="date"
@@ -333,11 +332,11 @@ export function Agenda() {
             </label>
             <div className="form-two-columns">
               <label>
-                Início
+                Início{" "}
                 <input name="start" type="time" defaultValue="13:00" required />
               </label>
               <label>
-                Fim
+                Fim{" "}
                 <input name="end" type="time" defaultValue="14:00" required />
               </label>
             </div>

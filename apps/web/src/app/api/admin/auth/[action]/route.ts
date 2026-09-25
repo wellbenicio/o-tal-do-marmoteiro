@@ -23,9 +23,8 @@ export async function GET(
   if (!token) return json({ message: "Sessão necessária." }, 401);
   try {
     const res = await adminApi("auth/session", { token });
-    return res.ok
-      ? json(await res.json())
-      : json({ message: "Sessão encerrada." }, res.status === 401 ? 401 : 503);
+    if (res.ok) return json(await res.json());
+    return json({ message: "Sessão encerrada." }, res.status === 401 ? 401 : 503);
   } catch {
     return json({ message: "Acesso temporariamente indisponível." }, 503);
   }
@@ -38,23 +37,34 @@ export async function POST(
   if (!["login", "logout"].includes(action))
     return json({ message: "Não encontrado." }, 404);
   if (!sameOrigin(req)) return json({ message: "Origem não autorizada." }, 403);
-  if (action === "logout") {
-    const token = req.cookies.get(adminCookieName)?.value;
-    try {
-      if (token) await adminApi("auth/logout", { token, body: {} });
-    } catch {
-      /* This browser must lose access even if the API is unavailable. */
-    }
-    const res = json({ ok: true });
-    res.cookies.set(adminCookieName, "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 0,
-    });
-    return res;
+  if (action === "logout") return logout(req);
+  return login(req);
+}
+async function logout(req: NextRequest) {
+  const token = req.cookies.get(adminCookieName)?.value;
+  try {
+    if (token) await adminApi("auth/logout", { token, body: {} });
+  } catch {
+    /* This browser must lose access even if the API is unavailable. */
   }
+  const res = json({ ok: true });
+  res.cookies.set(adminCookieName, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 0,
+  });
+  return res;
+}
+function loginFailure(status: number) {
+  if (status === 429)
+    return json({ message: "Muitas tentativas. Aguarde 15 minutos e tente novamente." }, 429);
+  if (status === 401)
+    return json({ message: "E-mail ou senha inválidos." }, 401);
+  return json({ message: "Acesso temporariamente indisponível." }, 503);
+}
+async function login(req: NextRequest) {
   try {
     const raw = await req.text();
     if (raw.length > 4096) return json({ message: "Dados inválidos." }, 400);
@@ -74,18 +84,7 @@ export async function POST(
       body: { email: body.email, password: body.password },
       clientKey,
     });
-    if (!upstream.ok)
-      return json(
-        {
-          message:
-            upstream.status === 429
-              ? "Muitas tentativas. Aguarde 15 minutos e tente novamente."
-              : upstream.status === 401
-                ? "E-mail ou senha inválidos."
-                : "Acesso temporariamente indisponível.",
-        },
-        [401, 429].includes(upstream.status) ? upstream.status : 503,
-      );
+    if (!upstream.ok) return loginFailure(upstream.status);
     const result = (await upstream.json()) as {
       token: string;
       expiresAt: string;

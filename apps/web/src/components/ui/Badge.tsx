@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 export function Badge({
   className,
   ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+}: Readonly<HTMLAttributes<HTMLSpanElement>>) {
   return (
     <span
       className={clsx(
