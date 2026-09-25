@@ -26,7 +26,7 @@ export function MobileBookingBar() {
   return visible ? (
     <div className="mobile-booking-bar">
       <span>
-        Um momento só seu
+        Um momento só seu{" "}
         <strong>
           {DEMO_DURATION} min · {money(DEMO_PRICE)}
         </strong>

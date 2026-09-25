@@ -152,11 +152,13 @@ export function managementSeed(): ManagementState {
     options: Partial<DemoBooking> = {},
   ) {
     const paidAt = dateAt(Math.min(days - 1, -1));
+    const priorityAmount = options.priority
+      ? previewConfig.question.priorityAmount
+      : 0;
     const amount =
       modality === "APPOINTMENT"
         ? DEMO_PRICE
-        : previewConfig.question.amount +
-          (options.priority ? previewConfig.question.priorityAmount : 0);
+        : previewConfig.question.amount + priorityAmount;
     const booking: DemoBooking = {
       id: `ORA-${3100 + index}`,
       modality,
