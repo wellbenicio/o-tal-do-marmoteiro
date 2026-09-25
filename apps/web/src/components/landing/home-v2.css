@@ -684,7 +684,7 @@
     gap: 14px;
   }
   .home-notice > div {
-    flex: 1;
+    flex: 1 0 calc(100% - 36px);
     min-width: 0;
   }
   .home-notice p {
