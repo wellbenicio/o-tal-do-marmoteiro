@@ -1,6 +1,6 @@
 # Git Flow e versionamento
 
-Política adotada em 22/09/2026 para `wellbenicio/o-tal-do-marmoteiro`. O repositório mantém duas branches permanentes. `dev` integra o desenvolvimento e continua como branch padrão no GitHub; `main` representa a linha de releases. Estarem sincronizadas com seus respectivos remotos não significa terem os mesmos commits.
+Política adotada em 22/09/2026 e atualizada em 25/09/2026 para `wellbenicio/o-tal-do-marmoteiro`. O repositório mantém duas branches permanentes. `main` é a branch padrão no GitHub e representa a linha de produção/releases; `dev` integra o desenvolvimento. Estarem sincronizadas com seus respectivos remotos não significa terem os mesmos commits. Mudar a branch padrão não promove código nem realiza deploy.
 
 ## Branches e destinos
 
@@ -9,6 +9,8 @@ Política adotada em 22/09/2026 para `wellbenicio/o-tal-do-marmoteiro`. O reposi
 | `feature/<descricao>` | `dev` atualizada | `dev` | Excluir após merge validado |
 | `release/<versao>` | `dev` atualizada | `main` e `dev` | Tag anotada `v<versao>` em `main`; excluir após ambos os merges |
 | `hotfix/<descricao>` | `main` atualizada | `main` e `dev` | Nova versão de correção; excluir após ambos os merges |
+
+A branch padrão do repositório não altera o destino dos PRs de feature: selecionar explicitamente `dev` como base. `main` recebe apenas releases e hotfixes validados.
 
 Usar nomes curtos em minúsculas e hífens. O prefixo é `feature/`, no singular. Documentação e infraestrutura seguem o mesmo caminho. Não criar novas branches `features/`, `copilot/`, `docs/` ou branches pessoais permanentes. Não reutilizar branch cuja entrega já foi integrada.
 
@@ -78,7 +80,9 @@ A antiga `features/mvp-implementation`, encerrada sem merge no PR #1, está pres
 
 ## Configuração e limites do GitHub
 
-Configuração aplicada e verificada: merge commits habilitados, squash/rebase desabilitados e exclusão automática de branches concluídas habilitada. O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
+Configuração aplicada e verificada: `main` como branch padrão, merge commits habilitados, squash/rebase desabilitados e `delete_branch_on_merge=true`. A opção nativa do GitHub remove a branch remota de origem após o merge do PR, inclusive `feature/*` → `dev`; não possui filtro por prefixo. Preservar PRs ainda abertos e observar os dois destinos de releases/hotfixes. A remoção da branch local continua sendo feita com `git branch -d`, após verificar a integração.
+
+O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
 
 Em 22/09/2026, a API de regras do repositório privado respondeu **403: requer GitHub Pro ou repositório público**. Portanto não há proteção efetiva contra push direto ou merge com check falhando no plano atual. O CI detecta problemas, mas não impede sozinho o administrador de ignorá-los. O repositório permanece privado; nenhuma troca de plano foi realizada.
 
