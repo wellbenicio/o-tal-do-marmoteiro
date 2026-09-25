@@ -19,7 +19,7 @@ export function ProfileFields() {
     <>
       <div className="form-two-columns">
         <label>
-          Nome civil
+          Nome civil{" "}
           <input
             name="legalName"
             required
@@ -33,11 +33,11 @@ export function ProfileFields() {
           <input name="socialName" placeholder="Como você quer ser chamado" />
         </label>
         <label>
-          Data de nascimento
+          Data de nascimento{" "}
           <input name="birthDate" type="date" max={localDate()} required />
         </label>
         <label>
-          Nome da mãe
+          Nome da mãe{" "}
           <input
             name="motherName"
             minLength={2}
@@ -46,7 +46,7 @@ export function ProfileFields() {
           />
         </label>
         <label>
-          Identidade de gênero
+          Identidade de gênero{" "}
           <input
             name="genderIdentity"
             required
@@ -59,7 +59,7 @@ export function ProfileFields() {
         </label>
       </div>
       <label>
-        WhatsApp com DDD
+        WhatsApp com DDD{" "}
         <input
           name="phone"
           type="tel"

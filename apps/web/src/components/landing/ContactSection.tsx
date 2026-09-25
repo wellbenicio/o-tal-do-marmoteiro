@@ -149,10 +149,10 @@ export function ContactSection() {
             </p>
 
             {showPreviewMessage && (
-              <p className="contact-preview-message" role="status">
+              <output className="contact-preview-message">
                 Esta é uma prévia da interface. Seus dados não foram enviados. O
                 agendamento e o pagamento estarão disponíveis na próxima etapa.
-              </p>
+              </output>
             )}
           </form>
         </div>

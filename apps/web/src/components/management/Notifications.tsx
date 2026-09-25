@@ -15,6 +15,19 @@ import { prettyTimestamp } from "@/lib/demo-bookings";
 import { Empty, MgBadge } from "./Shared";
 import { Modal } from "@/components/portal/Modal";
 import { OrderModal } from "./OrderModal";
+const noticeIcons = {
+  cancellation: AlertCircle,
+  payment: CheckCircle2,
+  agenda: Bell,
+  question: Bell,
+  customer: Bell,
+  system: Bell,
+};
+const emailStatus = {
+  FAILED: { tone: "red", label: "Falha simulada" },
+  SIMULATED: { tone: "green", label: "Processado na simulação" },
+  PREVIEW: { tone: "neutral", label: "Prévia pronta" },
+} as const;
 export function Notifications() {
   const s = useManagement();
   const [tab, setTab] = useState("all");
@@ -77,18 +90,14 @@ export function Notifications() {
       </div>
       {tab !== "email" ? (
         <section className="mg-card mg-notice-list">
-          {notices.map((n) => (
+          {notices.map((n) => {
+            const NoticeIcon = noticeIcons[n.type];
+            return (
             <article key={n.id} className={!n.read ? "unread" : ""}>
               <span
                 className={`mg-task-icon ${n.type === "cancellation" ? "orange" : ""}`}
               >
-                {n.type === "cancellation" ? (
-                  <AlertCircle size={20} />
-                ) : n.type === "payment" ? (
-                  <CheckCircle2 size={20} />
-                ) : (
-                  <Bell size={20} />
-                )}
+                <NoticeIcon size={20} />
               </span>
               <div>
                 <div className="mg-notice-title">
@@ -116,7 +125,8 @@ export function Notifications() {
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
           {!notices.length && (
             <Empty
               title="Tudo visto por aqui"
@@ -171,20 +181,8 @@ export function Notifications() {
                       </td>
                       <td>{prettyTimestamp(e.at)}</td>
                       <td>
-                        <MgBadge
-                          tone={
-                            e.status === "FAILED"
-                              ? "red"
-                              : e.status === "SIMULATED"
-                                ? "green"
-                                : "neutral"
-                          }
-                        >
-                          {e.status === "FAILED"
-                            ? "Falha simulada"
-                            : e.status === "SIMULATED"
-                              ? "Processado na simulação"
-                              : "Prévia pronta"}
+                        <MgBadge tone={emailStatus[e.status].tone}>
+                          {emailStatus[e.status].label}
                         </MgBadge>
                       </td>
                       <td>
@@ -223,11 +221,7 @@ export function Notifications() {
             <div>
               <span>Situação</span>
               <strong>
-                {current.status === "FAILED"
-                  ? "Falha simulada"
-                  : current.status === "SIMULATED"
-                    ? "Processado na simulação"
-                    : "Prévia pronta"}{" "}
+                {emailStatus[current.status].label}{" "}
                 · {current.attempts} tentativa(s)
               </strong>
             </div>

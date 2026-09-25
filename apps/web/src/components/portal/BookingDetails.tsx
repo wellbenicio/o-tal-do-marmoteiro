@@ -23,14 +23,15 @@ export function BookingDetails({
   booking: b,
   onAction,
   readOnly = false,
-}: {
+}: Readonly<{
   booking: DemoBooking;
   readOnly?: boolean;
   onAction: (
     action: "cancel" | "reschedule" | "notes" | "refund" | "join",
   ) => void;
-}) {
+}>) {
   const eligibility = rescheduleEligibility(b);
+  const queueLabel = b.priority ? "Fila prioritária" : "Fila regular";
   return (
     <>
       <h3 className="modal-service-title">
@@ -58,8 +59,7 @@ export function BookingDetails({
           <dt>{b.modality === "QUESTION" ? "Modalidade" : "Data e horário"}</dt>
           <dd>
             {b.modality === "QUESTION"
-              ? "WhatsApp · " +
-                (b.priority ? "Fila prioritária" : "Fila regular")
+              ? "WhatsApp · " + queueLabel
               : `${prettyDate(b.date)} · ${b.time}`}
           </dd>
         </div>
@@ -239,10 +239,27 @@ export function BookingDetails({
     </>
   );
 }
-export function RefundDetails({ booking: b }: { booking: DemoBooking }) {
+export function RefundDetails({
+  booking: b,
+}: Readonly<{ booking: DemoBooking }>) {
   const result = b.cancellation?.result;
   const manual = result?.decision === "MANUAL_REVIEW_REQUIRED";
   const refunded = ["REFUNDED", "PARTIALLY_REFUNDED"].includes(b.paymentStatus);
+  const stages = [
+    { label: "Solicitação recebida", description: "Protocolo registrado na sua área." },
+    {
+      label: "Avaliação do caso",
+      description: manual
+        ? "Aguardando decisão fundamentada. Nenhuma retenção foi aplicada automaticamente."
+        : "Decisão disponível no resumo acima.",
+    },
+    {
+      label: "Processamento da devolução",
+      description: refunded
+        ? "Devolução concluída no exemplo fictício."
+        : "A conclusão e o prazo dependem da decisão e do provedor; não há transferência real nesta prévia.",
+    },
+  ];
   return (
     <>
       <div className="refund-value">
@@ -282,11 +299,7 @@ export function RefundDetails({ booking: b }: { booking: DemoBooking }) {
       </dl>
       <p className="pending-policy">{result?.reason}</p>
       <ol className="refund-timeline">
-        {[
-          "Solicitação recebida",
-          "Avaliação do caso",
-          "Processamento da devolução",
-        ].map((label, i) => (
+        {stages.map(({ label, description }, i) => (
           <li
             className={
               i === 0 || refunded || (i === 1 && !manual) ? "done" : "current"
@@ -302,17 +315,7 @@ export function RefundDetails({ booking: b }: { booking: DemoBooking }) {
             </span>
             <div>
               <strong>{label}</strong>
-              <p>
-                {i === 0
-                  ? "Protocolo registrado na sua área."
-                  : i === 1
-                    ? manual
-                      ? "Aguardando decisão fundamentada. Nenhuma retenção foi aplicada automaticamente."
-                      : "Decisão disponível no resumo acima."
-                    : refunded
-                      ? "Devolução concluída no exemplo fictício."
-                      : "A conclusão e o prazo dependem da decisão e do provedor; não há transferência real nesta prévia."}
-              </p>
+              <p>{description}</p>
             </div>
           </li>
         ))}

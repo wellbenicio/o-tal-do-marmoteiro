@@ -352,9 +352,9 @@
   align-items: center;
   gap: 10px;
   color: #c9c4cc;
-  text-transform: capitalize;
   font-size: 11px;
   margin-bottom: 16px;
+  text-transform: none;
 }
 .mg-date-line > span {
   color: #817e88;
@@ -687,7 +687,7 @@
 .mg-relationships .mg-avatar {
   background: #cdbba7;
   border-color: #c9b69f;
-  color: #614a38;
+  color: #5f4837;
 }
 .mg-relationships .mg-relationship-note {
   font-size: 9px;
@@ -835,11 +835,6 @@
 .mg-page-tabs {
   width: fit-content;
   margin-bottom: 20px;
-}
-.mg-table-wrap {
-  overflow: auto;
-  padding: 0;
-  position: relative;
 }
 .mg-table {
   border-collapse: collapse;
@@ -1496,7 +1491,7 @@
 }
 .mg-relationship-banner .mg-task-icon {
   background: #d3c0aa;
-  color: #8f6242;
+  color: #714627;
   width: 45px;
   height: 45px;
 }
@@ -2675,15 +2670,15 @@
 }
 
 .mg-table-wrap {
+  overflow: auto;
+  padding: 0;
+  position: relative;
   max-height: 620px;
 }
 .mg-table thead {
   position: sticky;
   top: 0;
   z-index: 1;
-}
-.mg-date-line {
-  text-transform: none;
 }
 .admin-login {
   min-height: 100vh;
@@ -2844,7 +2839,7 @@
 }
 .admin-login-footer {
   text-align: center;
-  color: #827468;
+  color: #8a7c6f;
   font-size: 9px;
 }
 .mg-logout {

@@ -150,7 +150,7 @@ export function managementSeed(): ManagementState {
   ) {
     const paidAt = dateAt(Math.min(days - 1, -1));
     const amount =
-      modality === "APPOINTMENT" ? 7000 : options.priority ? 7000 : 5000;
+      modality === "APPOINTMENT" || options.priority ? 7000 : 5000;
     const booking: DemoBooking = {
       id: `ORA-${3100 + index}`,
       modality,
@@ -613,7 +613,12 @@ export function withCommunication(
   const audiences: EmailPreview["audience"][] = state.settings.ownerAlerts
     ? ["OWNER", "CUSTOMER"]
     : ["CUSTOMER"];
-  const emails = audiences.map((audience) => ({
+  const reference = event.orderId ? `Referência: ${event.orderId}.\n` : "";
+  const emails = audiences.map((audience) => {
+    const greeting = audience === "OWNER"
+      ? "Olá, Marmoteiro."
+      : `Olá, ${event.customer.name.split(" ")[0]}.`;
+    return {
     id: `${event.id}:${audience}`,
     eventId: event.id,
     at: event.at,
@@ -621,16 +626,35 @@ export function withCommunication(
       audience === "OWNER" ? state.settings.ownerEmail : event.customer.email,
     audience,
     subject: audience === "OWNER" ? event.title : event.customerTitle,
-    body: `${audience === "OWNER" ? "Olá, Marmoteiro." : `Olá, ${event.customer.name.split(" ")[0]}.`}\n\n${event.description}\n${event.orderId ? `Referência: ${event.orderId}.\n` : ""}\nOs detalhes ficam na sua área. Por privacidade, não incluímos o conteúdo da consulta nesta mensagem.\n\nO Tal do Marmoteiro\nfalecom@marmoteiro.com\n\n[Prévia: nenhum e-mail foi enviado.]`,
+    body: `${greeting}\n\n${event.description}\n${reference}\nOs detalhes ficam na sua área. Por privacidade, não incluímos o conteúdo da consulta nesta mensagem.\n\nO Tal do Marmoteiro\nfalecom@marmoteiro.com\n\n[Prévia: nenhum e-mail foi enviado.]`,
     status: "PREVIEW" as const,
     orderId: event.orderId,
     attempts: 0,
-  }));
+    };
+  });
   return {
     ...state,
     notices: [notice, ...state.notices],
     emails: [...emails, ...state.emails],
   };
+}
+function clientEventDescription(event: ClientEvent) {
+  const booking = event.booking;
+  let service = "";
+  if (booking?.modality === "APPOINTMENT") {
+    service = `Atendimento: ${booking.date} às ${booking.time} (Brasília).`;
+  } else if (booking?.modality === "QUESTION") {
+    service = "Modalidade: pergunta avulsa.";
+  }
+  const protocol = event.reference ? `Protocolo: ${event.reference}.` : "";
+  let channels = "";
+  if (booking?.modality === "APPOINTMENT" && event.kind === "PAYMENT_APPROVED") {
+    const reminders = booking.whatsappReminderConsent?.granted
+      ? "autorizados para esta consulta; envio não conectado."
+      : "não ativados pelo consulente.";
+    channels = `\n\nConsulta por videochamada: o convite Google Calendar e o link Google Meet aguardam a conexão com o provedor. Nenhum link real foi gerado nesta demonstração.\nLembretes pelo WhatsApp: ${reminders}`;
+  }
+  return `${eventCopy[event.kind].customer}. ${service} ${protocol}${channels}`;
 }
 export function applyClientEvent(
   state: ManagementState,
@@ -677,7 +701,7 @@ export function applyClientEvent(
     type: copy.type,
     customer,
     orderId: event.booking?.id,
-    description: `${copy.customer}. ${event.booking?.modality === "APPOINTMENT" ? `Atendimento: ${event.booking.date} às ${event.booking.time} (Brasília).` : event.booking?.modality === "QUESTION" ? "Modalidade: pergunta avulsa." : ""} ${event.reference ? `Protocolo: ${event.reference}.` : ""}${event.booking?.modality === "APPOINTMENT" && event.kind === "PAYMENT_APPROVED" ? "\n\nConsulta por videochamada: o convite Google Calendar e o link Google Meet aguardam a conexão com o provedor. Nenhum link real foi gerado nesta demonstração.\nLembretes pelo WhatsApp: " + (event.booking.whatsappReminderConsent?.granted ? "autorizados para esta consulta; envio não conectado." : "não ativados pelo consulente.") : ""}`,
+    description: clientEventDescription(event),
   });
   return next;
 }

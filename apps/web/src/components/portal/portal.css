@@ -30,7 +30,7 @@
   transform: none;
 }
 .product-button.secondary {
-  background: #ffffff04;
+  background: #1b1b1c;
   border-color: #ffffff1c;
   color: #d8d3cb;
 }
@@ -38,7 +38,7 @@
   background: #ffffff0c;
 }
 .product-button.danger {
-  background: #ac404033;
+  background: #351f20;
   border-color: #c9656555;
   color: #ffc3b9;
 }
@@ -159,7 +159,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: #ffffff04;
+  background: #1b1b1c;
   border: 1px solid #ffffff0c;
   border-radius: 7px;
   padding: 14px 16px;
@@ -347,7 +347,7 @@
   width: 50%;
   text-align: center;
   padding: 13px;
-  color: #807a71;
+  color: #827b72;
   font-size: 14px;
   border-bottom: 2px solid transparent;
 }
@@ -389,7 +389,7 @@
   top: -10px;
   padding: 0 12px;
   background: #101011;
-  color: #736d65;
+  color: #827b73;
   font-size: 12px;
 }
 .demo-access {
@@ -410,7 +410,7 @@
 }
 .auth-demo-note {
   font-size: 12px;
-  color: #777169;
+  color: #827b73;
   line-height: 1.8;
   margin-top: 22px;
 }
@@ -421,7 +421,7 @@
 .auth-footer {
   font-size: 12px;
   text-align: center;
-  color: #655f59;
+  color: #827b75;
   margin-top: 15px;
 }
 .portal-loading,
@@ -486,37 +486,22 @@
 .sidebar-label {
   font-size: 11px;
   letter-spacing: 2px;
-  color: #726b60;
+  color: #857e72;
   margin: 0 14px 18px;
-}
-.portal-sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.portal-sidebar nav > a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #9b958b;
-  font-size: 13px;
-  padding: 13px 14px;
-  border-radius: 6px;
-  border: 1px solid transparent;
 }
 .portal-sidebar nav > a:hover {
   color: #e8c087;
-  background: #ffffff03;
+  background: #171718;
 }
 .portal-sidebar nav > a.active {
   color: #f3b451;
-  background: #b7751417;
+  background: #231d15;
   border-color: #c1892f22;
 }
 .portal-sidebar nav > a > span {
   margin-left: auto;
   font-size: 11px;
-  background: #b77a2a25;
+  background: #2c2318;
   padding: 1px 6px;
   border-radius: 4px;
   color: #bfa16d;
@@ -528,18 +513,6 @@
 }
 .sidebar-bottom {
   margin-top: auto;
-}
-.sidebar-note {
-  padding: 27px 12px;
-  color: #b89968;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-.sidebar-note p {
-  font-size: 12px;
-  line-height: 1.9;
-  color: #807669;
 }
 .sidebar-note svg {
   flex-shrink: 0;
@@ -558,7 +531,7 @@
   width: 34px;
   height: 34px;
   flex-shrink: 0;
-  background: #b8863420;
+  background: #292219;
   border: 1px solid #b7873440;
   border-radius: 50%;
   color: #d6b071;
@@ -579,7 +552,7 @@
 }
 .sidebar-profile small {
   display: block;
-  color: #746b5e;
+  color: #877d70;
   font-size: 10px;
   margin-top: 3px;
 }
@@ -604,7 +577,7 @@
   gap: 12px;
   align-items: center;
   font-size: 12px;
-  color: #746d64;
+  color: #827b72;
 }
 .portal-topbar strong {
   font-weight: 400;
@@ -831,22 +804,22 @@
 }
 .status-confirmed {
   color: #9db898;
-  background: #74996612;
+  background: #1e201e;
   border-color: #7e9f6536;
 }
 .status-completed {
   color: #9c9d91;
-  background: #ffffff03;
+  background: #1a1a1b;
 }
 .status-pending_payment {
   color: #dbb573;
-  background: #b18a1814;
+  background: #232018;
   border-color: #cfb05438;
 }
 .status-canceled,
 .status-expired {
   color: #ba9486;
-  background: #a9552b0d;
+  background: #1e1a19;
   border-color: #a0604430;
 }
 .dashboard-aside {
@@ -877,7 +850,7 @@
   color: #5d4f38;
 }
 .notes-promo > .portal-eyebrow {
-  color: #8d7959;
+  color: #725f40;
   font-size: 10px;
   letter-spacing: 1.5px;
 }
@@ -890,7 +863,7 @@
   margin: 13px 0;
 }
 .notes-promo > p {
-  color: #837259;
+  color: #705f47;
   font-size: 13px;
   line-height: 1.9;
 }
@@ -926,7 +899,7 @@
 .care-card > span:last-child {
   font-size: 11px;
   display: block;
-  color: #786f61;
+  color: #887f70;
   margin-top: 17px;
 }
 .refund-callout {
@@ -985,7 +958,7 @@
 }
 .consultation-row-main > p > span {
   margin-left: 8px;
-  color: #797064;
+  color: #897f73;
 }
 .consultation-row-main > small {
   display: block;
@@ -999,6 +972,9 @@
   gap: 12px;
 }
 .portal-filters {
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: flex;
   gap: 6px;
   margin: 27px 0 20px;
@@ -1032,11 +1008,6 @@
   font-size: 13px;
   line-height: 1.8;
   max-width: 380px;
-}
-.table-caption {
-  font-size: 11px;
-  color: #766b5b;
-  margin: 19px 3px;
 }
 .notes-intro {
   display: flex;
@@ -1108,7 +1079,7 @@
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 4px;
-  background: #b8985920;
+  background: #2b2720;
   border: 1px solid #b7a16d15;
   color: #ae9a78;
 }
@@ -1184,7 +1155,7 @@
 }
 .payment-table td > small {
   font-size: 10px;
-  color: #7f735f;
+  color: #8b7f6a;
   display: block;
   margin-top: 7px;
 }
@@ -1192,26 +1163,26 @@
   display: inline-flex;
   padding: 5px 8px;
   border-radius: 4px;
-  background: #ffffff03;
+  background: #1a1a1b;
   color: #999084;
   font-size: 11px;
   white-space: nowrap;
 }
 .payment-approved {
-  background: #7c996512;
+  background: #1e201d;
   color: #a1b58d;
 }
 .payment-refund_requested {
-  background: #b88a3514;
+  background: #24201a;
   color: #c3a362;
 }
 .payment-refunded {
-  background: #73968f14;
+  background: #1e2121;
   color: #97b0a3;
 }
 .payment-pending {
   color: #d7ae61;
-  background: #cfa31e14;
+  background: #252218;
 }
 .help-grid {
   display: grid;
@@ -1282,7 +1253,7 @@
   gap: 25px;
   align-items: center;
   font-size: 11px;
-  color: #746855;
+  color: #877b67;
   border-top: 1px solid #ffffff0a;
   margin-top: 45px;
   padding: 25px 0;
@@ -1364,7 +1335,7 @@
   margin-top: 18px;
   font-size: 11px;
   line-height: 1.8;
-  color: #897b66;
+  color: #8e806a;
   text-align: center;
 }
 .modal-description {
@@ -1471,7 +1442,7 @@
 }
 .refund-value > p {
   font-size: 12px;
-  color: #907c5d;
+  color: #937f5f;
 }
 .refund-timeline {
   list-style: none;
@@ -1507,7 +1478,7 @@
 }
 .refund-timeline li p {
   font-size: 12px;
-  color: #776a55;
+  color: #8e806a;
   line-height: 1.8;
   margin-top: 8px;
 }
@@ -1589,7 +1560,7 @@
   gap: 10px;
   position: relative;
   font-size: 13px;
-  color: #796c58;
+  color: #887b66;
 }
 .wizard-progress > li:not(:last-child)::after {
   content: "";
@@ -1616,14 +1587,14 @@
 }
 .wizard-progress > li.active > span {
   border-color: #ce9a4870;
-  background: #a9792126;
+  background: #2d2619;
   color: #ffba4c;
 }
 .wizard-progress > li.complete {
   color: #a59c86;
 }
 .wizard-progress > li.complete > span {
-  background: #6e8b4826;
+  background: #24281f;
   border-color: #9bb57755;
   color: #aabb8c;
 }
@@ -1700,7 +1671,7 @@
 }
 .calendar-weekday {
   font-size: 10px;
-  color: #7c6e57;
+  color: #8d7f67;
   text-align: center;
   padding: 4px 0 11px;
 }
@@ -1734,7 +1705,7 @@
   align-items: center;
   gap: 6px;
   font-size: 10px;
-  color: #8f7b5c;
+  color: #927e5e;
   margin: 21px 0 0;
   line-height: 1.6;
 }
@@ -1779,7 +1750,7 @@
 }
 .time-grid > button.selected {
   border-color: #cda04d;
-  background: #a6752022;
+  background: #2a2419;
   color: #ffc166;
 }
 .time-grid > button:disabled {
@@ -1827,14 +1798,6 @@
   padding-bottom: 22px;
   border-bottom: 1px solid #ffffff0c;
   margin-bottom: 23px;
-}
-.summary-art > img {
-  height: 49px;
-  width: 49px;
-  object-fit: cover;
-  border-radius: 50%;
-  object-position: center 25%;
-  border: 1px solid #bc8f4244;
 }
 .summary-art > span {
   font-size: 10px;
@@ -1955,6 +1918,10 @@
   color: #a59275;
 }
 .payment-methods {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: grid;
   gap: 13px;
 }
@@ -1985,7 +1952,7 @@
 .payment-methods small {
   display: block;
   font-size: 12px;
-  color: #8b7554;
+  color: #9e8866;
   margin-top: 6px;
 }
 .radio-mark {
@@ -2024,13 +1991,13 @@
   width: 85px;
   height: 85px;
   color: #e0ae5d;
-  background: #87602622;
+  background: #26211a;
   border: 1px solid #a77d3644;
   border-radius: 50%;
   margin: 0 auto 28px;
 }
 .result-icon.success {
-  background: #7b994221;
+  background: #24281d;
   color: #bdcc94;
   border-color: #8aab5666;
 }
@@ -2938,6 +2905,8 @@
   }
 }
 .sidebar-note p {
+  line-height: 1.9;
+  color: #807669;
   font-size: 11px;
 }
 
@@ -2983,7 +2952,7 @@
   margin: 0 0 22px;
   border-left: 2px solid #a87b3e;
   padding: 9px 13px;
-  background: #dfab5508;
+  background: #1d1c1a;
   color: #bba98c;
   font-size: 13px;
   line-height: 1.7;
@@ -3002,6 +2971,10 @@
   padding-bottom: 30px;
 }
 .service-choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
@@ -3197,23 +3170,9 @@
   line-height: 1.85;
   color: #b6a78f;
 }
-.priority-choice {
-  display: flex;
-  gap: 12px;
-  padding: 20px;
-  background: #ffffff03;
-  border: 1px solid #ffffff1f;
-  border-radius: 8px;
-  margin: 25px 0 12px;
-  cursor: pointer;
-}
 .priority-choice.selected {
   border-color: #b18b4b;
   background: #9c752817;
-}
-.priority-choice > input {
-  margin-top: 6px;
-  accent-color: #dda54a;
 }
 .priority-choice strong {
   display: block;
@@ -3260,6 +3219,8 @@
   text-align: right;
 }
 .summary-art > img {
+  object-fit: cover;
+  border: 1px solid #bc8f4244;
   width: 100%;
   height: 140px;
   border-radius: 6px;
@@ -3620,26 +3581,41 @@
 }
 .status-booked,
 .status-queued {
-  background: #99702020;
+  background: #272219;
   color: #e0bd7a;
   border-color: #bb914633;
 }
 .status-suspended,
 .status-in_progress {
   color: #e5b878;
-  background: #85582520;
+  background: #251f1a;
 }
 .payment-refund_pending {
   color: #e1b979;
 }
 .portal-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
   overflow-y: auto;
   min-height: 0;
 }
 .portal-sidebar nav > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #9b958b;
+  font-size: 13px;
+  padding: 13px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
   min-height: 43px;
 }
 .sidebar-note {
+  padding: 27px 12px;
+  color: #b89968;
+  gap: 12px;
+  align-items: flex-start;
   display: none;
 }
 @media (min-width: 1000px) {
@@ -3762,13 +3738,26 @@
   }
 }
 .table-caption {
+  font-size: 11px;
+  color: #867b6a;
+  margin: 19px 3px;
   display: block;
   width: auto;
 }
 .priority-choice {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: #ffffff03;
+  border: 1px solid #ffffff1f;
+  border-radius: 8px;
+  margin: 25px 0 12px;
+  cursor: pointer;
   align-items: flex-start;
 }
 .priority-choice > input {
+  margin-top: 6px;
+  accent-color: #dda54a;
   width: 16px;
   height: 16px;
   flex: 0 0 16px;

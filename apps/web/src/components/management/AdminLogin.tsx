@@ -12,7 +12,7 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { clearAdminPreview } from "@/lib/preview-events";
-export function AdminLogin({ returnTo }: { returnTo: string }) {
+export function AdminLogin({ returnTo }: Readonly<{ returnTo: string }>) {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -89,7 +89,7 @@ export function AdminLogin({ returnTo }: { returnTo: string }) {
           <p>Entre com o acesso administrativo autorizado.</p>
           <form className="portal-form" onSubmit={submit}>
             <label>
-              E-mail administrativo
+              E-mail administrativo{" "}
               <input
                 name="email"
                 type="email"

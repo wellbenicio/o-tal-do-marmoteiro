@@ -9,10 +9,10 @@ import { Avatar, MgBadge } from "./Shared";
 export function OrderModal({
   id,
   onClose,
-}: {
+}: Readonly<{
   id: string;
   onClose: () => void;
-}) {
+}>) {
   const s = useManagement();
   const order = s.orders.find((o) => o.booking.id === id);
   const [amount, setAmount] = useState(
@@ -117,7 +117,7 @@ export function OrderModal({
                 }}
               >
                 <label>
-                  Motivo da alteração pelo prestador
+                  Motivo da alteração pelo prestador{" "}
                   <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
@@ -200,7 +200,7 @@ export function OrderModal({
                 />
               </label>
               <label>
-                Fundamentação da decisão
+                Fundamentação da decisão{" "}
                 <textarea
                   minLength={10}
                   required

@@ -99,11 +99,11 @@ em {
   padding: 16px 24px;
   border: 2px solid #f1dd00;
   border-radius: 100px;
-  background: linear-gradient(100deg, #ff9700 10%, #fa9200 42%, #815000 100%);
+  background: linear-gradient(100deg, #ff9700 10%, #fa9200 42%, #a97635 100%);
   box-shadow:
     0 0 9px #ff007b80,
     0 0 14px #ff007b33;
-  color: #fff;
+  color: #201505;
   font-size: 16px;
   font-weight: 500;
   transition:
@@ -117,7 +117,7 @@ em {
   width: 19px;
   height: 19px;
   border-radius: 50%;
-  color: #f39600;
+  color: #b75e00;
   background: white;
 }
 .booking-link:hover {
@@ -389,7 +389,7 @@ em {
 }
 .numbered-card-active .numbered-badge {
   background: #fff;
-  color: #f89500;
+  color: #ba5b00;
 }
 .panel-action {
   position: absolute;

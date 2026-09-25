@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, Mail } from "lucide-react";
 import { legalDocuments, type LegalDocumentId } from "@/lib/preview-legal";
-export function LegalPreview({ documentId }: { documentId?: LegalDocumentId }) {
+export function LegalPreview({
+  documentId,
+}: Readonly<{ documentId?: LegalDocumentId }>) {
   const documents = documentId
     ? legalDocuments.filter((d) => d.id === documentId)
     : legalDocuments;
@@ -70,7 +72,7 @@ export function LegalPreview({ documentId }: { documentId?: LegalDocumentId }) {
           <a className="text-link" href="mailto:falecom@marmoteiro.com">
             falecom@marmoteiro.com
           </a>
-          . O cancelamento também estará disponível na própria área do cliente.
+          {" "}. O cancelamento também estará disponível na própria área do cliente.
         </p>
       </section>
       <Link href="/agendar" className="product-button">

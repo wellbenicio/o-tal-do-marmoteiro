@@ -6,11 +6,11 @@ export function PrivateQuestion({
   booking,
   customerName,
   phone,
-}: {
+}: Readonly<{
   booking: DemoBooking;
   customerName: string;
   phone: string;
-}) {
+}>) {
   useAdminIdentity();
   if (booking.modality !== "QUESTION") return null;
   return (

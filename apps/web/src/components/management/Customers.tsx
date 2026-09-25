@@ -11,15 +11,26 @@ import {
   Mail,
 } from "lucide-react";
 import { useManagement } from "./ManagementProvider";
-import { customerStats } from "@/lib/management";
+import { customerStats, type Customer } from "@/lib/management";
 import { bookingLabels, money, prettyDate } from "@/lib/demo-bookings";
 import { Avatar, Empty, Kpi, MgBadge, SectionTitle } from "./Shared";
 import { Modal } from "@/components/portal/Modal";
+function FollowupBadge({
+  summary,
+}: Readonly<{ summary: ReturnType<typeof customerStats> & { customer: Customer } }>) {
+  if (summary.upcoming) return <MgBadge tone="green">Atendimento pendente</MgBadge>;
+  if (summary.needsFollowup) return <MgBadge tone="orange">Hora de retomar</MgBadge>;
+  return (
+    <MgBadge tone="neutral">
+      {summary.customer.relationshipAllowed ? "Em dia" : "Contato não autorizado"}
+    </MgBadge>
+  );
+}
 export function Customers({
   initialFilter = "all",
-}: {
+}: Readonly<{
   initialFilter?: string;
-}) {
+}>) {
   const s = useManagement();
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState("");
@@ -36,13 +47,11 @@ export function Customers({
         c.customer.name.toLowerCase().includes(search.toLowerCase()) &&
         (filter !== "retorno" || c.needsFollowup),
     )
-    .sort((a, b) =>
-      filter === "ranking"
-        ? b.completed - a.completed
-        : filter === "retorno"
-          ? (b.days || 0) - (a.days || 0)
-          : a.customer.name.localeCompare(b.customer.name),
-    );
+    .sort((first, second) => {
+      if (filter === "ranking") return second.completed - first.completed;
+      if (filter === "retorno") return (second.days || 0) - (first.days || 0);
+      return first.customer.name.localeCompare(second.customer.name);
+    });
   const current = all.find((c) => c.customer.id === selected);
   return (
     <>
@@ -103,7 +112,7 @@ export function Customers({
           }}
         >
           <label>
-            Lembrar após
+            Lembrar após{" "}
             <select
               aria-label="Intervalo para retorno"
               value={interval}
@@ -241,23 +250,7 @@ export function Customers({
                   </td>
                   <td>{money(c.total)}</td>
                   <td>
-                    <MgBadge
-                      tone={
-                        c.upcoming
-                          ? "green"
-                          : c.needsFollowup
-                            ? "orange"
-                            : "neutral"
-                      }
-                    >
-                      {c.upcoming
-                        ? "Atendimento pendente"
-                        : c.needsFollowup
-                          ? "Hora de retomar"
-                          : !c.customer.relationshipAllowed
-                            ? "Contato não autorizado"
-                            : "Em dia"}
-                    </MgBadge>
+                    <FollowupBadge summary={c} />
                   </td>
                   <td>
                     <button

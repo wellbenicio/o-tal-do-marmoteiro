@@ -21,7 +21,7 @@ const protectedFields = [
   { key: "motherName", label: "Nome da mãe" },
   { key: "genderIdentity", label: "Identidade de gênero" },
 ] as const;
-export function AccountPanels({ view }: { view: "account" | "privacy" }) {
+export function AccountPanels({ view }: Readonly<{ view: "account" | "privacy" }>) {
   const { profile, updateContact, addRequest, requests, notify } = useDemo();
   const [correction, setCorrection] = useState(false);
   const [field, setField] = useState<keyof DemoProfile>("legalName");
@@ -109,7 +109,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
                 onSubmit={submitCorrection}
               >
                 <label>
-                  Campo a corrigir
+                  Campo a corrigir{" "}
                   <select
                     value={field}
                     onChange={(e) =>
@@ -127,7 +127,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
                   Valor atual: {profile[field] || "Não informado"}
                 </p>
                 <label>
-                  Novo valor
+                  Novo valor{" "}
                   <input
                     name="newValue"
                     type={field === "birthDate" ? "date" : "text"}
@@ -161,7 +161,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
             <form className="portal-form" onSubmit={saveContact}>
               <div className="form-two-columns">
                 <label>
-                  E-mail
+                  E-mail{" "}
                   <input
                     name="email"
                     type="email"
@@ -171,7 +171,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
                   />
                 </label>
                 <label>
-                  WhatsApp
+                  WhatsApp{" "}
                   <input
                     name="phone"
                     type="tel"
@@ -228,7 +228,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
             </p>
             <form className="portal-form" onSubmit={submitPrivacy}>
               <label>
-                Assunto
+                Assunto{" "}
                 <select name="type">
                   <option>Acesso aos meus dados</option>
                   <option>Correção dos meus dados</option>
@@ -239,7 +239,7 @@ export function AccountPanels({ view }: { view: "account" | "privacy" }) {
                 </select>
               </label>
               <label>
-                Sua solicitação
+                Sua solicitação{" "}
                 <textarea
                   name="message"
                   required

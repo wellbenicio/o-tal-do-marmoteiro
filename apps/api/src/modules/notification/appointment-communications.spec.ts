@@ -165,6 +165,42 @@ describe('appointment communications worker', () => {
       [{ data: { status: 'MANUAL_REVIEW' } }],
     ]);
   });
+  it.each([
+    { attempts: 1, retryable: true, uncertain: false, status: 'RETRY' },
+    { attempts: 8, retryable: true, uncertain: false, status: 'FAILED' },
+    { attempts: 1, retryable: false, uncertain: false, status: 'FAILED' },
+    { attempts: 1, retryable: true, uncertain: true, status: 'MANUAL_REVIEW' },
+  ])(
+    'keeps failure precedence and retry limit: $status at attempt $attempts',
+    async (scenario) => {
+      const sample = fixture();
+      sample.db.$queryRaw.mockResolvedValue([
+        {
+          id: 'job',
+          eventCode: 'APPOINTMENT_WHATSAPP_REMINDER',
+          payload: sample.payload,
+          attempts: scenario.attempts,
+        },
+      ]);
+      sample.whatsapp.reminder.mockRejectedValue(
+        new ProviderError(
+          'TEST_FAILURE',
+          scenario.retryable,
+          scenario.uncertain,
+        ),
+      );
+      await sample.service.processDue();
+      expect(sample.db.outboxMessage.update).toHaveBeenCalledWith({
+        where: { id: 'job' },
+        data: {
+          status: scenario.status,
+          lastErrorCode: 'TEST_FAILURE',
+          leaseUntil: null,
+          availableAt: expect.any(Date) as Date,
+        },
+      });
+    },
+  );
   it('reuses consent and slot versions in reminder deduplication keys', async () => {
     const f = fixture('APPOINTMENT_CALENDAR_SYNC');
     await f.service.processDue();

@@ -10,10 +10,10 @@ import { Integrations } from "@/components/management/Integrations";
 export default async function Page({
   params,
   searchParams,
-}: {
+}: Readonly<{
   params: Promise<{ secao: string }>;
   searchParams: Promise<Record<string, string | undefined>>;
-}) {
+}>) {
   const { secao } = await params;
   await requireAdmin("/gestao/" + secao);
   const query = await searchParams;

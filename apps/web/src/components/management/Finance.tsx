@@ -35,6 +35,11 @@ import {
 } from "./Shared";
 import { Modal } from "@/components/portal/Modal";
 import { OrderModal } from "./OrderModal";
+function periodStart(period: string, today: string, customFrom: string) {
+  if (period === "month") return today.slice(0, 7) + "-01";
+  if (period === "custom") return customFrom;
+  return shiftedDate(-Number(period) + 1);
+}
 export function Finance() {
   const s = useManagement();
   const [period, setPeriod] = useState("month");
@@ -43,12 +48,7 @@ export function Finance() {
   const [expense, setExpense] = useState(false);
   const [order, setOrder] = useState<string | null>(null);
   const today = localDate();
-  const from =
-    period === "month"
-      ? today.slice(0, 7) + "-01"
-      : period === "custom"
-        ? customFrom
-        : shiftedDate(-Number(period) + 1);
+  const from = periodStart(period, today, customFrom);
   const to = period === "custom" ? customTo : today;
   const m = financialMetrics(s, from, to);
   const rows = s.orders
@@ -156,7 +156,7 @@ export function Finance() {
         {period === "custom" ? (
           <div className="mg-date-inputs">
             <label>
-              De
+              De{" "}
               <input
                 type="date"
                 value={customFrom}
@@ -167,7 +167,7 @@ export function Finance() {
               />
             </label>
             <label>
-              Até
+              Até{" "}
               <input
                 type="date"
                 value={customTo}
@@ -417,7 +417,7 @@ export function Finance() {
         >
           <form className="portal-form" onSubmit={addExpense}>
             <label>
-              Descrição
+              Descrição{" "}
               <input
                 name="title"
                 required
@@ -427,7 +427,7 @@ export function Finance() {
             </label>
             <div className="form-two-columns">
               <label>
-                Valor (R$)
+                Valor (R$){" "}
                 <input
                   type="number"
                   name="amount"
@@ -437,7 +437,7 @@ export function Finance() {
                 />
               </label>
               <label>
-                Data
+                Data{" "}
                 <input
                   type="date"
                   name="date"
@@ -448,7 +448,7 @@ export function Finance() {
               </label>
             </div>
             <label>
-              Categoria
+              Categoria{" "}
               <select name="category">
                 <option>Materiais</option>
                 <option>Software</option>

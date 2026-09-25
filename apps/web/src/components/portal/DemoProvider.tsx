@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -114,7 +115,7 @@ function validStoredState(value: unknown): value is DemoState {
     )
   );
 }
-export function DemoProvider({ children }: { children: ReactNode }) {
+export function DemoProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [state, setState] = useState<DemoState>(empty);
   const [busyBlocks, setBusyBlocks] = useState<AvailabilityBlock[]>([]);
   useEffect(() => {
@@ -123,12 +124,6 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     window.addEventListener(AVAILABILITY_EVENT, receive);
     return () => window.removeEventListener(AVAILABILITY_EVENT, receive);
   }, []);
-  function applyAdminBooking(booking: DemoBooking) {
-    setState((s) => ({
-      ...s,
-      bookings: s.bookings.map((b) => (b.id === booking.id ? booking : b)),
-    }));
-  }
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
   const [message, setMessage] = useState("");
@@ -173,320 +168,327 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     }, 15000);
     return () => clearInterval(timer);
   }, []);
-  function slotOccupied(date: string, time: string, except?: string) {
-    return (
-      overlapsBlock(busyBlocks, date, time, 30, except) ||
-      normalizeBookings(state.bookings).some(
-        (b) =>
-          b.id !== except &&
-          b.modality === "APPOINTMENT" &&
-          b.date === date &&
-          b.time === time &&
-          (b.status === "BOOKED" ||
-            b.orderStatus === "AWAITING_PAYMENT" ||
-            b.orderStatus === "CANCELLATION_REQUESTED"),
-      )
-    );
-  }
-  function enterDemo(profile = defaultProfile, examples = true) {
-    if (!examples) publishClientEvent("ACCOUNT_CREATED", profile);
-    setState((s) =>
-      s.profile?.email === profile.email
-        ? { ...s, profile }
-        : { profile, bookings: examples ? demoBookings() : [], requests: [] },
-    );
-  }
-  function updateContact(email: string, phone: string) {
-    publishClientEvent(
-      "CONTACT_UPDATED",
-      state.profile ? { ...state.profile, email, phone } : null,
-    );
-    setState((s) => ({
-      ...s,
-      profile: s.profile ? { ...s.profile, email, phone } : null,
-    }));
-    notify(
-      "Contato atualizado nesta demonstração. Na versão integrada, a mudança exigirá validação.",
-    );
-  }
-  function signOut() {
-    setState(empty);
-    clearAdminPreview();
-    sessionStorage.removeItem(CLIENT_EVENTS_KEY);
-    window.dispatchEvent(new Event(MANAGEMENT_RESET_EVENT));
-  }
-  function addBooking(booking: DemoBooking) {
-    if (!state.profile || booking.acceptances.length !== 3) return false;
-    if (
-      booking.modality === "QUESTION" &&
-      (!booking.question ||
-        booking.question.text.trim().length < 10 ||
-        booking.question.text.length > 1500)
-    )
-      return false;
-    if (
-      booking.modality === "APPOINTMENT" &&
-      (slotOccupied(booking.date, booking.time) ||
-        !previewConfig.calendar.slots.includes(booking.time) ||
-        appointmentTimestamp(booking.date, booking.time) <= Date.now())
-    )
-      return false;
-    setState((s) => ({
-      ...s,
-      bookings: [booking, ...normalizeBookings(s.bookings)],
-    }));
-    publishClientEvent("ORDER_CREATED", state.profile, booking);
-    return true;
-  }
-  function payBooking(id: string) {
-    const found = normalizeBookings(state.bookings).find((b) => b.id === id);
-    if (!found || found.orderStatus !== "AWAITING_PAYMENT") {
-      notify("Essa reserva expirou. Inicie uma nova contratação de teste.");
-      return false;
+  const value = useMemo<DemoContextValue>(() => {
+    function applyAdminBooking(booking: DemoBooking) {
+      setState((current) => ({
+        ...current,
+        bookings: current.bookings.map((existing) =>
+          existing.id === booking.id ? booking : existing,
+        ),
+      }));
     }
-    const at = new Date().toISOString();
-    setState((s) => ({
-      ...s,
-      bookings: s.bookings.map((b) =>
-        b.id === id
-          ? {
-              ...b,
-              orderStatus: "CONFIRMED",
-              status: b.modality === "QUESTION" ? "QUEUED" : "BOOKED",
-              paymentStatus: "APPROVED",
-              paidAt: at,
-              timeline: [
-                ...b.timeline,
-                { at, title: "Pagamento simulado aprovado" },
-                {
-                  at,
-                  title:
-                    b.modality === "QUESTION"
-                      ? "Entrada na fila; execução ainda não iniciada"
-                      : "Horário confirmado na demonstração",
-                },
-              ],
-            }
-          : b,
-      ),
-    }));
-    publishClientEvent("PAYMENT_APPROVED", state.profile, {
-      ...found,
-      orderStatus: "CONFIRMED",
-      status: found.modality === "QUESTION" ? "QUEUED" : "BOOKED",
-      paymentStatus: "APPROVED",
-      paidAt: at,
-    });
-    notify(
-      "Pagamento aprovado na simulação. Nenhum valor cobrado ou e-mail enviado.",
-    );
-    return true;
-  }
-  function cancelBooking(id: string, reason = "", exceptional = false) {
-    const found = normalizeBookings(state.bookings).find((b) => b.id === id);
-    if (!found || !canManage(found)) return;
-    const at = new Date().toISOString();
-    const result = decideRefund({
-      modality: found.modality,
-      totalPaid: found.paymentStatus === "APPROVED" ? found.amount : 0,
-      contractedAt: found.createdAt,
-      requestedAt: at,
-      execution: found.status,
-      startsAt:
-        found.modality === "APPOINTMENT"
-          ? appointmentTimestamp(found.date, found.time)
-          : undefined,
-      withdrawal: "UNDETERMINED",
-      exceptional,
-    });
-    const manual = result.decision === "MANUAL_REVIEW_REQUIRED";
-    const protocol = "CAN-" + crypto.randomUUID().slice(0, 8).toUpperCase();
-    const updated: DemoBooking = {
-      ...found,
-      orderStatus: manual ? "CANCELLATION_REQUESTED" : "CANCELED",
-      status: manual
-        ? ["QUEUED", "IN_PROGRESS"].includes(found.status)
-          ? "SUSPENDED"
-          : found.status
-        : "CANCELED",
-      paymentStatus: manual
-        ? found.paymentStatus
-        : result.amount
-          ? "REFUND_PENDING"
-          : "CANCELLED",
-      canceledAt: manual ? undefined : at,
-      cancellation: {
-        protocol,
-        requestedAt: at,
-        reason,
-        executionAtRequest: found.status,
-        result,
-      },
-      timeline: [
-        ...found.timeline,
-        { at, title: `Solicitação recebida · ${protocol}` },
-        {
-          at,
-          title: manual
-            ? "Encaminhada para análise; nenhum reembolso aprovado automaticamente"
-            : "Reserva cancelada sem cobrança",
-        },
-      ],
-    };
-    setState((s) => ({
-      ...s,
-      bookings: s.bookings.map((b) => (b.id === id ? updated : b)),
-    }));
-    publishClientEvent(
-      "CANCELLATION_REQUESTED",
-      state.profile,
-      updated,
-      protocol,
-    );
-    notify(
-      `Solicitação recebida · ${protocol}. Protocolo disponível nos detalhes. Nesta prévia, nenhum e-mail é enviado.`,
-    );
-  }
-  function requestReschedule(id: string) {
-    const b = normalizeBookings(state.bookings).find((b) => b.id === id);
-    if (!b) return false;
-    const eligibility = rescheduleEligibility(b);
-    if (!eligibility.allowed) {
-      notify(eligibility.reason);
-      return false;
-    }
-    if (b.rescheduleRequest?.status === "OPEN") return true;
-    const at = new Date().toISOString();
-    const updated: DemoBooking = {
-      ...b,
-      rescheduleRequest: {
-        id: "REA-" + crypto.randomUUID().slice(0, 8),
-        requestedAt: at,
-        optionsPresentedAt: at,
-        expiresAt: new Date(Date.now() + 48 * 3600000).toISOString(),
-        originalDate: b.date,
-        originalTime: b.time,
-        causedByProvider: false,
-        status: "OPEN",
-      },
-      timeline: [
-        ...b.timeline,
-        {
-          at,
-          title: "Reagendamento solicitado; opções disponíveis por 48 horas",
-        },
-      ],
-    };
-    setState((s) => ({
-      ...s,
-      bookings: s.bookings.map((item) => (item.id === id ? updated : item)),
-    }));
-    publishClientEvent(
-      "RESCHEDULE_REQUESTED",
-      state.profile,
-      updated,
-      updated.rescheduleRequest?.id,
-    );
-    return true;
-  }
-  function rescheduleBooking(id: string, date: string, time: string) {
-    const found = normalizeBookings(state.bookings).find((b) => b.id === id);
-    if (
-      !found ||
-      !rescheduleEligibility(found).allowed ||
-      found.rescheduleRequest?.status !== "OPEN" ||
-      (found.date === date && found.time === time) ||
-      !previewConfig.calendar.slots.includes(time) ||
-      appointmentTimestamp(date, time) <= Date.now() ||
-      slotOccupied(date, time, id)
-    ) {
-      notify(
-        "Não foi possível confirmar. Confira o prazo e escolha outro horário disponível.",
+    function slotOccupied(date: string, time: string, except?: string) {
+      return (
+        overlapsBlock(busyBlocks, date, time, 30, except) ||
+        normalizeBookings(state.bookings).some(
+          (b) =>
+            b.id !== except &&
+            b.modality === "APPOINTMENT" &&
+            b.date === date &&
+            b.time === time &&
+            (b.status === "BOOKED" ||
+              b.orderStatus === "AWAITING_PAYMENT" ||
+              b.orderStatus === "CANCELLATION_REQUESTED"),
+        )
       );
-      return false;
     }
-    const at = new Date().toISOString();
-    const updated: DemoBooking = {
-      ...found,
-      previousDate: found.date,
-      previousTime: found.time,
-      date,
-      time,
-      rescheduleUsed: found.rescheduleRequest?.causedByProvider
-        ? found.rescheduleUsed
-        : true,
-      rescheduleRequest: {
-        ...found.rescheduleRequest!,
-        status: "CONFIRMED",
-        confirmedAt: at,
-      },
-      timeline: [
-        ...found.timeline,
-        { at, title: `Novo horário confirmado: ${date} às ${time}` },
-      ],
-    };
-    setState((s) => ({
-      ...s,
-      bookings: s.bookings.map((b) => (b.id === id ? updated : b)),
-    }));
-    publishClientEvent("RESCHEDULE_CONFIRMED", state.profile, updated);
-    notify(
-      found.rescheduleRequest?.causedByProvider
-        ? "Novo horário confirmado. A alteração pelo prestador não consumiu um novo uso do seu direito."
-        : "Novo horário confirmado. Seu reagendamento foi utilizado nesta demonstração.",
-    );
-    return true;
-  }
-  function addRequest(
-    request: Omit<DemoRequest, "id" | "requestedAt" | "status">,
-  ) {
-    const id =
-      (request.type === "CORRECTION" ? "CAD-" : "PRV-") +
-      crypto.randomUUID().slice(0, 8).toUpperCase();
-    setState((s) => ({
-      ...s,
-      requests: [
-        {
-          ...request,
-          id,
-          requestedAt: new Date().toISOString(),
-          status: "RECEIVED",
+    function enterDemo(profile = defaultProfile, examples = true) {
+      if (!examples) publishClientEvent("ACCOUNT_CREATED", profile);
+      setState((s) =>
+        s.profile?.email === profile.email
+          ? { ...s, profile }
+          : { profile, bookings: examples ? demoBookings() : [], requests: [] },
+      );
+    }
+    function updateContact(email: string, phone: string) {
+      publishClientEvent(
+        "CONTACT_UPDATED",
+        state.profile ? { ...state.profile, email, phone } : null,
+      );
+      setState((s) => ({
+        ...s,
+        profile: s.profile ? { ...s.profile, email, phone } : null,
+      }));
+      notify(
+        "Contato atualizado nesta demonstração. Na versão integrada, a mudança exigirá validação.",
+      );
+    }
+    function signOut() {
+      setState(empty);
+      clearAdminPreview();
+      sessionStorage.removeItem(CLIENT_EVENTS_KEY);
+      window.dispatchEvent(new Event(MANAGEMENT_RESET_EVENT));
+    }
+    function addBooking(booking: DemoBooking) {
+      if (!state.profile || booking.acceptances.length !== 3) return false;
+      if (
+        booking.modality === "QUESTION" &&
+        (!booking.question ||
+          booking.question.text.trim().length < 10 ||
+          booking.question.text.length > 1500)
+      )
+        return false;
+      if (
+        booking.modality === "APPOINTMENT" &&
+        (slotOccupied(booking.date, booking.time) ||
+          !previewConfig.calendar.slots.includes(booking.time) ||
+          appointmentTimestamp(booking.date, booking.time) <= Date.now())
+      )
+        return false;
+      setState((s) => ({
+        ...s,
+        bookings: [booking, ...normalizeBookings(s.bookings)],
+      }));
+      publishClientEvent("ORDER_CREATED", state.profile, booking);
+      return true;
+    }
+    function payBooking(id: string) {
+      const found = normalizeBookings(state.bookings).find((b) => b.id === id);
+      if (found?.orderStatus !== "AWAITING_PAYMENT") {
+        notify("Essa reserva expirou. Inicie uma nova contratação de teste.");
+        return false;
+      }
+      const at = new Date().toISOString();
+      setState((s) => ({
+        ...s,
+        bookings: s.bookings.map((b) =>
+          b.id === id
+            ? {
+                ...b,
+                orderStatus: "CONFIRMED",
+                status: b.modality === "QUESTION" ? "QUEUED" : "BOOKED",
+                paymentStatus: "APPROVED",
+                paidAt: at,
+                timeline: [
+                  ...b.timeline,
+                  { at, title: "Pagamento simulado aprovado" },
+                  {
+                    at,
+                    title:
+                      b.modality === "QUESTION"
+                        ? "Entrada na fila; execução ainda não iniciada"
+                        : "Horário confirmado na demonstração",
+                  },
+                ],
+              }
+            : b,
+        ),
+      }));
+      publishClientEvent("PAYMENT_APPROVED", state.profile, {
+        ...found,
+        orderStatus: "CONFIRMED",
+        status: found.modality === "QUESTION" ? "QUEUED" : "BOOKED",
+        paymentStatus: "APPROVED",
+        paidAt: at,
+      });
+      notify(
+        "Pagamento aprovado na simulação. Nenhum valor cobrado ou e-mail enviado.",
+      );
+      return true;
+    }
+    function cancelBooking(id: string, reason = "", exceptional = false) {
+      const found = normalizeBookings(state.bookings).find((b) => b.id === id);
+      if (!found || !canManage(found)) return;
+      const at = new Date().toISOString();
+      const result = decideRefund({
+        modality: found.modality,
+        totalPaid: found.paymentStatus === "APPROVED" ? found.amount : 0,
+        contractedAt: found.createdAt,
+        requestedAt: at,
+        execution: found.status,
+        startsAt:
+          found.modality === "APPOINTMENT"
+            ? appointmentTimestamp(found.date, found.time)
+            : undefined,
+        withdrawal: "UNDETERMINED",
+        exceptional,
+      });
+      const manual = result.decision === "MANUAL_REVIEW_REQUIRED";
+      const protocol = "CAN-" + crypto.randomUUID().slice(0, 8).toUpperCase();
+      const reviewStatus = ["QUEUED", "IN_PROGRESS"].includes(found.status)
+        ? "SUSPENDED"
+        : found.status;
+      const canceledPaymentStatus = result.amount
+        ? "REFUND_PENDING"
+        : "CANCELLED";
+      const updated: DemoBooking = {
+        ...found,
+        orderStatus: manual ? "CANCELLATION_REQUESTED" : "CANCELED",
+        status: manual ? reviewStatus : "CANCELED",
+        paymentStatus: manual ? found.paymentStatus : canceledPaymentStatus,
+        canceledAt: manual ? undefined : at,
+        cancellation: {
+          protocol,
+          requestedAt: at,
+          reason,
+          executionAtRequest: found.status,
+          result,
         },
-        ...s.requests,
-      ],
-    }));
-    publishClientEvent("CUSTOMER_REQUEST", state.profile, undefined, id);
-    notify(`Solicitação simulada recebida · ${id}. Nenhum dado enviado.`);
-  }
+        timeline: [
+          ...found.timeline,
+          { at, title: `Solicitação recebida · ${protocol}` },
+          {
+            at,
+            title: manual
+              ? "Encaminhada para análise; nenhum reembolso aprovado automaticamente"
+              : "Reserva cancelada sem cobrança",
+          },
+        ],
+      };
+      setState((s) => ({
+        ...s,
+        bookings: s.bookings.map((b) => (b.id === id ? updated : b)),
+      }));
+      publishClientEvent(
+        "CANCELLATION_REQUESTED",
+        state.profile,
+        updated,
+        protocol,
+      );
+      notify(
+        `Solicitação recebida · ${protocol}. Protocolo disponível nos detalhes. Nesta prévia, nenhum e-mail é enviado.`,
+      );
+    }
+    function requestReschedule(id: string) {
+      const b = normalizeBookings(state.bookings).find((b) => b.id === id);
+      if (!b) return false;
+      const eligibility = rescheduleEligibility(b);
+      if (!eligibility.allowed) {
+        notify(eligibility.reason);
+        return false;
+      }
+      if (b.rescheduleRequest?.status === "OPEN") return true;
+      const at = new Date().toISOString();
+      const updated: DemoBooking = {
+        ...b,
+        rescheduleRequest: {
+          id: "REA-" + crypto.randomUUID().slice(0, 8),
+          requestedAt: at,
+          optionsPresentedAt: at,
+          expiresAt: new Date(Date.now() + 48 * 3600000).toISOString(),
+          originalDate: b.date,
+          originalTime: b.time,
+          causedByProvider: false,
+          status: "OPEN",
+        },
+        timeline: [
+          ...b.timeline,
+          {
+            at,
+            title: "Reagendamento solicitado; opções disponíveis por 48 horas",
+          },
+        ],
+      };
+      setState((s) => ({
+        ...s,
+        bookings: s.bookings.map((item) => (item.id === id ? updated : item)),
+      }));
+      publishClientEvent(
+        "RESCHEDULE_REQUESTED",
+        state.profile,
+        updated,
+        updated.rescheduleRequest?.id,
+      );
+      return true;
+    }
+    function rescheduleBooking(id: string, date: string, time: string) {
+      const found = normalizeBookings(state.bookings).find((b) => b.id === id);
+      if (
+        !found ||
+        !rescheduleEligibility(found).allowed ||
+        found.rescheduleRequest?.status !== "OPEN" ||
+        (found.date === date && found.time === time) ||
+        !previewConfig.calendar.slots.includes(time) ||
+        appointmentTimestamp(date, time) <= Date.now() ||
+        slotOccupied(date, time, id)
+      ) {
+        notify(
+          "Não foi possível confirmar. Confira o prazo e escolha outro horário disponível.",
+        );
+        return false;
+      }
+      const at = new Date().toISOString();
+      const updated: DemoBooking = {
+        ...found,
+        previousDate: found.date,
+        previousTime: found.time,
+        date,
+        time,
+        rescheduleUsed: found.rescheduleRequest?.causedByProvider
+          ? found.rescheduleUsed
+          : true,
+        rescheduleRequest: {
+          ...found.rescheduleRequest!,
+          status: "CONFIRMED",
+          confirmedAt: at,
+        },
+        timeline: [
+          ...found.timeline,
+          { at, title: `Novo horário confirmado: ${date} às ${time}` },
+        ],
+      };
+      setState((s) => ({
+        ...s,
+        bookings: s.bookings.map((b) => (b.id === id ? updated : b)),
+      }));
+      publishClientEvent("RESCHEDULE_CONFIRMED", state.profile, updated);
+      notify(
+        found.rescheduleRequest?.causedByProvider
+          ? "Novo horário confirmado. A alteração pelo prestador não consumiu um novo uso do seu direito."
+          : "Novo horário confirmado. Seu reagendamento foi utilizado nesta demonstração.",
+      );
+      return true;
+    }
+    function addRequest(
+      request: Omit<DemoRequest, "id" | "requestedAt" | "status">,
+    ) {
+      const id =
+        (request.type === "CORRECTION" ? "CAD-" : "PRV-") +
+        crypto.randomUUID().slice(0, 8).toUpperCase();
+      setState((s) => ({
+        ...s,
+        requests: [
+          {
+            ...request,
+            id,
+            requestedAt: new Date().toISOString(),
+            status: "RECEIVED",
+          },
+          ...s.requests,
+        ],
+      }));
+      publishClientEvent("CUSTOMER_REQUEST", state.profile, undefined, id);
+      notify(`Solicitação simulada recebida · ${id}. Nenhum dado enviado.`);
+    }
+    return {
+      ...state,
+      busyBlocks,
+      applyAdminBooking,
+      ready,
+      now,
+      enterDemo,
+      updateContact,
+      signOut,
+      addBooking,
+      payBooking,
+      cancelBooking,
+      requestReschedule,
+      rescheduleBooking,
+      addRequest,
+      notify,
+    };
+  }, [state, busyBlocks, ready, now, notify]);
   return (
-    <DemoContext.Provider
-      value={{
-        ...state,
-        busyBlocks,
-        applyAdminBooking,
-        ready,
-        now,
-        enterDemo,
-        updateContact,
-        signOut,
-        addBooking,
-        payBooking,
-        cancelBooking,
-        requestReschedule,
-        rescheduleBooking,
-        addRequest,
-        notify,
-      }}
-    >
+    <DemoContext.Provider value={value}>
       {children}
       {message && (
-        <div className="portal-toast" role="status">
+        <output className="portal-toast">
           <span />
           {message}
           <button aria-label="Fechar mensagem" onClick={() => setMessage("")}>
             ×
           </button>
-        </div>
+        </output>
       )}
     </DemoContext.Provider>
   );
