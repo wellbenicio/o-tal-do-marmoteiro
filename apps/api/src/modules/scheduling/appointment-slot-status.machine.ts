@@ -17,7 +17,7 @@ import { DomainError } from '../../common/errors/domain-error';
 export type AppointmentSlotStatusEvent =
   /** Cliente seleciona o horário no checkout, antes do pagamento (seção 14.1). */
   | { type: 'HOLD' }
-  /** Pagamento aprovado (mesmo evento que confirma AppointmentStatus — ADR 0003). */
+  /** Pagamento aprovado (mesmo evento que confirma AppointmentStatus — ADR 0018). */
   | { type: 'PAYMENT_APPROVED' }
   /** Hold expirado, checkout abandonado, ou pagamento não aprovado (seção 14.2). */
   | { type: 'RELEASE' };

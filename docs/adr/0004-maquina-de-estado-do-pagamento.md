@@ -10,7 +10,7 @@ A seção 10 exige que Pagamento seja tratado como eixo de estado
 independente de Pedido e Atendimento: "Representa a movimentação
 financeira" (seção 10.2). A ADR 0001 já registra a decisão de usar XState
 "para os fluxos de Pedido, Pagamento e Atendimento" — as máquinas de Pedido
-(ADR 0002) e Atendimento (ADR 0003) já foram implementadas; esta ADR fecha
+(ADR 0017) e Atendimento (ADR 0018) já foram implementadas; esta ADR fecha
 o terceiro eixo.
 
 Diferentemente do Pedido e do Atendimento, a seção 21.2 já enumera um
@@ -44,11 +44,11 @@ Evidências textuais adicionais usadas nesta decisão:
 - Seção 11.1: `payment.confirmedAt` é a referência oficial do SLA da
   pergunta avulsa — confirma que existe um instante de confirmação bem
   definido, coincidente com a transição para `APPROVED`.
-- ADR 0002 (`OrderStatus`): `CREATED → CONFIRMED` ocorre quando
+- ADR 0017 (`OrderStatus`): `CREATED → CONFIRMED` ocorre quando
   `PaymentTransaction.status` se torna `APPROVED`; `CREATED → CANCELLED`
   ocorre quando o pagamento é "rejeitado, cancelado ou abandonado antes da
   aprovação (espelha `PaymentStatus.REJECTED`/`CANCELLED`)". Ou seja, a
-  ADR 0002 já pressupõe que `REJECTED` e `CANCELLED` são desfechos
+  ADR 0017 já pressupõe que `REJECTED` e `CANCELLED` são desfechos
   possíveis a partir de `PENDING`, sem passar por `APPROVED`.
 - Seção 20.2 (Refund Policy Engine): o motor de reembolso é centralizado e
   produz uma decisão (`FULL_REFUND`/`PARTIAL_REFUND`/`NO_REFUND`/
@@ -92,8 +92,8 @@ Transições:
 
 - `PENDING → APPROVED` (evento `APPROVE`): webhook do provedor confirma o
   pagamento (seção 21.3). Dispara `OrderStatus.CREATED → CONFIRMED`
-  (ADR 0002) e, para consulta online, `AppointmentStatus.NOT_STARTED →
-  SCHEDULED` (ADR 0003).
+  (ADR 0017) e, para consulta online, `AppointmentStatus.NOT_STARTED →
+  SCHEDULED` (ADR 0018).
 - `PENDING → REJECTED` (evento `REJECT`): webhook do provedor informa
   recusa.
 - `PENDING → CANCELLED` (evento `CANCEL`): abandono/expiração do checkout
@@ -133,14 +133,14 @@ Engine.
   necessária; esta ADR apenas fecha o grafo de transições que faltava.
 - O módulo `payment` ganha `payment-status.machine.ts` (lógica pura de
   transição, XState) e `PaymentStatusService` (NestJS), seguindo
-  exatamente o padrão de `ordering`/`scheduling` (ADR 0002/0003).
+  exatamente o padrão de `ordering`/`scheduling` (ADR 0017/0003).
 - Esta decisão não modela o "merge diagram" de reprocessamento de webhook
   duplicado (ex.: dois eventos `APPROVE` para a mesma transação) — a
   função `transitionPaymentStatus` lança
   `InvalidPaymentStatusTransitionError` nesse caso, cabendo ao chamador
   (módulo `payment`, em rodada futura) decidir se trata isso como no-op
   idempotente ou como erro operacional. Esse ponto já era citado como
-  aberto na ADR 0002.
+  aberto na ADR 0017.
 - Não modela, ainda, a hipótese de um reembolso parcial ser seguido de um
   reembolso complementar até atingir o total (ex.: uma revisão manual —
   seção 18 — que amplie uma decisão `PARTIAL_REFUND` anterior para

@@ -9,7 +9,7 @@
 A seção 14.2 exige um mecanismo de reserva temporária para "evitar dupla
 venda do mesmo horário" da consulta online — regra invariante nº 8 (seção
 32: "o mesmo horário não deverá ser vendido definitivamente para dois
-pedidos"). Ao contrário do Pedido (ADR 0002), do Atendimento (ADR 0003) e
+pedidos"). Ao contrário do Pedido (ADR 0017), do Atendimento (ADR 0018) e
 do Pagamento (ADR 0004), a especificação já apresenta o diagrama completo
 de estados e transições para o slot, sem apenas exemplos soltos:
 
@@ -29,7 +29,7 @@ Esses três valores já estão transcritos literalmente em
 `AppointmentSlotStatus` (`apps/api/prisma/schema.prisma`, model
 `AppointmentSlot`, com campos de apoio `heldAt`/`heldUntil`) desde a
 estruturação técnica anterior. Esta ADR fecha o grafo de eventos que
-disparam essas transições, seguindo o mesmo padrão das ADR 0002–0004.
+disparam essas transições, seguindo o mesmo padrão das ADR 0017–0004.
 
 Evidências textuais adicionais usadas nesta decisão:
 
@@ -41,7 +41,7 @@ Evidências textuais adicionais usadas nesta decisão:
   definido tecnicamente/configuravelmente" — confirma que o hold tem prazo
   configurável (seção 37: "tempo de hold do slot durante checkout"), e que
   a expiração desse prazo é uma das causas de `HELD → AVAILABLE`.
-- ADR 0003 (`AppointmentStatus`): `NOT_STARTED → SCHEDULED` ocorre no
+- ADR 0018 (`AppointmentStatus`): `NOT_STARTED → SCHEDULED` ocorre no
   evento `PAYMENT_APPROVED`, textualmente ligado ao slot em `BOOKED`
   ("Horário confirmado (slot em `BOOKED`)") — confirma que a aprovação do
   pagamento é o evento comum que move tanto `AppointmentStatus` quanto
@@ -76,7 +76,7 @@ Transições:
   política de expiração em si (parâmetro configurável, seção 37).
 - `HELD → BOOKED` (evento `PAYMENT_APPROVED`): pagamento aprovado
   (`PaymentStatus.PENDING → APPROVED`, ADR 0004) — mesmo evento que
-  confirma `AppointmentStatus.NOT_STARTED → SCHEDULED` (ADR 0003).
+  confirma `AppointmentStatus.NOT_STARTED → SCHEDULED` (ADR 0018).
 - `HELD → AVAILABLE` (evento `RELEASE`): cobre, sem distinção de estado,
   os três motivos citados literalmente na seção 14.2 — hold expirado
   (prazo configurável decorrido), checkout abandonado pelo cliente, ou
@@ -106,13 +106,13 @@ ADR** — ver nota abaixo.
   adicional é necessária; esta ADR apenas fecha o grafo de transições.
 - O módulo `scheduling` ganha `appointment-slot-status.machine.ts` (lógica
   pura de transição, XState) e `AppointmentSlotStatusService` (NestJS),
-  seguindo o mesmo padrão de `ordering`/`payment` (ADR 0002/0004).
+  seguindo o mesmo padrão de `ordering`/`payment` (ADR 0017/0004).
 - **Fora do escopo, sinalizado para ADR futura:** a liberação de um slot
   `BOOKED` de volta para `AVAILABLE` quando a consulta associada é
   cancelada (seção 16), sofre no-show (seção 17) ou é substituída por um
   novo horário via reagendamento (seção 15 — o `originalSlotId` fica
   presumivelmente livre após a confirmação do `newSlotId`) não é modelada
-  aqui. Este ponto é análogo ao já sinalizado na ADR 0003 sobre a
+  aqui. Este ponto é análogo ao já sinalizado na ADR 0018 sobre a
   fronteira `Appointment`/`ServiceExecution`, e deverá ser resolvido antes
   da implementação completa dos módulos `scheduling` (ação de
   reagendamento) e `cancellation`.

@@ -1,10 +1,22 @@
 # ADR 0012: Autenticação e RBAC
 
-**Status:** Aceita
+**Status:** Reconciliada com as ADRs 0002/0003 em 25/09/2026
 **Data:** 2 de setembro de 2026
 **Fonte funcional:** `o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md`, seção 7 (Autenticação), seção 28 (Controle de acesso administrativo), seção 35 (Segurança mínima esperada) e seção 38 (itens 6 "modelo de autorização" e 7 "estratégia de autenticação").
 
-## Contexto
+## Decisão vigente após a reconciliação
+
+- O login administrativo real da ADR 0002 permanece em `/admin/auth/*`, com chave privada do BFF, limitação persistida, contas provisionadas e cookies protegidos na web. Não existe signup administrativo público.
+- `SessionStore` é ligado a `PersistentAdminSessionStore`, que consulta `AdminAuthService` e o PostgreSQL. `find` revalida expiração, revogação, conta ativa e papel `OWNER`; converte esse proprietário autorizado em `AuthRole.ADMIN`. `revoke` revoga a sessão persistida. `create` recusa emissão fora do fluxo de login com credenciais e limitação de tentativas.
+- `InMemorySessionStore` permanece como dublê de testes, sem registro no módulo de produção. A identidade futura dos consulentes continua sob a direção Firebase da ADR 0003; nenhum token em memória autoriza conta real.
+- `ScryptPasswordHasher` reutiliza `hashPassword`/`verifyPassword` da autenticação atual: N=32768, r=8, p=3, sal de 16 bytes, chave de 64 bytes e formato versionado `scrypt$N$r$p$salt$key`. Novas senhas respeitam 15 a 128 caracteres; não se migram nem se reescrevem hashes já persistidos.
+- `AdminRole` preserva `OWNER` e o valor histórico `ADMIN`; o padrão é `OWNER`. Preservar `ADMIN` no banco não concede acesso: os guards existentes continuam recusando papéis diferentes de `OWNER`.
+- A migration vigente é `20260925140000_reconcile_domain_enums`: converte o tipo sem remover a coluna nem alterar o valor do papel. Papéis desconhecidos interrompem a migration para revisão.
+- Os contratos HTTP de domínio permanecem cálculos sem leitura ou mutação de recursos. A autorização dos futuros comandos persistentes deve ser definida por recurso; um resultado calculado não é aprovação financeira nem administrativa.
+
+Os trechos abaixo registram a proposta original. Onde divergirem, a decisão vigente acima prevalece; a sessão em memória e o formato antigo de hash não são a configuração da aplicação integrada.
+
+## Contexto histórico
 
 A seção 38 lista "modelo de autorização" (item 6) e "estratégia de
 autenticação" (item 7) como itens do checklist da etapa técnica. Assim como

@@ -1,10 +1,31 @@
 # ADR 0007: Motor de Política de Reembolso (`RefundPolicyEngine`)
 
-**Status:** Aceita
+**Status:** Reconciliada com o baseline e a prévia em 25/09/2026
 **Data:** 22 de agosto de 2026
 **Fonte funcional:** `o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md`, seções 13, 15.7, 16, 17, 18, 19, 20 e regras invariantes 6, 11, 12, 16 e 17 (seção 32).
 
-## Contexto
+## Decisão vigente
+
+O motor continua puro, sem efetivar estorno, persistir decisões ou autorizar pagamentos. As inferências de restituição integral por padrão, negativa automática após entrega e direito legal deduzido apenas pela diferença entre datas não foram adotadas na integração.
+
+`RefundPolicyInput.withdrawal` recebe `APPLICABLE`, `NOT_APPLICABLE` ou `UNDETERMINED`. Ausência equivale a indeterminação. A origem desse enquadramento deve ser uma avaliação confiável no caso de uso, nunca o navegador; o endpoint atual somente calcula o resultado da entrada informada. O prazo legal de sete dias continua no baseline, mas sua aplicabilidade não é presumida por um cálculo de milissegundos.
+
+Precedência reconciliada com a prévia:
+
+1. Sem pagamento: nenhum valor a restituir (`NO_REFUND`, valores zero).
+2. Serviço entregue/concluído: análise manual, sem negativa automática.
+3. Direito legal reconhecido: restituição integral, inclusive prioridade, prevalecendo sobre no-show, cancelamento tardio e exceções informadas.
+4. Restituição escolhida por alteração do prestador em serviço não realizado: integral.
+5. Situação excepcional ou enquadramento legal indeterminado: análise manual.
+6. Sem direito legal superior, no-show caracterizado: retenção 50%, restituição 50%.
+7. Sem direito legal superior, cancelamento com antecedência não negativa e menor que 24h: retenção 30%, restituição 70%.
+8. Demais casos: análise manual; não inventar um percentual por exclusão.
+
+Na análise manual, `refundAmount` e `retainedAmount` são `null` (a apurar), não uma decisão de valor zero. Valores informados em reais são arredondados a centavos. Controllers e serviços compartilham o mesmo motor; decisões manuais futuras exigem justificativa e auditoria.
+
+O texto abaixo preserva a discussão original. Sua árvore de precedência e suas inferências foram substituídas pela decisão vigente acima.
+
+## Contexto histórico
 
 A especificação exige que a regra de reembolso seja **centralizada** e
 proíbe explicitamente lógica de reembolso espalhada:
@@ -15,7 +36,7 @@ proíbe explicitamente lógica de reembolso espalhada:
 > "Reembolso deve ser calculado centralmente por regra de domínio." (regra
 > invariante nº 17, seção 32)
 
-Diferentemente das ADRs 0002-0006, este documento **não define uma máquina
+Diferentemente das ADRs 0017/0018 e 0004-0006, este documento **não define uma máquina
 de estado** (não há um "estado de reembolso" que transita por eventos).
 Trata-se de uma **função de decisão pura**: a especificação já enumera as
 quatro saídas possíveis (`RefundDecisionType`, seção 20.3, já transcrito em
@@ -114,7 +135,7 @@ determinística sobre um conjunto de insumos.
 `isServiceAlreadyRendered`/`isNoShow`/exclusões do 17.2 são calculados pelo
 chamador (que já conhece o `AppointmentStatus`/`QuestionStatus` concreto) —
 o motor permanece agnóstico aos enums de execução para não duplicar as
-máquinas de estado das ADRs 0002/0003/0006; ele só recebe os fatos já
+máquinas de estado das ADRs 0017/0018/0006; ele só recebe os fatos já
 qualificados. "Regras legais prioritárias" (último item da lista da seção
 20.2) não é um campo adicional: é o **próprio direito de arrependimento**
 (seção 19.3), já coberto por `contractedAt`/`cancellationRequestedAt`.

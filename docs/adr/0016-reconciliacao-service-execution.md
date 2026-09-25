@@ -1,23 +1,35 @@
 # ADR 0016: Reconciliação `ServiceExecution` vs. `QuestionRequest`/`Appointment`
 
-**Status:** Aceita
+**Status:** Proposta de remoção substituída na reconciliação de 25/09/2026
 **Data:** 2 de setembro de 2026
 **Fonte funcional:** `o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md`, seções 11.5–11.7 (execução da pergunta avulsa), 10.3 (estados de Atendimento), 33 e 34 (domínios conceituais e arquitetura funcional recomendada).
 
-## Contexto
+## Decisão vigente
+
+`ServiceExecution` e suas relações com `Order` e `AdminUser` são preservados. A ausência de chamadas atuais não demonstra ausência de registros, e o estado `COMPLETED` não substitui timestamps e autoria já gravados. Não é aceitável remover esse histórico por conveniência de integração.
+
+A migration não integrada `20260902220000_remove_service_execution` foi retirada do conjunto deste PR. Nenhuma migration já integrada em `dev` foi alterada. A nova `20260925140000_reconcile_domain_enums` não remove tabelas, colunas nem dados de execução.
+
+O módulo `Fulfillment` continua reservado à orquestração. Definir sua fonte de gravação futura exige política de migração e de retenção antes de qualquer desativação da tabela; preservação do histórico não implica gravar fatos duplicados.
+
+O teste `domain-enums.integration.spec.ts` cria o schema anterior, preenche execução com horários e responsável, aplica a atualização e exige igualdade do histórico. Testa também rollback integral em caso de papel desconhecido.
+
+O texto abaixo é a proposta histórica, mantida para rastreabilidade, e não autoriza `DROP TABLE` na aplicação reconciliada.
+
+## Contexto histórico
 
 O model `ServiceExecution` (`apps/api/prisma/schema.prisma`) foi criado como
 uma "visão unificada entre modalidades" da execução do serviço, com o
 comentário original "ADR pendente: fronteira exata entre este registro e os
 campos específicos já presentes em QuestionRequest/Appointment precisa ser
-reconciliada na etapa de arquitetura (risco de duplicidade)". As ADRs 0002,
-0003 e 0005 já sinalizaram explicitamente este ponto como fora de escopo:
+reconciliada na etapa de arquitetura (risco de duplicidade)". As ADRs 0017,
+0018 e 0005 já sinalizaram explicitamente este ponto como fora de escopo:
 
 > "Fora do escopo desta ADR: a fronteira exata entre `Appointment` e
 > `ServiceExecution` (sinalizada como "ADR pendente" no model
 > `ServiceExecution`, risco de duplicidade entre os dois registros) não é
 > resolvida aqui — seguirá aberta para uma ADR de reconciliação estrutural
-> antes da implementação do módulo `fulfillment`." (ADR 0003)
+> antes da implementação do módulo `fulfillment`." (ADR 0018)
 
 Nenhum código em `apps/api/src/` referencia `ServiceExecution` hoje — o
 model existe apenas no schema, sem uso.
@@ -59,7 +71,7 @@ sem ganho — o risco de duplicidade que o comentário original já
 antecipava.
 
 **Consulta online** (`Appointment`): não possui campos de execução além de
-`status` (`AppointmentStatus`) e `noShowAt`. A ADR 0003 já analisou esta
+`status` (`AppointmentStatus`) e `noShowAt`. A ADR 0018 já analisou esta
 lacuna e concluiu, ao rejeitar um estado `IN_PROGRESS`:
 
 > "ao contrário da Pergunta Avulsa (seção 11.5, ação administrativa
@@ -67,7 +79,7 @@ lacuna e concluiu, ao rejeitar um estado `IN_PROGRESS`:
 > ação equivalente para a Consulta online (seção 23.5 lista apenas agenda,
 > reagendamento, cancelamento, no-show, conclusão, exceções — sem "iniciar
 > atendimento"). Adicionar `IN_PROGRESS` seria inventar uma transição não
-> descrita na especificação." (ADR 0003, Alternativas consideradas)
+> descrita na especificação." (ADR 0018, Alternativas consideradas)
 
 O mesmo raciocínio se aplica a `ServiceExecution.startedAt`/
 `performedByAdminId` para a modalidade Consulta online: não há base textual
@@ -76,7 +88,7 @@ agendado (`AppointmentSlot.startsAt`), e a "conclusão" já é integralmente
 representada por `AppointmentStatus.COMPLETED` (seção 10.3, exemplo
 `ATENDIMENTO: CONCLUÍDO`). Adicionar um segundo registro de conclusão
 (`ServiceExecution.completedAt`) para a mesma modalidade duplicaria um fato
-já fechado pela máquina de estado da ADR 0003, sem nenhuma informação nova.
+já fechado pela máquina de estado da ADR 0018, sem nenhuma informação nova.
 
 ## Decisão
 
@@ -105,7 +117,7 @@ Isso resolve, junto, os dois pontos que dependiam desta reconciliação:
   reagendamento — a ADR 0005 já sinalizou este ponto como análogo, mas
   distinto:
 
-  > "Este ponto é análogo ao já sinalizado na ADR 0003 sobre a fronteira
+  > "Este ponto é análogo ao já sinalizado na ADR 0018 sobre a fronteira
   > `Appointment`/`ServiceExecution`, e deverá ser resolvido antes da
   > implementação completa dos módulos `scheduling` (ação de
   > reagendamento) e `cancellation`." (ADR 0005)
@@ -119,7 +131,7 @@ Isso resolve, junto, os dois pontos que dependiam desta reconciliação:
   continua dependendo de modelagem de caso de uso completa, como já
   registrado na ADR 0012.
 
-As ADRs 0002, 0003 e 0005 não foram editadas — permanecem como registro
+As ADRs 0017, 0018 e 0005 não foram editadas — permanecem como registro
 histórico das decisões tomadas em cada momento; esta ADR é o documento que
 resolve o ponto que elas deixaram em aberto.
 
@@ -158,10 +170,10 @@ resolve o ponto que elas deixaram em aberto.
   a Pergunta avulsa:** rejeitada — introduziria uma assimetria de modelagem
   sem necessidade, e ainda careceria de base textual para
   `startedAt`/`performedByAdminId` na Consulta online (mesma razão pela
-  qual a ADR 0003 rejeitou `IN_PROGRESS`).
+  qual a ADR 0018 rejeitou `IN_PROGRESS`).
 - **Adicionar `startedAt`/`performedByAdminId` a `Appointment` diretamente**
   (em vez de via `ServiceExecution`), por simetria com `QuestionRequest`:
-  rejeitada pelo mesmo motivo que a ADR 0003 rejeitou `IN_PROGRESS` — não
+  rejeitada pelo mesmo motivo que a ADR 0018 rejeitou `IN_PROGRESS` — não
   há ação equivalente descrita na especificação para a Consulta online.
 - **Resolver também a liberação de `AppointmentSlot` nesta ADR:** rejeitada
   — é lógica de caso de uso (ação de cancelamento/reagendamento), fora do

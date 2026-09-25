@@ -6,7 +6,7 @@ import {
 } from './order-status.machine';
 
 describe('order-status.machine', () => {
-  describe('transições válidas (docs/adr/0002-maquina-de-estado-do-pedido.md)', () => {
+  describe('transições válidas (docs/adr/0017-maquina-de-estado-do-pedido.md)', () => {
     it('CREATED --PAYMENT_APPROVED--> CONFIRMED', () => {
       expect(
         transitionOrderStatus(OrderStatus.CREATED, {

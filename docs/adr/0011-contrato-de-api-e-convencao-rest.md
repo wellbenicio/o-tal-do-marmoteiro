@@ -28,11 +28,12 @@ implementadas via HTTP, sem adicionar nenhuma regra de negócio nova.
 
 ### Prefixo global e versionamento
 
-`app.setGlobalPrefix('api/v1')` em `apps/api/src/main.ts`. Todas as rotas
-ficam sob `/api/v1/...`. Versionamento simples por prefixo de path (não o
-mecanismo de `URI Versioning` do NestJS) — suficiente para uma API que
-ainda não tem consumidor externo publicado; pode ser revisto quando houver
-necessidade real de coexistência de versões.
+`configureHttp` em `apps/api/src/common/http-configuration.ts`, chamado pelo
+bootstrap e pelos testes, aplica `/api/v1` aos contratos de cálculo novos.
+As rotas existentes `/admin/*`, `/internal/*` e `GET /` são excluídas do
+prefixo para preservar BFF, executor autenticado e healthcheck. Mantém-se o
+limite JSON de 16kb, `Cache-Control: no-store` nas rotas restritas e a porta
+3001/HOST configurável. A alteração não publica uma API transacional.
 
 ### Validação de entrada
 
@@ -54,7 +55,7 @@ APIs"** (`Content-Type: application/problem+json`):
   "type": "about:blank",
   "title": "Conflict",
   "status": 409,
-  "detail": "Transição inválida do Pedido: evento \"CANCEL\" não é permitido a partir do estado \"CANCELLED\" (ver docs/adr/0002-maquina-de-estado-do-pedido.md).",
+  "detail": "Transição inválida do Pedido: evento \"CANCEL\" não é permitido a partir do estado \"CANCELLED\" (ver docs/adr/0017-maquina-de-estado-do-pedido.md).",
   "code": "InvalidOrderStatusTransitionError",
   "instance": "/api/v1/orders/status/transition"
 }
@@ -114,11 +115,11 @@ Controllers criados (um por serviço de domínio já existente):
 
 | Controller | Rota base | Serviço |
 |---|---|---|
-| `OrderStatusController` | `orders/status` | `OrderStatusService` (ADR 0002) |
+| `OrderStatusController` | `orders/status` | `OrderStatusService` (ADR 0017) |
 | `PaymentStatusController` | `payments/status` | `PaymentStatusService` (ADR 0004) |
-| `AppointmentStatusController` | `appointments/status` | `AppointmentStatusService` (ADR 0003) |
+| `AppointmentStatusController` | `appointments/status` | `AppointmentStatusService` (ADR 0018) |
 | `AppointmentSlotStatusController` | `appointment-slots/status` | `AppointmentSlotStatusService` (ADR 0005) |
-| `RescheduleRequestStatusController` | `reschedule-requests/status` | `RescheduleRequestStatusService` (ADR 0003) |
+| `RescheduleRequestStatusController` | `reschedule-requests/status` | `RescheduleRequestStatusService` (ADR 0018) |
 | `RescheduleEligibilityController` | `reschedule-requests/eligibility` | `RescheduleEligibilityService` (ADR 0010) |
 | `QuestionStatusController` | `questions/status` | `QuestionStatusService` (ADR 0006) |
 | `QuestionQueueOrderingController` | `questions/queue` | `QuestionQueueOrderingService` (ADR 0008) |

@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsDate,
   IsEnum,
+  IsIn,
   IsNumber,
   IsOptional,
 } from 'class-validator';
@@ -26,6 +27,10 @@ export class EvaluateRefundPolicyRequestDto {
 
   @IsNumber()
   totalPaidAmount!: number;
+
+  @IsOptional()
+  @IsIn(['APPLICABLE', 'NOT_APPLICABLE', 'UNDETERMINED'])
+  withdrawal?: 'APPLICABLE' | 'NOT_APPLICABLE' | 'UNDETERMINED';
 
   @IsOptional()
   @IsDate()

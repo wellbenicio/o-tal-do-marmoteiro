@@ -16,6 +16,8 @@ import { DomainError } from '../../common/errors/domain-error';
 
 /** Códigos de motivo — alinhados aos exemplos de `RefundDecision.reasonCode` no schema Prisma. */
 export type RefundReasonCode =
+  | 'UNPAID'
+  | 'LEGAL_ASSESSMENT_REQUIRED'
   | 'EXCEPTIONAL_CIRCUMSTANCE'
   | 'WITHDRAWAL_RIGHT'
   | 'PROVIDER_RESCHEDULE'
@@ -40,6 +42,7 @@ export interface RefundPolicyInput {
   isServiceAlreadyRendered: boolean;
   /** Valor total pago, já incluindo eventual valor de prioridade (seção 20.2 "valor total pago"; regra invariante nº 6, seção 32). */
   totalPaidAmount: number;
+  withdrawal?: 'APPLICABLE' | 'NOT_APPLICABLE' | 'UNDETERMINED';
   /** Data/hora do agendamento (seção 20.2; somente `APPOINTMENT`). */
   scheduledAt?: Date;
   /**
@@ -62,14 +65,9 @@ export interface RefundPolicyInput {
 export interface RefundPolicyDecision {
   decision: RefundDecisionType;
   reasonCode: RefundReasonCode;
-  /** Valor calculado de reembolso (seção 20.1). `0` quando `MANUAL_REVIEW_REQUIRED`. */
-  refundAmount: number;
-  /** Valor retido (seção 20.1). `0` quando `MANUAL_REVIEW_REQUIRED`. */
-  retainedAmount: number;
+  refundAmount: number | null;
+  retainedAmount: number | null;
 }
-
-/** Prazo legal do direito de arrependimento (seção 19.1). */
-const WITHDRAWAL_RIGHT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 /** Antecedência mínima abaixo da qual o cancelamento é tardio (seção 16.1). */
 const LATE_CANCELLATION_THRESHOLD_MS = 24 * 60 * 60 * 1000;
@@ -130,17 +128,11 @@ function validateInput(input: RefundPolicyInput): void {
     );
   }
 
-  if (input.totalPaidAmount < 0) {
+  if (!Number.isFinite(input.totalPaidAmount) || input.totalPaidAmount < 0) {
     throw new InvalidRefundPolicyInputError(
-      'totalPaidAmount não pode ser negativo',
+      'totalPaidAmount deve ser finito e não negativo',
     );
   }
-}
-
-function isWithdrawalRightApplicable(input: RefundPolicyInput): boolean {
-  const elapsedMs =
-    input.cancellationRequestedAt.getTime() - input.contractedAt.getTime();
-  return elapsedMs <= WITHDRAWAL_RIGHT_WINDOW_MS;
 }
 
 function isLateCancellation(input: RefundPolicyInput): boolean {
@@ -152,7 +144,7 @@ function isLateCancellation(input: RefundPolicyInput): boolean {
   }
   const noticeMs =
     input.scheduledAt.getTime() - input.cancellationRequestedAt.getTime();
-  return noticeMs < LATE_CANCELLATION_THRESHOLD_MS;
+  return noticeMs >= 0 && noticeMs < LATE_CANCELLATION_THRESHOLD_MS;
 }
 
 function fullRefund(
@@ -161,18 +153,25 @@ function fullRefund(
   return { refundAmount: totalPaidAmount, retainedAmount: 0 };
 }
 
-function noRefund(
-  totalPaidAmount: number,
-): Pick<RefundPolicyDecision, 'refundAmount' | 'retainedAmount'> {
-  return { refundAmount: 0, retainedAmount: totalPaidAmount };
+function manualReview(reasonCode: RefundReasonCode): RefundPolicyDecision {
+  return {
+    decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
+    reasonCode,
+    refundAmount: null,
+    retainedAmount: null,
+  };
 }
 
 function partialRefund(
   totalPaidAmount: number,
   retentionRatio: number,
 ): Pick<RefundPolicyDecision, 'refundAmount' | 'retainedAmount'> {
-  const retainedAmount = totalPaidAmount * retentionRatio;
-  return { refundAmount: totalPaidAmount - retainedAmount, retainedAmount };
+  const refundAmount =
+    Math.round(totalPaidAmount * (1 - retentionRatio) * 100) / 100;
+  return {
+    refundAmount,
+    retainedAmount: Math.round((totalPaidAmount - refundAmount) * 100) / 100,
+  };
 }
 
 /**
@@ -186,33 +185,16 @@ export function evaluateRefundPolicy(
 ): RefundPolicyDecision {
   validateInput(input);
 
-  // 1. Situação excepcional reportada (seção 18) — sempre revisão manual,
-  // antes de qualquer outra regra automática (seção 19.3 não lista
-  // "situações excepcionais" entre as políticas subordinadas ao direito
-  // de arrependimento).
-  if (input.exceptionalCircumstanceReported) {
+  if (input.totalPaidAmount === 0) {
     return {
-      decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
-      reasonCode: 'EXCEPTIONAL_CIRCUMSTANCE',
+      decision: RefundDecisionType.NO_REFUND,
+      reasonCode: 'UNPAID',
       refundAmount: 0,
       retainedAmount: 0,
     };
   }
-
-  // 2. Direito de arrependimento (seção 19.1, prazo de 7 dias; regra
-  // invariante nº 12: prevalece sobre retenções contratuais).
-  if (isWithdrawalRightApplicable(input)) {
-    if (input.isServiceAlreadyRendered || input.isNoShow) {
-      // Seção 13.3: serviço já entregue — não nega nem concede
-      // automaticamente, encaminha para revisão manual.
-      return {
-        decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
-        reasonCode: 'WITHDRAWAL_RIGHT',
-        refundAmount: 0,
-        retainedAmount: 0,
-      };
-    }
-    // Seções 13.1/13.2: reembolso integral automático.
+  if (input.isServiceAlreadyRendered) return manualReview('ALREADY_RENDERED');
+  if (input.withdrawal === 'APPLICABLE') {
     return {
       decision: RefundDecisionType.FULL_REFUND,
       reasonCode: 'WITHDRAWAL_RIGHT',
@@ -220,8 +202,6 @@ export function evaluateRefundPolicy(
     };
   }
 
-  // 3. Reagendamento provocado pelo prestador (seção 15.7) — não é culpa
-  // do cliente, prevalece sobre no-show/cancelamento tardio.
   if (input.providerCausedRescheduleRefundChosen) {
     return {
       decision: RefundDecisionType.FULL_REFUND,
@@ -230,7 +210,11 @@ export function evaluateRefundPolicy(
     };
   }
 
-  // 4. No-show (seção 17.3): retenção de 50%.
+  if (input.exceptionalCircumstanceReported)
+    return manualReview('EXCEPTIONAL_CIRCUMSTANCE');
+  if (input.withdrawal !== 'NOT_APPLICABLE')
+    return manualReview('LEGAL_ASSESSMENT_REQUIRED');
+
   if (input.isNoShow) {
     return {
       decision: RefundDecisionType.PARTIAL_REFUND,
@@ -239,7 +223,6 @@ export function evaluateRefundPolicy(
     };
   }
 
-  // 5. Cancelamento tardio (seção 16.2): retenção de 30%.
   if (isLateCancellation(input)) {
     return {
       decision: RefundDecisionType.PARTIAL_REFUND,
@@ -251,22 +234,5 @@ export function evaluateRefundPolicy(
     };
   }
 
-  // 6. Serviço já prestado sem nenhuma das condições acima (sem direito
-  // legal aplicável, sem exceção): sem fundamento para devolução (seção
-  // 20.3, NO_REFUND só quando "juridicamente e contratualmente válida").
-  if (input.isServiceAlreadyRendered) {
-    return {
-      decision: RefundDecisionType.NO_REFUND,
-      reasonCode: 'ALREADY_RENDERED',
-      ...noRefund(input.totalPaidAmount),
-    };
-  }
-
-  // 7. Padrão: cancelamento com antecedência, sem penalidade descrita
-  // (seção 16.1, por exclusão — ver ADR 0007, "Pontos em aberto").
-  return {
-    decision: RefundDecisionType.FULL_REFUND,
-    reasonCode: 'STANDARD_CANCELLATION',
-    ...fullRefund(input.totalPaidAmount),
-  };
+  return manualReview('STANDARD_CANCELLATION');
 }

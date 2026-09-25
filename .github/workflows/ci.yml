@@ -1,0 +1,66 @@
+name: Validate application
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+permissions:
+  contents: read
+jobs:
+  git-flow:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Validate branch names and integration direction
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        shell: bash
+        run: |
+          case "$BASE_BRANCH:$HEAD_BRANCH" in
+            dev:feature/?*|dev:release/?*|dev:hotfix/?*|main:release/?*|main:hotfix/?*)
+              echo "Git Flow: $HEAD_BRANCH -> $BASE_BRANCH"
+              ;;
+            *)
+              echo "::error::Use feature/* -> dev; release/* ou hotfix/* -> main e dev."
+              exit 1
+              ;;
+          esac
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: marmoteiro
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: marmoteiro_test
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U marmoteiro"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://marmoteiro:ci-only-password@localhost:5432/marmoteiro_test
+      RUN_DATABASE_TESTS: "true"
+      COMMUNICATIONS_ENABLED: "false"
+      OUTBOX_RUNNER: scheduled
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run prisma:generate --workspace @marmoteiro/api
+      - run: npm run prisma:deploy --workspace @marmoteiro/api
+      - run: npm run lint
+      - run: npm run test --workspace @marmoteiro/api -- --runInBand
+      - run: npm run test:e2e --workspace @marmoteiro/api -- --runInBand
+      - run: npm run test --workspace @marmoteiro/web
+      - run: npm run typecheck --workspace @marmoteiro/shared
+      - run: npm run build
+      - name: Ensure lint did not leave changes
+        run: git diff --exit-code

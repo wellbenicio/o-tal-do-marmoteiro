@@ -15,6 +15,7 @@ function baseAppointmentInput(
 ): RefundPolicyInput {
   return {
     modality: ServiceOfferingType.APPOINTMENT,
+    withdrawal: 'NOT_APPLICABLE',
     contractedAt: CONTRACTED_AT,
     cancellationRequestedAt: new Date(CONTRACTED_AT.getTime() + 20 * DAY_MS),
     scheduledAt: new Date(CONTRACTED_AT.getTime() + 21 * DAY_MS),
@@ -29,6 +30,7 @@ function baseQuestionInput(
 ): RefundPolicyInput {
   return {
     modality: ServiceOfferingType.QUESTION,
+    withdrawal: 'NOT_APPLICABLE',
     contractedAt: CONTRACTED_AT,
     cancellationRequestedAt: new Date(CONTRACTED_AT.getTime() + 20 * DAY_MS),
     isServiceAlreadyRendered: false,
@@ -39,7 +41,7 @@ function baseQuestionInput(
 
 describe('evaluateRefundPolicy', () => {
   describe('1. situação excepcional (seção 18)', () => {
-    it('encaminha para MANUAL_REVIEW_REQUIRED mesmo quando o direito de arrependimento também se aplicaria', () => {
+    it('encaminha situação excepcional sem direito legal já reconhecido para análise', () => {
       const result = evaluateRefundPolicy(
         baseAppointmentInput({
           cancellationRequestedAt: new Date(
@@ -52,8 +54,8 @@ describe('evaluateRefundPolicy', () => {
       expect(result).toEqual({
         decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
         reasonCode: 'EXCEPTIONAL_CIRCUMSTANCE',
-        refundAmount: 0,
-        retainedAmount: 0,
+        refundAmount: null,
+        retainedAmount: null,
       });
     });
   });
@@ -66,6 +68,7 @@ describe('evaluateRefundPolicy', () => {
             CONTRACTED_AT.getTime() + 6 * DAY_MS,
           ),
           totalPaidAmount: 200,
+          withdrawal: 'APPLICABLE',
         }),
       );
 
@@ -77,12 +80,13 @@ describe('evaluateRefundPolicy', () => {
       });
     });
 
-    it('inclui exatamente o sétimo dia dentro do prazo (limite inclusivo)', () => {
+    it('respeita o direito reconhecido no sétimo dia sem negar pelo início da execução', () => {
       const result = evaluateRefundPolicy(
         baseQuestionInput({
           cancellationRequestedAt: new Date(
             CONTRACTED_AT.getTime() + 7 * DAY_MS,
           ),
+          withdrawal: 'APPLICABLE',
         }),
       );
 
@@ -97,18 +101,19 @@ describe('evaluateRefundPolicy', () => {
             CONTRACTED_AT.getTime() + 3 * DAY_MS,
           ),
           isServiceAlreadyRendered: true,
+          withdrawal: 'APPLICABLE',
         }),
       );
 
       expect(result).toEqual({
         decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
-        reasonCode: 'WITHDRAWAL_RIGHT',
-        refundAmount: 0,
-        retainedAmount: 0,
+        reasonCode: 'ALREADY_RENDERED',
+        refundAmount: null,
+        retainedAmount: null,
       });
     });
 
-    it('encaminha para MANUAL_REVIEW_REQUIRED quando há no-show dentro do prazo de arrependimento', () => {
+    it('o direito legal reconhecido prevalece sobre o no-show', () => {
       const result = evaluateRefundPolicy(
         baseAppointmentInput({
           cancellationRequestedAt: new Date(
@@ -116,10 +121,11 @@ describe('evaluateRefundPolicy', () => {
           ),
           scheduledAt: new Date(CONTRACTED_AT.getTime() + 3 * DAY_MS),
           isNoShow: true,
+          withdrawal: 'APPLICABLE',
         }),
       );
 
-      expect(result.decision).toBe(RefundDecisionType.MANUAL_REVIEW_REQUIRED);
+      expect(result.decision).toBe(RefundDecisionType.FULL_REFUND);
       expect(result.reasonCode).toBe('WITHDRAWAL_RIGHT');
     });
 
@@ -228,7 +234,7 @@ describe('evaluateRefundPolicy', () => {
   });
 
   describe('6. serviço já prestado sem outra condição (seção 20.3)', () => {
-    it('resulta em NO_REFUND quando não há direito legal, exceção ou no-show aplicável', () => {
+    it('não nega automaticamente o pedido de serviço já entregue', () => {
       const result = evaluateRefundPolicy(
         baseQuestionInput({
           cancellationRequestedAt: new Date(
@@ -240,16 +246,16 @@ describe('evaluateRefundPolicy', () => {
       );
 
       expect(result).toEqual({
-        decision: RefundDecisionType.NO_REFUND,
+        decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
         reasonCode: 'ALREADY_RENDERED',
-        refundAmount: 0,
-        retainedAmount: 150,
+        refundAmount: null,
+        retainedAmount: null,
       });
     });
   });
 
   describe('7. padrão — cancelamento com antecedência, sem penalidade descrita', () => {
-    it('concede reembolso integral por exclusão da regra de cancelamento tardio (seção 16.1)', () => {
+    it('não inventa um percentual para cancelamento fora dos casos definidos', () => {
       const result = evaluateRefundPolicy(
         baseAppointmentInput({
           cancellationRequestedAt: new Date(
@@ -261,15 +267,55 @@ describe('evaluateRefundPolicy', () => {
       );
 
       expect(result).toEqual({
-        decision: RefundDecisionType.FULL_REFUND,
+        decision: RefundDecisionType.MANUAL_REVIEW_REQUIRED,
         reasonCode: 'STANDARD_CANCELLATION',
-        refundAmount: 80,
-        retainedAmount: 0,
+        refundAmount: null,
+        retainedAmount: null,
       });
     });
   });
 
   describe('validação de entrada', () => {
+    it('não deduz direito legal somente pelo prazo nem aplica retenção com enquadramento desconhecido', () => {
+      for (const withdrawal of [undefined, 'UNDETERMINED'] as const) {
+        const result = evaluateRefundPolicy(
+          baseAppointmentInput({
+            cancellationRequestedAt: new Date(CONTRACTED_AT.getTime() + DAY_MS),
+            scheduledAt: new Date(CONTRACTED_AT.getTime() + DAY_MS + HOUR_MS),
+            withdrawal,
+          }),
+        );
+        expect(result.decision).toBe(RefundDecisionType.MANUAL_REVIEW_REQUIRED);
+        expect(result.refundAmount).toBeNull();
+      }
+    });
+    it('não reduz direito legal reconhecido por causa de uma exceção reportada', () => {
+      const result = evaluateRefundPolicy(
+        baseQuestionInput({
+          withdrawal: 'APPLICABLE',
+          exceptionalCircumstanceReported: true,
+        }),
+      );
+      expect(result.decision).toBe(RefundDecisionType.FULL_REFUND);
+    });
+    it('sem pagamento não existe valor a restituir', () => {
+      const result = evaluateRefundPolicy(
+        baseQuestionInput({ totalPaidAmount: 0 }),
+      );
+      expect(result).toMatchObject({
+        decision: RefundDecisionType.NO_REFUND,
+        refundAmount: 0,
+        retainedAmount: 0,
+      });
+    });
+    it('não transforma o horário passado em no-show nem em cancelamento tardio', () => {
+      const result = evaluateRefundPolicy(
+        baseAppointmentInput({
+          scheduledAt: new Date(CONTRACTED_AT.getTime() + DAY_MS),
+        }),
+      );
+      expect(result.decision).toBe(RefundDecisionType.MANUAL_REVIEW_REQUIRED);
+    });
     it('rejeita isNoShow para modalidade QUESTION', () => {
       expect(() =>
         evaluateRefundPolicy(baseQuestionInput({ isNoShow: true })),

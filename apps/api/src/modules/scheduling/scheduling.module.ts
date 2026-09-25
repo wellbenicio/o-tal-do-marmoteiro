@@ -14,7 +14,7 @@ import { RescheduleEligibilityController } from './reschedule-eligibility.contro
  * 15 (Reagendamento da consulta). Máquina de estado do Atendimento
  * (`AppointmentStatus`) e da solicitação de reagendamento
  * (`RescheduleRequestStatus`) definidas em
- * docs/adr/0003-maquina-de-estado-do-atendimento.md. Máquina de estado do
+ * docs/adr/0018-maquina-de-estado-do-atendimento.md. Máquina de estado do
  * Slot de Agenda (`AppointmentSlotStatus`) definida em
  * docs/adr/0005-maquina-de-estado-do-slot-de-agenda.md. Elegibilidade e
  * prazo de reagendamento definidos em

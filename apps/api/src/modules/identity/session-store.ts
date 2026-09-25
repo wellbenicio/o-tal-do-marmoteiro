@@ -22,11 +22,7 @@ export interface Session {
  * exigir uma reescrita de assinatura quando a implementação real chegar.
  * Ver docs/adr/0012-autenticacao-e-rbac.md.
  *
- * Somente a implementação em memória (`InMemorySessionStore`) é
- * fornecida nesta ADR — mesmo padrão porta+fake usado para
- * `BusinessHoursCalendar` (ADR 0009): a escolha de um backend real e
- * persistente entre reinícios do processo é decisão de infraestrutura
- * fora do escopo atual.
+ * A aplicação registra PersistentAdminSessionStore; memória fica nos testes.
  */
 export abstract class SessionStore {
   abstract create(

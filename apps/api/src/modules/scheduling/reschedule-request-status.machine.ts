@@ -6,7 +6,7 @@ import { DomainError } from '../../common/errors/domain-error';
 /**
  * Máquina de estado da Solicitação de Reagendamento (XState — ver ADR 0001,
  * seção "Máquinas de estado"). Estados e transições definidos em
- * docs/adr/0003-maquina-de-estado-do-atendimento.md, seção "Decisão
+ * docs/adr/0018-maquina-de-estado-do-atendimento.md, seção "Decisão
  * vinculada: RescheduleRequestStatus":
  *
  * PENDING --CONFIRM--> CONFIRMED
@@ -36,7 +36,7 @@ export const rescheduleRequestStatusMachine = createMachine({
 });
 
 /**
- * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003.
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0018.
  * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
  */
 export class InvalidRescheduleRequestStatusTransitionError extends DomainError {
@@ -45,7 +45,7 @@ export class InvalidRescheduleRequestStatusTransitionError extends DomainError {
     public readonly event: RescheduleRequestStatusEvent['type'],
   ) {
     super(
-      `Transição inválida da Solicitação de Reagendamento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0003-maquina-de-estado-do-atendimento.md).`,
+      `Transição inválida da Solicitação de Reagendamento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0018-maquina-de-estado-do-atendimento.md).`,
       HttpStatus.CONFLICT,
     );
     this.name = 'InvalidRescheduleRequestStatusTransitionError';

@@ -1,26 +1,31 @@
 import { Module } from '@nestjs/common';
 import { PasswordHasher, ScryptPasswordHasher } from './password-hasher';
-import { SessionStore, InMemorySessionStore } from './session-store';
+import { SessionStore } from './session-store';
+import { PersistentAdminSessionStore } from './persistent-admin-session-store';
 import { AuthGuard } from './auth.guard';
 import { RolesGuard } from './roles.guard';
-
-/**
- * Domínio: Identity (autenticação/credenciais).
- * Fonte: especificação funcional, seção 7 (Autenticação), seção 28
- * (Controle de acesso administrativo) e seção 35 (Segurança mínima
- * esperada). Mecanismo de autenticação/RBAC definido em
- * docs/adr/0012-autenticacao-e-rbac.md — hashing de senha (`PasswordHasher`),
- * sessão por token opaco (`SessionStore`) e guards HTTP (`AuthGuard`,
- * `RolesGuard`). Não expõe nenhum controller HTTP: não há endpoint real
- * de login/logout nesta ADR — ver "Pontos em aberto" da ADR 0012.
- */
+import { AdminAuthService } from './admin/admin-auth.service';
+import { AdminAuthController } from './admin/admin-auth.controller';
+import { AdminSessionGuard, InternalApiGuard } from './admin/admin-auth.guard';
 @Module({
+  controllers: [AdminAuthController],
   providers: [
     { provide: PasswordHasher, useClass: ScryptPasswordHasher },
-    { provide: SessionStore, useClass: InMemorySessionStore },
+    { provide: SessionStore, useClass: PersistentAdminSessionStore },
     AuthGuard,
     RolesGuard,
+    AdminAuthService,
+    AdminSessionGuard,
+    InternalApiGuard,
   ],
-  exports: [PasswordHasher, SessionStore, AuthGuard, RolesGuard],
+  exports: [
+    PasswordHasher,
+    SessionStore,
+    AuthGuard,
+    RolesGuard,
+    AdminAuthService,
+    AdminSessionGuard,
+    InternalApiGuard,
+  ],
 })
 export class IdentityModule {}

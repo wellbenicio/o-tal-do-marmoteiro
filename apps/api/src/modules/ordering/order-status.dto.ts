@@ -9,7 +9,7 @@ const ORDER_STATUS_EVENT_TYPES = [
   'CANCEL',
 ] as const satisfies readonly OrderStatusEvent['type'][];
 
-/** Evento da máquina de estado do Pedido — ver docs/adr/0002-maquina-de-estado-do-pedido.md. */
+/** Evento da máquina de estado do Pedido — ver docs/adr/0017-maquina-de-estado-do-pedido.md. */
 export class OrderStatusEventDto {
   @IsIn(ORDER_STATUS_EVENT_TYPES)
   type!: OrderStatusEvent['type'];

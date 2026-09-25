@@ -23,6 +23,7 @@ describe('RefundPolicyService', () => {
       cancellationRequestedAt: contractedAt,
       isServiceAlreadyRendered: false,
       totalPaidAmount: 100,
+      withdrawal: 'APPLICABLE',
     });
 
     expect(result.decision).toBe(RefundDecisionType.FULL_REFUND);

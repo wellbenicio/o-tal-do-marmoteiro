@@ -36,7 +36,7 @@ migração de schema é necessária para esta ADR.
 **Instante de referência ("o atendimento"):** a seção 26 aplica-se à
 Consulta Online (`RecordingConsent.appointmentId`); "o atendimento" é,
 portanto, a conclusão do `Appointment` vinculado (`AppointmentStatus.COMPLETED`,
-ADR 0003). O model `Appointment` não possui hoje uma coluna de timestamp
+ADR 0018). O model `Appointment` não possui hoje uma coluna de timestamp
 dedicada para o instante dessa transição (apenas o valor de estado e,
 para o caso específico de no-show, `noShowAt`) — replicando exatamente a
 mesma situação já resolvida na ADR 0010 para `optionsPresentedAt`: em vez
@@ -122,7 +122,7 @@ suspensão é a regra primária; o prazo de 90 dias é a regra "padrão").
   origem única do instante de conclusão: rejeitada por ora — exigiria
   decidir, fora do escopo desta ADR, se essa coluna seria preenchida
   automaticamente na transição de `AppointmentStatus` (o que tocaria a
-  ADR 0003, já aceita) ou por ação administrativa explícita (não descrita
+  ADR 0018, já aceita) ou por ação administrativa explícita (não descrita
   para a Consulta Online, ao contrário da Pergunta Avulsa — seção 11.5).
   Manter a função agnóstica quanto à origem do dado (mesmo padrão da ADR
   0010) evita essa decisão prematura.

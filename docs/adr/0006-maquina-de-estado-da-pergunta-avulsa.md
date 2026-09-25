@@ -6,8 +6,8 @@
 
 ## Contexto
 
-Diferentemente do Pedido (ADR 0002), do Atendimento da consulta online
-(ADR 0003), do Pagamento (ADR 0004) e do Slot de agenda (ADR 0005), a
+Diferentemente do Pedido (ADR 0017), do Atendimento da consulta online
+(ADR 0018), do Pagamento (ADR 0004) e do Slot de agenda (ADR 0005), a
 especificação **já enumera exaustivamente** os doze valores de
 `QuestionStatus` (seção 11.3) — sete do fluxo principal e cinco
 "auxiliares". Esses valores já estão transcritos literalmente em
@@ -53,7 +53,7 @@ Evidências textuais usadas para reconstruir o grafo de transições:
   encaminhar para revisão") — confirma que `DELIVERED → COMPLETED`
   também é ação administrativa explícita (`concluir`), e não uma
   transição automática por tempo — mesmo padrão do `COMPLETE` já adotado
-  em `AppointmentStatus` (ADR 0003).
+  em `AppointmentStatus` (ADR 0018).
 - Seção 13.1: "O cliente poderá solicitar cancelamento enquanto o
   atendimento estiver em `QUEUED`... Quando houver direito de
   arrependimento legalmente aplicável: o pedido deverá ser cancelado; o
@@ -140,7 +140,7 @@ Transições:
   `AppointmentStatus`/`AppointmentSlotStatus`).
 - `AWAITING_PAYMENT → CANCELLED` (evento `PAYMENT_DECLINED`): pagamento
   rejeitado, cancelado ou abandonado antes da aprovação (espelha
-  `OrderStatus.CREATED → CANCELLED`, ADR 0002).
+  `OrderStatus.CREATED → CANCELLED`, ADR 0017).
 - `PAID → QUEUED` (evento `ENTER_QUEUE`): entrada automática na fila,
   imediatamente após a confirmação do pagamento (seção 11.4 — "somente
   pedidos com pagamento confirmado", sem outro gate descrito).
@@ -200,9 +200,9 @@ prestado" (uso correto de `CANCELLED` nos casos QUEUED/IN_PROGRESS) com
   necessária; esta ADR apenas fecha o grafo de transições.
 - O módulo `question` ganha `question-status.machine.ts` (lógica pura de
   transição, XState) e `QuestionStatusService` (NestJS), seguindo o mesmo
-  padrão de `ordering`/`payment`/`scheduling` (ADR 0002/0004/0005).
+  padrão de `ordering`/`payment`/`scheduling` (ADR 0017/0004/0005).
 - **Ponto sinalizado para confirmação do responsável funcional** (mesmo
-  espírito da ressalva já registrada na ADR 0003 para `AppointmentStatus`):
+  espírito da ressalva já registrada na ADR 0018 para `AppointmentStatus`):
   esta ADR assume que uma solicitação de cancelamento a partir de `QUEUED`
   ou `IN_PROGRESS` **sempre** resulta em `CANCELLED` (via
   `CANCELLATION_REQUESTED`), sem um caminho de "negativa" de volta à fila
@@ -231,4 +231,4 @@ prestado" (uso correto de `CANCELLED` nos casos QUEUED/IN_PROGRESS) com
   não descreve esse desfecho para esses dois estados (ao contrário de
   `DELIVERED`, coberto por `MANUAL_REVIEW`). Ver ponto sinalizado acima.
 - **Enum único para Pedido+Pagamento+Atendimento+Pergunta:** rejeitada
-  pelos mesmos motivos já registrados nas ADR 0002–0004 (seção 10).
+  pelos mesmos motivos já registrados nas ADR 0017–0004 (seção 10).

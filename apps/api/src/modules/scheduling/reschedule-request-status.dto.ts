@@ -8,7 +8,7 @@ const RESCHEDULE_REQUEST_STATUS_EVENT_TYPES = [
   'EXPIRE',
 ] as const satisfies readonly RescheduleRequestStatusEvent['type'][];
 
-/** Evento da máquina de estado da Solicitação de Reagendamento — ver docs/adr/0003-maquina-de-estado-do-atendimento.md. */
+/** Evento da máquina de estado da Solicitação de Reagendamento — ver docs/adr/0018-maquina-de-estado-do-atendimento.md. */
 export class RescheduleRequestStatusEventDto {
   @IsIn(RESCHEDULE_REQUEST_STATUS_EVENT_TYPES)
   type!: RescheduleRequestStatusEvent['type'];

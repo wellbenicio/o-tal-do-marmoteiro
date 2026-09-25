@@ -8,7 +8,7 @@ import { RescheduleRequestStatusTransitionRequestDto } from './reschedule-reques
  * Reagendamento — apenas orquestra `RescheduleRequestStatusService`, sem
  * regra de negócio própria. Ver ADR 0011
  * (docs/adr/0011-contrato-de-api-e-convencao-rest.md) e
- * docs/adr/0003-maquina-de-estado-do-atendimento.md.
+ * docs/adr/0018-maquina-de-estado-do-atendimento.md.
  */
 @Controller('reschedule-requests/status')
 export class RescheduleRequestStatusController {

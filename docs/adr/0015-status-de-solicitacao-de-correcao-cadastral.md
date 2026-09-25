@@ -58,7 +58,7 @@ APPROVED  ADJUSTED   REJECTED
 
 | Estado     | Significado                                                                 | Transcrição/base textual |
 | ---------- | ---------------------------------------------------------------------------- | --------------------------- |
-| `PENDING`  | Solicitação registrada, aguardando decisão do administrador.                  | Inferência técnica — estado inicial, vocabulário alinhado a `RescheduleRequestStatus.PENDING` (ADR 0003). |
+| `PENDING`  | Solicitação registrada, aguardando decisão do administrador.                  | Inferência técnica — estado inicial, vocabulário alinhado a `RescheduleRequestStatus.PENDING` (ADR 0018). |
 | `APPROVED` | Administrador aprovou a correção exatamente com o `requestedValue` informado. | Inferência técnica — desfecho "positivo" implícito por exclusão (a especificação só nomeia justificativa para recusa/ajuste, o que implica um desfecho positivo sem justificativa obrigatória). |
 | `ADJUSTED` | Administrador aplicou um valor diferente do `requestedValue` original.        | Transcrição literal de "ajuste" (seção 6.4). |
 | `REJECTED` | Administrador recusou a correção.                                             | Transcrição literal de "recusa" (seção 6.4). |

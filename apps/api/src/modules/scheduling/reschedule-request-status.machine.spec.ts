@@ -6,7 +6,7 @@ import {
 } from './reschedule-request-status.machine';
 
 describe('reschedule-request-status.machine', () => {
-  describe('transições válidas (docs/adr/0003-maquina-de-estado-do-atendimento.md)', () => {
+  describe('transições válidas (docs/adr/0018-maquina-de-estado-do-atendimento.md)', () => {
     it('PENDING --CONFIRM--> CONFIRMED', () => {
       expect(
         transitionRescheduleRequestStatus(RescheduleRequestStatus.PENDING, {

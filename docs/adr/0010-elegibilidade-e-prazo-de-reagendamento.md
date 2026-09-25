@@ -7,7 +7,7 @@
 ## Contexto
 
 A máquina de estado da Solicitação de Reagendamento (`RescheduleRequestStatus`,
-ADR 0003) já modela os estados `PENDING`/`CONFIRMED`/`EXPIRED` e cita as
+ADR 0018) já modela os estados `PENDING`/`CONFIRMED`/`EXPIRED` e cita as
 regras da seção 15 qualitativamente, mas nenhuma ADR anterior implementou
 os **cálculos/validações determinísticos** que a seção 15 exige antes e
 depois de uma transição:
@@ -78,7 +78,7 @@ Implementar em `apps/api/src/modules/scheduling/reschedule-eligibility.ts`:
 - `isRescheduleChoiceExpired(optionsExpireAt, now)` — função de
   conveniência que compara `now` com o prazo calculado, para decidir
   quando disparar o evento `EXPIRE` da máquina `RescheduleRequestStatus`
-  (ADR 0003).
+  (ADR 0018).
 
 Exposto via `RescheduleEligibilityService` (NestJS), seguindo o mesmo
 padrão de ponto único de acesso das ADRs 0007–0009.

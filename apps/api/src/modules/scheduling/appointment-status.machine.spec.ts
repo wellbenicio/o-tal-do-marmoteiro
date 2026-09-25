@@ -6,7 +6,7 @@ import {
 } from './appointment-status.machine';
 
 describe('appointment-status.machine', () => {
-  describe('transições válidas (docs/adr/0003-maquina-de-estado-do-atendimento.md)', () => {
+  describe('transições válidas (docs/adr/0018-maquina-de-estado-do-atendimento.md)', () => {
     it('NOT_STARTED --PAYMENT_APPROVED--> SCHEDULED', () => {
       expect(
         transitionAppointmentStatus(AppointmentStatus.NOT_STARTED, {
@@ -41,7 +41,7 @@ describe('appointment-status.machine', () => {
   });
 
   describe('transições inválidas', () => {
-    it('NOT_STARTED não aceita CANCEL — o valor simplesmente nunca avança (nota da ADR 0003)', () => {
+    it('NOT_STARTED não aceita CANCEL — o valor simplesmente nunca avança (nota da ADR 0018)', () => {
       expect(
         canTransitionAppointmentStatus(AppointmentStatus.NOT_STARTED, {
           type: 'CANCEL',

@@ -10,7 +10,7 @@ const APPOINTMENT_STATUS_EVENT_TYPES = [
   'CANCEL',
 ] as const satisfies readonly AppointmentStatusEvent['type'][];
 
-/** Evento da máquina de estado do Atendimento — ver docs/adr/0003-maquina-de-estado-do-atendimento.md. */
+/** Evento da máquina de estado do Atendimento — ver docs/adr/0018-maquina-de-estado-do-atendimento.md. */
 export class AppointmentStatusEventDto {
   @IsIn(APPOINTMENT_STATUS_EVENT_TYPES)
   type!: AppointmentStatusEvent['type'];

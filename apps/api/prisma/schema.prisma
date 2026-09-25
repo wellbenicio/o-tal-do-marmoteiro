@@ -27,10 +27,7 @@ datasource db {
 
 /// Credenciais de autenticação. Separado de Customer para isolar o domínio
 /// de identidade/autenticação do domínio de dados cadastrais (seção 34).
-/// Estratégia de sessão/token definida em
-/// docs/adr/0012-autenticacao-e-rbac.md: token opaco validado via
-/// `SessionStore` (não persistido neste schema — apenas em memória nesta
-/// etapa, ver "Pontos em aberto" da ADR 0012).
+/// Identidade de consulente futura segue Firebase (ADR 0003); sessões administrativas usam AdminSession.
 model Identity {
   id           String   @id @default(uuid())
   customerId   String   @unique
@@ -155,18 +152,19 @@ model ServicePrice {
 // ============================================================
 
 /// Estados do Pedido — enum definido em
-/// docs/adr/0002-maquina-de-estado-do-pedido.md. A especificação cita
+/// docs/adr/0017-maquina-de-estado-do-pedido.md. A especificação cita
 /// apenas CONFIRMADO/CANCELADO como exemplos (seção 10); CREATED e as
 /// transições completas são decisão técnica registrada na ADR.
 enum OrderStatus {
   CREATED
   CONFIRMED
+  CANCELLATION_REQUESTED
   CANCELLED
 }
 
 /// Representa o que foi contratado — eixo de estado independente de
 /// Pagamento e Atendimento (seção 10). Ver
-/// docs/adr/0002-maquina-de-estado-do-pedido.md.
+/// docs/adr/0017-maquina-de-estado-do-pedido.md.
 model Order {
   id          String      @id @default(uuid())
   customerId  String
@@ -184,6 +182,7 @@ model Order {
   cancellationRequests CancellationRequest[]
   refundDecisions     RefundDecision[]
   legalAcceptances    LegalAcceptance[]
+  serviceExecution    ServiceExecution?
 }
 
 /// Item de pedido — permite discriminar pergunta e prioridade no checkout
@@ -318,7 +317,7 @@ model AppointmentSlot {
 }
 
 /// Estados do Atendimento da Consulta Online — enum definido em
-/// docs/adr/0003-maquina-de-estado-do-atendimento.md. Reagendamento,
+/// docs/adr/0018-maquina-de-estado-do-atendimento.md. Reagendamento,
 /// cancelamento tardio e no-show permanecem modelados como eventos e regras
 /// financeiras (RescheduleRequest, CancellationRequest, RefundDecision), não
 /// como estados adicionais fechados neste enum (seções 15–17).
@@ -330,7 +329,7 @@ enum AppointmentStatus {
   CANCELLED
 }
 
-/// Consulta online. Ver docs/adr/0003-maquina-de-estado-do-atendimento.md.
+/// Consulta online. Ver docs/adr/0018-maquina-de-estado-do-atendimento.md.
 model Appointment {
   id             String            @id @default(uuid())
   orderId        String            @unique
@@ -345,10 +344,12 @@ model Appointment {
 
   rescheduleRequests RescheduleRequest[]
   recordingConsent   RecordingConsent?
+  communication AppointmentCommunication?
+  reminderConsent AppointmentReminderConsent?
 }
 
-/// Estados da solicitação de reagendamento — decisão vinculada à ADR 0003
-/// (docs/adr/0003-maquina-de-estado-do-atendimento.md), seção 15.3–15.5.
+/// Estados da solicitação de reagendamento — decisão vinculada à ADR 0018
+/// (docs/adr/0018-maquina-de-estado-do-atendimento.md), seção 15.3–15.5.
 enum RescheduleRequestStatus {
   PENDING
   CONFIRMED
@@ -376,16 +377,18 @@ model RescheduleRequest {
 // Domínio: fulfillment (seção 11.5–11.7, 14)
 // ============================================================
 
-// Fulfillment não possui model de persistência próprio. A seção 33/34
-// permite nomenclatura/estrutura técnica diferente da lista conceitual,
-// desde que os limites de domínio sejam preservados — decisão explícita
-// registrada em docs/adr/0016-reconciliacao-service-execution.md, que
-// remove o antigo model `ServiceExecution` (duplicava
-// QuestionRequest.executionStartedAt/deliveredAt/completedAt para
-// Pergunta Avulsa, e não tinha base textual para Consulta Online além do
-// que `AppointmentStatus.COMPLETED`, ADR 0003, já cobre). O domínio
-// permanece como módulo de orquestração (`FulfillmentModule`) sobre os
-// campos já existentes em `QuestionRequest` e `Appointment`.
+model ServiceExecution {
+  id                 String              @id @default(uuid())
+  orderId            String              @unique
+  order              Order               @relation(fields: [orderId], references: [id])
+  modality           ServiceOfferingType
+  startedAt          DateTime?
+  completedAt        DateTime?
+  performedByAdminId  String?
+  performedByAdmin    AdminUser?          @relation(fields: [performedByAdminId], references: [id])
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
 
 // ============================================================
 // Domínio: cancellation (seções 13, 16, 17, 18, 19, 20)
@@ -570,18 +573,21 @@ model OutboxMessage {
   status      String    @default("PENDING")
   createdAt   DateTime  @default(now())
   processedAt DateTime?
+  deduplicationKey String? @unique
+  availableAt DateTime @default(now())
+  attempts Int @default(0)
+  leaseUntil DateTime?
+  lastErrorCode String?
+  @@index([status, availableAt])
 }
 
 // ============================================================
 // Domínio: administration (seção 28)
 // ============================================================
 
-/// Papel do AdminUser dentro do painel administrativo. Hoje um único
-/// valor (`ADMIN`), mas modelado como enum — não `String` — para permitir
-/// evolução futura para RBAC granular sem alterar o tipo da coluna,
-/// conforme a seção 28 exige ("a solução técnica deverá permitir
-/// evolução para RBAC/permissões"). Ver docs/adr/0012-autenticacao-e-rbac.md.
+/// OWNER é o papel autorizado; ADMIN é preservado como valor histórico sem conceder acesso.
 enum AdminRole {
+  OWNER
   ADMIN
 }
 
@@ -593,14 +599,16 @@ model AdminUser {
   name         String
   email        String    @unique
   passwordHash String
-  role         AdminRole @default(ADMIN)
+  role         AdminRole @default(OWNER)
   active       Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  sessions AdminSession[]
   dataCorrectionDecisions DataCorrectionRequest[]
   questionExecutionsStarted QuestionRequest[] @relation("QuestionExecutionStarted")
   questionDeliveries        QuestionRequest[] @relation("QuestionDelivered")
+  serviceExecutionsPerformed ServiceExecution[]
   cancellationDecisions   CancellationRequest[]
   refundDecisions          RefundDecision[]
   auditLogs                AuditLog[]
@@ -625,4 +633,43 @@ model AuditLog {
   newState      Json?
   metadata      Json?
   createdAt     DateTime  @default(now())
+}
+
+// Administrative sessions are independent from customer identities.
+model AdminSession {
+  id String @id @default(uuid())
+  tokenHash String @unique
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  @@index([adminId, expiresAt])
+}
+model AdminLoginBucket {
+  key String @id
+  attempts Int @default(0)
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+
+// Operational integration metadata; never question content.
+model AppointmentCommunication {
+  appointmentId String @id
+  appointment Appointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  calendarId String
+  eventId String
+  calendarUrl String?
+  meetUrl String?
+  syncedRevision String?
+  updatedAt DateTime @updatedAt
+}
+model AppointmentReminderConsent {
+  appointmentId String @id
+  appointment Appointment @relation(fields:[appointmentId],references:[id],onDelete:Cascade)
+  granted Boolean
+  phone String
+  version String
+  decidedAt DateTime
+  revokedAt DateTime?
 }

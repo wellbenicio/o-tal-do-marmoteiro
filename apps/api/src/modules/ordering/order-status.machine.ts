@@ -6,7 +6,7 @@ import { DomainError } from '../../common/errors/domain-error';
 /**
  * Máquina de estado do Pedido (XState — ver ADR 0001, seção "Máquinas de
  * estado"). Estados e transições definidos em
- * docs/adr/0002-maquina-de-estado-do-pedido.md:
+ * docs/adr/0017-maquina-de-estado-do-pedido.md:
  *
  * CREATED --PAYMENT_APPROVED--> CONFIRMED
  * CREATED --PAYMENT_DECLINED--> CANCELLED
@@ -15,7 +15,7 @@ import { DomainError } from '../../common/errors/domain-error';
  * CANCELLED é terminal (nenhuma transição sai dele).
  */
 export type OrderStatusEvent =
-  /** Pagamento aprovado (webhook do provedor) — ADR 0002, seção Decisão. */
+  /** Pagamento aprovado (webhook do provedor) — ADR 0017, seção Decisão. */
   | { type: 'PAYMENT_APPROVED' }
   /** Pagamento rejeitado, cancelado ou abandonado antes da aprovação. */
   | { type: 'PAYMENT_DECLINED' }
@@ -37,12 +37,15 @@ export const orderStatusMachine = createMachine({
         CANCEL: OrderStatus.CANCELLED,
       },
     },
+    [OrderStatus.CANCELLATION_REQUESTED]: {
+      on: { CANCEL: OrderStatus.CANCELLED },
+    },
     [OrderStatus.CANCELLED]: {},
   },
 });
 
 /**
- * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0002.
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0017.
  * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011: o estado
  * atual do Pedido conflita com o evento solicitado.
  */
@@ -52,7 +55,7 @@ export class InvalidOrderStatusTransitionError extends DomainError {
     public readonly event: OrderStatusEvent['type'],
   ) {
     super(
-      `Transição inválida do Pedido: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0002-maquina-de-estado-do-pedido.md).`,
+      `Transição inválida do Pedido: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0017-maquina-de-estado-do-pedido.md).`,
       HttpStatus.CONFLICT,
     );
     this.name = 'InvalidOrderStatusTransitionError';

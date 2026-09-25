@@ -6,14 +6,14 @@ import { DomainError } from '../../common/errors/domain-error';
 /**
  * Máquina de estado do Atendimento da Consulta Online (XState — ver ADR
  * 0001, seção "Máquinas de estado"). Estados e transições definidos em
- * docs/adr/0003-maquina-de-estado-do-atendimento.md:
+ * docs/adr/0018-maquina-de-estado-do-atendimento.md:
  *
  * NOT_STARTED --PAYMENT_APPROVED--> SCHEDULED
  * SCHEDULED   --COMPLETE-->         COMPLETED
  * SCHEDULED   --NO_SHOW-->          NO_SHOW
  * SCHEDULED   --CANCEL-->           CANCELLED
  *
- * Importante (nota da ADR 0003): quando o Pedido é cancelado ANTES de a
+ * Importante (nota da ADR 0018): quando o Pedido é cancelado ANTES de a
  * consulta chegar a ser agendada, o Atendimento simplesmente permanece em
  * `NOT_STARTED` — não há transição `NOT_STARTED → CANCELLED` modelada aqui,
  * pois "o valor simplesmente nunca avança".
@@ -52,7 +52,7 @@ export const appointmentStatusMachine = createMachine({
 });
 
 /**
- * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0003.
+ * Erro lançado ao tentar aplicar uma transição não permitida pela ADR 0018.
  * Estende `DomainError` com HTTP 409 (Conflict) — ver ADR 0011.
  */
 export class InvalidAppointmentStatusTransitionError extends DomainError {
@@ -61,7 +61,7 @@ export class InvalidAppointmentStatusTransitionError extends DomainError {
     public readonly event: AppointmentStatusEvent['type'],
   ) {
     super(
-      `Transição inválida do Atendimento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0003-maquina-de-estado-do-atendimento.md).`,
+      `Transição inválida do Atendimento: evento "${event}" não é permitido a partir do estado "${currentStatus}" (ver docs/adr/0018-maquina-de-estado-do-atendimento.md).`,
       HttpStatus.CONFLICT,
     );
     this.name = 'InvalidAppointmentStatusTransitionError';

@@ -9,7 +9,7 @@ import {
 /**
  * Ponto único de acesso à máquina de estado do Atendimento da Consulta
  * Online para o restante da aplicação. Ver
- * docs/adr/0003-maquina-de-estado-do-atendimento.md.
+ * docs/adr/0018-maquina-de-estado-do-atendimento.md.
  */
 @Injectable()
 export class AppointmentStatusService {
