@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-marmoteiro}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marmoteiro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no ambiente local}
       POSTGRES_DB: ${POSTGRES_DB:-marmoteiro}
     ports:
       - "127.0.0.1:5432:5432"

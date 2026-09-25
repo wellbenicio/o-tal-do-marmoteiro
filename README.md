@@ -65,9 +65,14 @@ privacy, notification, administration e audit.
 
 Pré-requisitos: Node.js 22+, npm 10+ e Docker.
 
+Defina `POSTGRES_PASSWORD` no ambiente local antes de iniciar o Compose e use
+o mesmo valor em `DATABASE_URL` da API. Não versione a senha. Para volumes já
+existentes, informe a senha atual do banco; a variável não altera credenciais
+de um banco inicializado.
+
 ```bash
 # 1. Instalar dependências de todos os workspaces
-npm install
+npm ci --ignore-scripts
 
 # 2. Subir Postgres (Redis é opcional)
 docker compose up -d postgres
