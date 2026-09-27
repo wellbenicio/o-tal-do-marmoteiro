@@ -1,0 +1,25 @@
+{
+  "name": "o-tal-do-marmoteiro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma de contrata\u00e7\u00e3o e gest\u00e3o de atendimentos oraculares",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace @marmoteiro/api",
+    "dev:web": "npm run dev --workspace @marmoteiro/web --",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "admin:create": "npm run admin:manage --workspace @marmoteiro/api -- create",
+    "admin:disable": "npm run admin:manage --workspace @marmoteiro/api -- disable",
+    "admin:password": "npm run admin:manage --workspace @marmoteiro/api -- reset-password"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.2",
+    "multer": "2.4.0",
+    "mysql2": "3.24.4"
+  }
+}

@@ -1,0 +1,20 @@
+# Builds the entire release (web, API and migration job).
+# Explicit invocation: gcloud builds submit --config=infra/cloudbuild-api.yaml
+# Set _REGION, _REPOSITORY and _RELEASE (immutable release identifier).
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, apps/api/Dockerfile, --target, runtime, -t, '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:${_RELEASE}', .]
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, apps/api/Dockerfile, --target, migrate, -t, '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/migrate:${_RELEASE}', .]
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, apps/web/Dockerfile, -t, '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/web:${_RELEASE}', .]
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:${_RELEASE}'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/migrate:${_RELEASE}'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/web:${_RELEASE}'
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: marmoteiro
+  _RELEASE: replace-with-release-id
+options:
+  logging: CLOUD_LOGGING_ONLY
