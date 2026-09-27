@@ -1,6 +1,6 @@
 {
   "name": "o-tal-do-marmoteiro",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Plataforma de contrata\u00e7\u00e3o e gest\u00e3o de atendimentos oraculares",
   "workspaces": [
