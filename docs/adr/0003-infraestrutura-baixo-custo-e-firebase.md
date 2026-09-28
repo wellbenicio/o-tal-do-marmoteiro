@@ -19,7 +19,7 @@ O responsável confirmou domínio na Cloudflare, e-mail ainda não configurado, 
 
 Mantém-se a direção Next.js/NestJS/Neon. Spark permite preparar a identidade, mas Cloud Run no mesmo projeto exige faturamento e mudança para Blaze. Benefícios devem ser conferidos/resgatados na conta do proprietário antes de compor abatimentos; não são garantia de gratuidade ou autorização para ativar cobrança. Conta Google pessoal atende à preparação de Calendar/Meet; Workspace não é dependência do produto.
 
-Cloudflare será mantida como registrador/DNS. Recebimento por Email Routing e envio profissional são configurações distintas. Frente HTTPS, provedor de saída humana e integrações reais permanecem pendentes; esta atualização não escolhe outro runtime, altera regras funcionais ou ativa serviços. As fontes e passos de verificação estão no guia.
+Cloudflare será mantida como registrador/DNS. Recebimento por Email Routing e envio profissional são configurações distintas. O envio transacional continuará separado no Resend, usando `notificacoes.marmoteiro.com`. Frente HTTPS, provedor de saída humana e integrações reais permanecem pendentes; esta atualização não escolhe outro runtime, altera regras funcionais ou ativa serviços. O passo a passo de painel, DNS, Email Routing, Resend e DMARC está no [runbook Cloudflare/e-mail](../architecture/dominio-cloudflare-email.md).
 
 ## Consequências
 
@@ -35,6 +35,7 @@ Escalar primeiro por medição: aumentar franquia/pool/instâncias, índices e p
 - Netlify Free: aceita projetos comerciais, tem limite de créditos e pode pausar ao esgotá-los. Pode hospedar a prévia; NestJS/banco continuam exigindo destino próprio.
 - Cloudflare Workers: opção econômica, mas runtime/adaptador OpenNext e limites de CPU precisam de homologação; não é substituição direta do container NestJS.
 - Firebase App Hosting: simplifica domínio/CDN/build de Next.js quando a combinação framework/monorepo está homologada. Exige Blaze; configuração candidata em `apps/web/apphosting.yaml`.
+- Firebase Hosting na frente do Cloud Run: candidato de baixo custo para domínio customizado em `southamerica-east1`, mas a sessão administrativa atual precisa ser adaptada/testada porque o Hosting repassa apenas o cookie especial `__session` nas requisições dinâmicas.
 - VPS: custo mensal e manutenção de sistema, backups, TLS e banco mesmo sem tráfego. Não é a recomendação para esta fase.
 
-Preços, fontes e hipóteses estão em [custos](../architecture/custos.md); estado da implementação e sequência em [mapa técnico](../architecture/README.md).
+Preços, fontes e hipóteses estão em [custos](../architecture/custos.md); domínio/DNS/e-mail em [Cloudflare e e-mail](../architecture/dominio-cloudflare-email.md); estado da implementação e sequência em [mapa técnico](../architecture/README.md).
