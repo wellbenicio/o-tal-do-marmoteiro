@@ -252,58 +252,185 @@ No Artifact Registry, configure inicialmente uma política de limpeza em **dry r
 
 **Verificação:** repositório Docker e bucket privados, com a conta de build autorizada nos dois recursos.
 
-## 10. E-mail profissional sem Google Workspace
+## 10. Configurar Cloudflare e e-mail sem Google Workspace
 
-O endereço oficial continua sendo **falecom@marmoteiro.com**. Como ainda não foi configurado, primeiro prepare recebimento; depois valide o envio. Nenhuma conta de Workspace faz parte deste roteiro.
+Objetivo desta etapa:
 
-### 10.1 Receber no Gmail com Cloudflare Email Routing
+- conferir o domínio `marmoteiro.com`;
+- receber mensagens em `falecom@marmoteiro.com`;
+- preparar `notificacoes.marmoteiro.com` no Resend;
+- não contratar Google Workspace.
 
-O encaminhamento simples está disponível no plano gratuito; a caixa que armazena as mensagens será seu Gmail de destino. [Preços do Email Service](https://developers.cloudflare.com/email-service/platform/pricing/).
+### 10.1 Conferir domínio e DNSSEC
 
-1. No [painel Cloudflare](https://dash.cloudflare.com/), procure **Email Routing**, atualmente em **Compute > Email Service**; em interfaces anteriores, pode aparecer dentro do domínio em **Email**.
-2. Em **Onboard Domain**, selecione `marmoteiro.com`. Revise os registros MX/TXT propostos antes de confirmar. Se já aparecer outro serviço de e-mail no DNS, confira sua função antes de substituir registros.
-3. Em **Destination Addresses**, adicione seu Gmail de destino e confirme o link recebido nessa caixa.
-4. Em **Routing Rules**, crie `falecom` no domínio, ação **Send to an email**, escolhendo o destino verificado. Salve.
-5. Teste a partir de **outra conta**, diferente do Gmail de destino: envie para `falecom@marmoteiro.com` e confirme a chegada, inclusive na pasta de spam. [Passo a passo oficial](https://developers.cloudflare.com/email-service/get-started/route-emails/).
+1. Entre em [Cloudflare Dashboard](https://dash.cloudflare.com/).
+2. Selecione sua conta.
+3. Abra **Domain Registration > Manage Domains**.
+4. Em `marmoteiro.com`, confirme **Auto-renew = On**.
+5. Clique em **Manage > Configuration**.
+6. Habilite **DNSSEC** se estiver desligado.
 
-Não é necessário publicar o Gmail pessoal como contato do negócio. Marque o recebimento como concluído apenas após o teste; registro do domínio sozinho não cria uma caixa de entrada.
+**Pronto quando:** domínio ativo, renovação automática ligada e DNSSEC habilitado.
 
-### 10.2 Enviar e responder como falecom@marmoteiro.com
+### 10.2 Onde adicionar registros DNS
 
-Receber uma mensagem encaminhada não configura automaticamente o remetente no Gmail. Responder normalmente pode revelar o endereço Gmail. Para usar o canal profissional também na saída, escolha e valide um serviço de envio/SMTP autorizado para o domínio ou uma caixa postal de outro provedor, sem obrigatoriedade de Workspace.
+Quando Resend, Firebase ou outro serviço pedir um TXT/CNAME/MX:
 
-A Cloudflare oferece **Email Sending em beta, inclusive SMTP**, separadamente do encaminhamento. Envio para destinatários arbitrários exige **Workers Paid**, segundo a tabela atual; não considerar esse recurso incluído gratuitamente no registro do domínio. Pode ser avaliado como alternativa, mas ainda exige domínio autorizado, cliente de e-mail compatível e testes de entrega. [SMTP Cloudflare](https://developers.cloudflare.com/email-service/api/send-emails/smtp/), [condições de preço](https://developers.cloudflare.com/email-service/platform/pricing/).
+1. abra `marmoteiro.com` na Cloudflare;
+2. vá a **DNS > Records**;
+3. clique em **Add record**;
+4. copie exatamente os campos fornecidos pelo serviço;
+5. deixe **TTL = Auto**;
+6. para CNAME de validação/e-mail, use **DNS only**;
+7. clique em **Save**.
 
-Antes de usar o endereço em atendimento real, testar recebimento, resposta com `From: falecom@marmoteiro.com` e autenticação SPF/DKIM/DMARC no destinatário. O provedor de saída humana continua **a escolher**. O Resend abaixo é o candidato já documentado para mensagens automáticas da aplicação; sua configuração não cria uma interface de caixa postal.
-
-### 10.3 Preparar o Resend para mensagens automáticas
-
-Esta etapa pode ser feita agora, mas não é necessária para a primeira URL `run.app`.
-
-1. Entre no [Resend](https://resend.com/) e crie sua conta. Confirme o e-mail e o plano Free.
-2. Abra **Domains > Add domain**.
-3. Use o subdomínio `notificacoes.marmoteiro.com`. Ele separa os envios do sistema do recebimento de `falecom@marmoteiro.com`.
-4. Escolha a região de envio disponível mais adequada e registre a escolha; ela é independente da região do banco.
-5. O Resend exibirá os registros DNS. Abra **Cloudflare > marmoteiro.com > DNS > Records > Add record**. Copie os nomes e valores fornecidos, sem duplicar `.marmoteiro.com` no nome. Registros de e-mail/verificação devem ficar em **DNS only** quando existir a opção de proxy; TXT/MX não são proxy HTTP. [Configuração Resend na Cloudflare](https://resend.com/docs/knowledge-base/cloudflare).
-6. Copie **tipo, host/nome, conteúdo e prioridade**, quando houver, exatamente do painel. O TTL padrão normalmente serve.
-7. Atenção ao campo de nome: alguns provedores acrescentam `.marmoteiro.com` automaticamente. Evite criar um nome duplicado como `...marmoteiro.com.marmoteiro.com`.
-8. Preserve os MX da raiz usados pelo Cloudflare Email Routing, se já ativado. O MX do subdomínio de retorno do Resend tem outra finalidade. Não habilite recebimento Resend na raiz nem troque esses MX para configurar somente envio.
-9. Não crie dois TXT começando com `v=spf1` no mesmo hostname. Se já houver um registro no nome solicitado, concilie-o com a configuração existente.
-10. Clique em **Verify / I've added the records** e aguarde a verificação. Se continuar pendente, compare os nomes completos e valores antes de repetir registros.
-
-Verificar domínio de envio não exige transferir sua caixa postal. O sistema terá remetente sugerido `O Tal do Marmoteiro <avisos@notificacoes.marmoteiro.com>` e resposta dirigida a `falecom@marmoteiro.com`. Esse remetente é uma proposta para a futura integração, não uma variável já utilizada pelo código. [Domínios](https://resend.com/docs/dashboard/domains/introduction), [gestão e verificação](https://resend.com/docs/dashboard/domains/manage-domains).
-
-Depois da verificação, crie a chave em **API Keys > Create API Key**:
-
-| Campo | Valor |
+| Campo | Significado |
 | --- | --- |
-| Nome | `marmoteiro-producao-envio` |
-| Permissão | Sending access |
-| Domínio | `notificacoes.marmoteiro.com` |
+| Type | TXT, MX, CNAME, A etc. |
+| Name | Host/subdomínio; `@` representa `marmoteiro.com` |
+| Content / Target | Valor fornecido pelo serviço |
+| Priority | Usado em MX; copie exatamente |
+| TTL | Deixe `Auto` nesta fase |
 
-Guarde o valor exibido uma vez no gerenciador de senhas. Depois de preparar Blaze/Secret Manager, cadastre-o como segredo `marmoteiro-resend-api-key`. A associação à API e a variável de ambiente serão acrescentadas quando implementarmos o provedor de envio. Desative rastreamento de abertura/clique para os avisos de consulta; preserve conteúdo mínimo. Se a conta solicitar aprovação para produção, complete o cadastro verdadeiro do negócio. [Chaves](https://resend.com/docs/dashboard/api-keys/introduction), [permissões](https://resend.com/docs/api-reference/api-keys/create-api-key).
+Não invente valores e não apague registro que você não reconhece.
 
-**Verificação:** domínio Verified, chave restrita guardada privadamente e recebimento profissional testado. A aplicação ainda precisa da integração de envio; verificar DNS não ativa mensagens automáticas no projeto.
+### 10.3 Receber `falecom@marmoteiro.com`
+
+#### Ativar Email Routing
+
+1. Cloudflare Dashboard > sua conta.
+2. Abra **Compute > Email Service > Email Routing**.
+3. Clique em **Onboard Domain**.
+4. Escolha `marmoteiro.com`.
+5. Revise os registros que a Cloudflare adicionará.
+6. Clique em **Done**.
+
+A Cloudflare pode criar automaticamente os MX e registros de autenticação necessários. Não duplique esses registros manualmente.
+
+#### Informar sua caixa de destino
+
+1. Vá a **Compute > Email Service > Email Routing > Destination Addresses**.
+2. Informe a caixa de e-mail que você já usa.
+3. Abra o e-mail de confirmação recebido nela.
+4. Clique em **Verify email address**.
+5. Volte à Cloudflare e confirme que aparece como verificada.
+
+#### Criar o endereço `falecom@`
+
+1. Abra **Email Routing > Routing Rules**.
+2. Clique em **Create routing rule**.
+3. Em **Email pattern**, informe:
+   ```text
+   falecom
+   ```
+4. Selecione `marmoteiro.com`.
+5. Em **Action**, escolha encaminhar para um endereço.
+6. Em **Destination**, escolha sua caixa verificada.
+7. Salve.
+
+Deixe **Catch-all desligado** inicialmente.
+
+#### Testar
+
+Envie de outro e-mail para:
+
+```text
+falecom@marmoteiro.com
+```
+
+**Pronto quando:** a mensagem chega à sua caixa de destino.
+
+> Email Routing só recebe/encaminha. Ele não cria webmail, IMAP ou SMTP para você enviar manualmente como `falecom@`.
+
+### 10.4 Configurar o Resend
+
+O sistema usará:
+
+```text
+notificacoes.marmoteiro.com
+```
+
+1. Entre no Resend.
+2. Abra **Domains > Add domain**.
+3. Informe `notificacoes.marmoteiro.com`.
+4. Se o Resend oferecer integração automática com Cloudflare/Domain Connect, prefira essa opção.
+5. Caso contrário, mantenha Resend e Cloudflare abertos lado a lado e, para cada registro mostrado:
+   - Cloudflare > `marmoteiro.com` > **DNS > Records > Add record**;
+   - copie Type;
+   - copie Name;
+   - copie Content/Target;
+   - copie Priority, se existir;
+   - TTL = Auto;
+   - Proxy = **DNS only**, quando esse campo existir;
+   - Save.
+6. Volte ao Resend e execute a verificação.
+7. Só conclua quando o domínio aparecer como **Verified**.
+
+Regras importantes:
+
+- não altere os MX da raiz `marmoteiro.com` criados pelo Email Routing;
+- não crie dois TXT começando com `v=spf1` no mesmo hostname;
+- copie DKIM exatamente como o Resend mostrar;
+- não use proxy laranja em registro de validação/e-mail.
+
+### 10.5 Criar a API Key do Resend
+
+Depois de `Verified`:
+
+1. Resend > **API Keys > Create API Key**.
+2. Nome: `marmoteiro-producao-envio`.
+3. Permissão: **Sending access**.
+4. Restrinja ao domínio `notificacoes.marmoteiro.com`, se disponível.
+5. Crie e copie a chave.
+6. No Google Cloud Secret Manager, salve como:
+   ```text
+   marmoteiro-resend-api-key
+   ```
+
+Nunca grave essa chave no Git ou na documentação.
+
+Configuração prevista:
+
+```text
+From: O Tal do Marmoteiro <avisos@notificacoes.marmoteiro.com>
+Reply-To: falecom@marmoteiro.com
+```
+
+### 10.6 Criar DMARC inicial
+
+Depois que Routing e Resend estiverem funcionando:
+
+1. Cloudflare > `marmoteiro.com` > **DNS > Records > Add record**.
+2. Type: **TXT**.
+3. Name:
+   ```text
+   _dmarc
+   ```
+4. Content:
+   ```text
+   v=DMARC1; p=none;
+   ```
+5. TTL: **Auto**.
+6. Save.
+
+`p=none` é somente observação. Não usar `quarantine`/`reject` antes de validar todos os remetentes.
+
+### 10.7 Checklist
+
+- [ ] `marmoteiro.com` ativo
+- [ ] Auto-renew ligado
+- [ ] DNSSEC ativo
+- [ ] Email Routing onboarded
+- [ ] Destination Address verificada
+- [ ] regra `falecom@` criada
+- [ ] teste de recebimento passou
+- [ ] Catch-all desligado
+- [ ] `notificacoes.marmoteiro.com` Verified no Resend
+- [ ] API key guardada no Secret Manager
+- [ ] DMARC `p=none` criado
+- [ ] nenhuma credencial no Git
+
+Se algo falhar, use o runbook [domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md), que contém diagnóstico por problema.
 
 ## 11. Autenticar o Terminal do Mac
 
