@@ -1,6 +1,6 @@
 # Mapa técnico — O Tal do Marmoteiro
 
-Atualizado em 28/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
+Atualizado em 25/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
 
 ## Leitura rápida
 
@@ -13,17 +13,6 @@ Para configurar as contas como proprietário, comece pelo [passo a passo de conf
 5. [Próximas etapas e handoff](./handoff.md): sequência de implementação, critérios de conclusão e bloqueios externos.
 6. ADRs [0001](../adr/0001-escolha-da-stack-tecnologica.md), [0002](../adr/0002-acesso-administrativo-e-canais.md), [0003](../adr/0003-infraestrutura-baixo-custo-e-firebase.md).
 7. [Git Flow](./git-flow.md): branches, integração, releases, sincronização e limpeza.
-8. [Domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md): Cloudflare Registrar, Spark -> Blaze, Google AI Pro, custom domain e e-mail sem Workspace.
-
-### Plataforma já confirmada
-
-- domínio: `marmoteiro.com`, Cloudflare Registrar + Cloudflare DNS;
-- Google Workspace: fora do baseline;
-- Firebase: Spark durante preparação; Blaze somente quando Cloud Run/App Hosting exigir Cloud Billing;
-- Google AI Pro + Google Developer Program Premium: benefício vigente de US$ 10/mês em créditos Google Cloud quando corretamente vinculado/resgatado;
-- entrada de e-mail: Cloudflare Email Routing para `falecom@`;
-- transacional: Resend em `notificacoes.marmoteiro.com`;
-- domínio web: primeiro `run.app`; depois Firebase Hosting -> Cloud Run apenas após compatibilizar sessão com `__session`.
 
 ## Estado real
 
@@ -38,7 +27,7 @@ Para configurar as contas como proprietário, comece pelo [passo a passo de conf
 | Pagamento | Estados e regras de prévia separados | Gateway, webhook assinado, idempotência, reconciliação e estorno real |
 | Agenda | Slots/hold/reagendamento/cancelamento na prévia | Exclusividade transacional, concorrência, expiração e integração com disponibilidade pessoal |
 | Comunicações | Outbox PostgreSQL e adaptadores Calendar/Meet/WhatsApp; execução por chamada interna autenticada | Eventos confiáveis de domínio, Cloud Tasks/OAuth, e-mail comercial, consentimentos persistidos e recibos |
-| Infraestrutura | Dockerfiles, Next standalone, App Hosting config, build Cloud Run, CI e limites de pool; domínio `marmoteiro.com` já registrado no Cloudflare Registrar/DNS; Firebase atualmente Spark | Vincular Cloud Billing -> Blaze antes do Cloud Run; validar benefício Google AI Pro; deploy/smoke test remoto; adaptar cookie `__session` antes de usar Firebase Hosting no domínio |
+| Infraestrutura | Dockerfiles, Next standalone, App Hosting config, build Cloud Run, CI e limites de pool | Contas/projeto remoto autenticados, faturamento escolhido, deploy e smoke test remoto |
 
 A conta administrativa criada durante a validação pertence ao PostgreSQL local. Nenhuma senha ou conta deve ser copiada para Git, YAML ou documentação. Migrar banco ou provisionar administrador remoto é etapa explícita do deploy.
 
