@@ -1,23 +1,12 @@
 # Handoff técnico e sequência de produção
 
-Atualizado em 28/09/2026. Branch padrão/produção: `main`; integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
+Atualizado em 25/09/2026. Branch padrão/produção: `main`; integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
 
 ## Primeiro minuto de outro desenvolvedor/agente
 
 Leia `AGENTS.md`, o baseline e [mapa técnico](./README.md). Confira arquivos de ambiente por nomes/validação, sem imprimir segredos. Inspecione processos nas portas 3008/3001 e Docker antes de reiniciar. A conta administrativa local existe; não criar senha padrão nem colocar credenciais em documentação/seed.
 
-O responsável recebeu um [guia de criação das contas e primeira publicação](./configuracao-das-contas.md). Sua existência não comprova que as etapas foram executadas. O domínio `marmoteiro.com` já está registrado no Cloudflare Registrar e usa Cloudflare DNS; Google Workspace foi descartado nesta fase. O Firebase informado pelo responsável está no Spark. Confirmar o Project ID real antes de publicar. A região sugerida no guia é São Paulo quando disponível no plano escolhido; exemplos antigos em `us-central1` não são uma decisão já aplicada. Para Cloud Run/App Hosting, vincular Cloud Billing e confirmar a mudança Spark -> Blaze. Firebase Hosting continua bloqueado para o domínio autenticado até adaptar o cookie atual ao tratamento de `__session`.
-
-## Infraestrutura externa confirmada em 28/09/2026
-
-- `marmoteiro.com`: Cloudflare Registrar + Cloudflare DNS;
-- sem Google Workspace;
-- `falecom@marmoteiro.com`: entrada planejada via Cloudflare Email Routing;
-- transacional: Resend em `notificacoes.marmoteiro.com`;
-- Firebase atual: Spark;
-- produção Cloud Run/App Hosting: exige Cloud Billing e Blaze;
-- Google AI Pro + Google Developer Program Premium: benefício vigente de US$ 10/mês em créditos Google Cloud quando corretamente vinculado;
-- guia operacional: [domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md).
+O responsável recebeu um [guia de criação das contas e primeira publicação](./configuracao-das-contas.md). Sua existência não comprova que as etapas foram executadas. Confirmar recursos/IDs reais antes de publicar. A região sugerida no guia é São Paulo quando disponível no plano escolhido; exemplos antigos em `us-central1` não são uma decisão já aplicada. Domínio próprio ainda exige escolha/homologação da frente HTTPS; Firebase Hosting filtra cookies e não é compatível automaticamente com o cookie administrativo atual.
 
 ## Preços e duração — 25/09/2026
 
@@ -38,7 +27,7 @@ O catálogo persistente ainda será integrado. A prioridade de R$ 20,00 permanec
 
 ## O que impede a publicação remota agora
 
-Nenhuma conta Firebase/Google Cloud/hospedagem está autenticada neste ambiente. O responsável informou que possui Firebase no plano Spark, mas o Project ID e o vínculo deste repositório com esse projeto ainda precisam ser confirmados. Também não há banco remoto configurado. O build local não equivale a deploy. É necessário confirmar o Project ID, autenticar o proprietário, vincular Cloud Billing antes do Cloud Run (Spark -> Blaze), criar/conectar o banco e provisionar segredos/acesso administrativo. O Google AI Pro/Google Developer Program Premium pode fornecer US$ 10/mês em créditos Google Cloud quando corretamente vinculado/resgatado, mas isso não substitui billing.
+Nenhuma conta Firebase/Google Cloud/hospedagem está autenticada neste ambiente e nenhum projeto remoto foi informado. Também não há banco remoto configurado. O build local não equivale a deploy. É necessário selecionar projeto/conta de faturamento, autenticar o proprietário, criar/conectar o banco e provisionar segredos/acesso administrativo.
 
 Não publicar somente a web dizendo que o painel está funcional: a verificação administrativa depende da API e do PostgreSQL. Uma prévia sem API falha fechada no login, mas isso precisa ser explicitamente combinado; o objetivo é publicar as camadas necessárias.
 
@@ -83,7 +72,7 @@ Prévia de desenvolvimento em `http://localhost:3008/`, API local em 3001. Artef
 | 4. Pedido/agenda/pergunta persistentes | Identidade e catálogo | Hold e exclusividade com concorrência, texto protegido, fila correta, correção cadastral e auditoria |
 | 5. Gateway | Conta comercial e sandbox | Cobrança, assinatura/dedup de webhook, confirmação confiável, reconciliação, estorno e testes de falha/duplicidade |
 | 6. Google Calendar/Meet | Pagamento/agenda confiáveis, OAuth e calendário | Convite com Meet, atualização/cancelamento, conflitos/disponibilidade pessoal e reconciliação sem dados íntimos |
-| 7. E-mail transacional | Cloudflare DNS + Resend verificado | `notificacoes.marmoteiro.com`, templates versionados, opt-ins quando aplicáveis, outbox, retries, limites diários e recibos/bounces; entrada `falecom@` via Cloudflare Email Routing |
+| 7. E-mail transacional | Domínio/DNS e provedor | Templates versionados, opt-ins quando aplicáveis, outbox, retries, limites diários e recibos/bounces |
 | 8. WhatsApp | Número/conta/template aprovados e consentimento | Agendamento de lembretes, revogação, revalidação, recibos de entrega e tratamento de incerteza |
 | 9. Operação administrativa real | Domínios anteriores | Métricas financeiras sobre eventos reais, decisões manuais, contatos autorizados, auditoria e exportações |
 | 10. Retenção e lançamento comercial | Jurídico/dados/integrações homologados | Backups/restauração, atendimento LGPD, retenção/legal hold, observabilidade, teste de carga e revisão final do fluxo inteiro |
@@ -96,8 +85,8 @@ Registrar problema e comportamento final; contrato e autorização; regras/invar
 
 ## Decisões ainda a fechar
 
-- Project ID efetivo do Firebase, regiões e transferência aplicável de dados; limite de gasto aceitável e método de acompanhamento; confirmar Google Developer Program Premium/crédito mensal.
-- Caixa postal/SMTP humana para `falecom@` somente se houver necessidade de envio manual pelo domínio; gateway/conta elegível para o ramo de atividade e formas de pagamento.
+- ID/conta do projeto Firebase, regiões e transferência aplicável de dados; limite de gasto aceitável e método de acompanhamento.
+- Provedor atual do e-mail profissional; gateway/conta elegível para o ramo de atividade e formas de pagamento.
 - OAuth da agenda: conta organizadora, calendário e permissões; homologação do Meet conforme recursos da conta.
 - Número Meta, template aprovado, política de contato comercial separada dos lembretes; atendimento inicial manual da pergunta continua previsto.
 - Retenção por categoria de dados, backup e recuperação; arquivos e gravações (quando autorizadas) fora do banco relacional.

@@ -1,17 +1,6 @@
 # Configuração das contas e primeira publicação
 
-Guia do responsável pelo O Tal do Marmoteiro. Atualizado em 28/09/2026 contra o código do repositório e documentação oficial. **Este documento é um roteiro operacional: nenhuma cobrança, recurso remoto ou integração é criada apenas por existir documentação.** Os nomes dos menus podem variar com o idioma e a atualização do painel.
-
-### Estado já confirmado pelo responsável
-
-- domínio principal: `marmoteiro.com`, registrado no **Cloudflare Registrar**;
-- DNS autoritativo: **Cloudflare DNS**; como o domínio foi registrado na Cloudflare, os nameservers permanecem na própria Cloudflare;
-- Google Workspace: **não será contratado** nesta fase;
-- Firebase: projeto atualmente no plano **Spark**;
-- conta Google do responsável: participação no programa estudantil com **Google AI Pro** e Google Developer Program; quando o benefício Premium estiver corretamente vinculado ao Perfil de Desenvolvedor, a documentação oficial vigente informa **US$ 10/mês em créditos Google Cloud**, cotas maiores do Gemini Code Assist e até 30 workspaces do Firebase Studio;
-- esses benefícios não eliminam a necessidade de Cloud Billing para Cloud Run/App Hosting e não devem ser tratados como garantia de fatura zero.
-
-O detalhamento de DNS, domínio e e-mail fica centralizado em [domínio Cloudflare e e-mail](./dominio-cloudflare-email.md).
+Guia do responsável pelo O Tal do Marmoteiro. Conferido em 22/09/2026 contra o código local e documentação oficial. **Este documento é um roteiro: nenhuma conta, cobrança, recurso remoto ou integração foi criada por sua elaboração.** Os nomes dos menus podem variar com o idioma e a atualização do painel.
 
 ## 1. O que será configurado
 
@@ -23,15 +12,12 @@ O detalhamento de DNS, domínio e e-mail fica centralizado em [domínio Cloudfla
 | Secret Manager | Guardar URLs com senha e chaves privadas | Agora |
 | Neon | PostgreSQL remoto | Agora |
 | Resend | E-mails automáticos do sistema | Conta/domínio podem ser preparados agora; envio depois |
-| Cloudflare Registrar / DNS | Registro do domínio, DNS e DNSSEC | Já escolhido; configurar e preservar |
-| Cloudflare Email Routing | Receber `falecom@marmoteiro.com` por encaminhamento | Pode ser habilitado sem Workspace |
-| Resend | E-mails transacionais do sistema | Configurar subdomínio e DNS; integrar depois |
-| Caixa postal/SMTP profissional | Enviar e responder manualmente como `falecom@marmoteiro.com` | Só contratar quando houver necessidade operacional; não confundir com Email Routing |
+| Provedor de domínio/e-mail | DNS e caixa postal profissional | Identificar agora; preservar a configuração existente |
 | Google Calendar/Meet e Meta | Convites e lembretes | Preparar contas; concluir junto com cada integração |
 
 A primeira publicação terá uma URL HTTPS `run.app`. Cadastro de cliente, pagamento, agenda e financeiro continuam demonstrativos. O login administrativo é real e depende do banco remoto. Criar um usuário no Firebase não concede acesso à gestão.
 
-Reserve um gerenciador de senhas para os segredos. Anote os identificadores públicos numa ficha separada. Use a conta Google do proprietário e autenticação em duas etapas nas contas. Use sua conta Google pessoal já existente para Firebase/Google Cloud. **Google Workspace não é requisito** para criar projeto, usar Firebase, Cloud Run, Calendar API ou os benefícios do Google Developer Program. O e-mail comercial do domínio é uma decisão separada da identidade usada nos consoles.
+Reserve um gerenciador de senhas para os segredos. Anote os identificadores públicos numa ficha separada. Use a conta Google do proprietário e autenticação em duas etapas nas contas. Caso o e-mail profissional não seja uma conta Google, use sua conta Google já existente; não é necessário contratar Workspace para criar o projeto.
 
 ## 2. Firebase e Google Cloud: um único projeto
 
@@ -47,50 +33,24 @@ Firebase acrescenta serviços ao projeto Google Cloud associado. Registrar aplic
 
 **Verificação:** o ID exibido nos dois consoles é idêntico.
 
-## 3. Spark hoje; Blaze somente quando o deploy exigir
+## 3. Faturamento e alerta de gastos
 
-O projeto Firebase está atualmente no **Spark**, e isso é suficiente para preparar o aplicativo web, usar Firebase Authentication dentro das cotas do plano e desenvolver localmente. Porém, o desenho de produção deste repositório usa serviços Google Cloud pagos por consumo — especialmente Cloud Run, Cloud Build, Artifact Registry e Secret Manager — que **não ficam disponíveis no Spark**. O Firebase App Hosting também exige Cloud Billing.
-
-A regra operacional é:
-
-1. **Enquanto estiver apenas desenvolvendo e configurando Authentication:** pode permanecer no Spark.
-2. **Antes do primeiro deploy em Cloud Run ou App Hosting:** vincule uma conta do Cloud Billing ao mesmo projeto.
-3. Ao vincular o faturamento, o Firebase converte automaticamente esse projeto de Spark para **Blaze (pay as you go)**.
-4. Blaze não é uma assinatura mensal fixa do Firebase; a cobrança depende do consumo dos produtos pagos, preservando as cotas sem custo aplicáveis.
-5. Não crie um segundo projeto Google Cloud só para evitar a mudança de plano: Firebase e Google Cloud compartilham o mesmo Project ID, IAM e faturamento.
-
-### Benefícios Google AI Pro / Google Developer Program
-
-A conta do responsável participa do Google AI Pro para estudantes e do Google Developer Program. Na documentação oficial vigente em 28/09/2026, o Google AI Pro inclui o Google Developer Program Premium quando a assinatura está vinculada ao Perfil de Desenvolvedor, com:
-
-- **US$ 10/mês em créditos Google Cloud**;
-- cotas maiores do Gemini Code Assist;
-- até **30 workspaces do Firebase Studio**;
-- demais benefícios do programa.
-
-Esses créditos podem ajudar a absorver o consumo pequeno do projeto, mas:
-
-- confirme no Perfil de Desenvolvedor/área de benefícios que o Premium está realmente ativo;
-- confirme que o crédito mensal foi resgatado/aplicado antes de contar com ele;
-- não misture `créditos de IA` do Google One/Flow/Antigravity com `créditos Google Cloud`; são saldos e finalidades diferentes;
-- o crédito não substitui a necessidade de uma conta de faturamento válida;
-- consumo acima do crédito e das franquias continua faturável.
-
-### Configurar faturamento com segurança
+Cloud Run exige uma conta de faturamento vinculada, mesmo quando o consumo cabe na franquia. A associação de faturamento também deve aparecer no Firebase como plano Blaze. Não confundir créditos temporários de avaliação com franquias permanentes.
 
 1. No Google Cloud, abra **Faturamento / Billing**.
-2. Vincule uma conta de faturamento ao **mesmo Project ID** do Firebase.
-3. Volte ao Firebase e confirme que o projeto aparece como **Blaze**.
-4. Em **Budgets & alerts**, crie `Marmoteiro - acompanhamento mensal`.
-5. Escopo: somente o projeto Marmoteiro; todos os serviços.
-6. Use inicialmente um orçamento baixo de observação, por exemplo R$ 30 ou US$ 5, conforme a moeda da conta. É alerta, não promessa de custo.
-7. Alertas: 50%, 80% e 100%; habilite previsão, se disponível.
-8. Ative limites de instâncias e limpeza de artefatos descritos neste guia.
-9. Depois do primeiro deploy, confira **Billing > Reports** e também a aplicação do crédito do Google Developer Program.
+2. Vincule uma conta existente ou crie a sua, preenchendo país, cadastro e pagamento diretamente no Google.
+3. Confira a associação ao projeto Marmoteiro. Leia a moeda e condições antes de concluir.
+4. Em **Orçamentos e alertas / Budgets & alerts**, crie um orçamento do tipo **somente alertas**.
+5. Nome: `Marmoteiro - acompanhamento mensal`.
+6. Escopo: somente este projeto; todos os serviços.
+7. Período: mensal. Valor sugerido para acompanhamento: R$ 30 se a conta faturar em reais, ou US$ 5 se faturar em dólares. São exemplos de alertas, não conversão cambial nem promessa de custo.
+8. Crie alertas em 50%, 80% e 100% do valor. Ative também previsão de ultrapassagem, se disponível.
+9. Confirme os destinatários de faturamento; inclua um endereço que você acompanha.
+10. Depois do primeiro deploy, acompanhe **Billing > Reports**, filtrando o projeto.
 
-**Importante:** alertas de orçamento comuns não desligam automaticamente todos os serviços. Alguns produtos Firebase oferecem spend caps próprios, mas isso não deve ser tratado como trava global de Cloud Run/Google Cloud.
+**Um orçamento somente de alertas não interrompe cobranças.** Os limites de instâncias ajudam, mas não são um teto financeiro. O Google oferece controles de gasto em prévia para alguns cenários; não são parte da configuração deste roteiro. [Orçamentos oficiais](https://docs.cloud.google.com/billing/docs/how-to/budgets).
 
-**Verificação:** mesmo Project ID nos dois consoles; Blaze somente depois do vínculo de billing; orçamento ativo; benefício Premium/US$ 10 registrado separadamente como crédito promocional/benefício e não como limite de gasto.
+**Verificação:** faturamento ativo para o ID correto e orçamento listado com os destinatários corretos.
 
 ## 4. Preparar o Firebase Authentication
 
@@ -233,185 +193,34 @@ No Artifact Registry, configure inicialmente uma política de limpeza em **dry r
 
 **Verificação:** repositório Docker e bucket privados, com a conta de build autorizada nos dois recursos.
 
-## 10. Configurar Cloudflare e e-mail sem Google Workspace
+## 10. Preparar o Resend e preservar seu e-mail profissional
 
-Objetivo desta etapa:
+Esta etapa pode ser feita agora, mas não é necessária para a primeira URL `run.app`.
 
-- conferir o domínio `marmoteiro.com`;
-- receber mensagens em `falecom@marmoteiro.com`;
-- preparar `notificacoes.marmoteiro.com` no Resend;
-- não contratar Google Workspace.
-
-### 10.1 Conferir domínio e DNSSEC
-
-1. Entre em [Cloudflare Dashboard](https://dash.cloudflare.com/).
-2. Selecione sua conta.
-3. Abra **Domain Registration > Manage Domains**.
-4. Em `marmoteiro.com`, confirme **Auto-renew = On**.
-5. Clique em **Manage > Configuration**.
-6. Habilite **DNSSEC** se estiver desligado.
-
-**Pronto quando:** domínio ativo, renovação automática ligada e DNSSEC habilitado.
-
-### 10.2 Onde adicionar registros DNS
-
-Quando Resend, Firebase ou outro serviço pedir um TXT/CNAME/MX:
-
-1. abra `marmoteiro.com` na Cloudflare;
-2. vá a **DNS > Records**;
-3. clique em **Add record**;
-4. copie exatamente os campos fornecidos pelo serviço;
-5. deixe **TTL = Auto**;
-6. para CNAME de validação/e-mail, use **DNS only**;
-7. clique em **Save**.
-
-| Campo | Significado |
-| --- | --- |
-| Type | TXT, MX, CNAME, A etc. |
-| Name | Host/subdomínio; `@` representa `marmoteiro.com` |
-| Content / Target | Valor fornecido pelo serviço |
-| Priority | Usado em MX; copie exatamente |
-| TTL | Deixe `Auto` nesta fase |
-
-Não invente valores e não apague registro que você não reconhece.
-
-### 10.3 Receber `falecom@marmoteiro.com`
-
-#### Ativar Email Routing
-
-1. Cloudflare Dashboard > sua conta.
-2. Abra **Compute > Email Service > Email Routing**.
-3. Clique em **Onboard Domain**.
-4. Escolha `marmoteiro.com`.
-5. Revise os registros que a Cloudflare adicionará.
-6. Clique em **Done**.
-
-A Cloudflare pode criar automaticamente os MX e registros de autenticação necessários. Não duplique esses registros manualmente.
-
-#### Informar sua caixa de destino
-
-1. Vá a **Compute > Email Service > Email Routing > Destination Addresses**.
-2. Informe a caixa de e-mail que você já usa.
-3. Abra o e-mail de confirmação recebido nela.
-4. Clique em **Verify email address**.
-5. Volte à Cloudflare e confirme que aparece como verificada.
-
-#### Criar o endereço `falecom@`
-
-1. Abra **Email Routing > Routing Rules**.
-2. Clique em **Create routing rule**.
-3. Em **Email pattern**, informe:
-   ```text
-   falecom
-   ```
-4. Selecione `marmoteiro.com`.
-5. Em **Action**, escolha encaminhar para um endereço.
-6. Em **Destination**, escolha sua caixa verificada.
-7. Salve.
-
-Deixe **Catch-all desligado** inicialmente.
-
-#### Testar
-
-Envie de outro e-mail para:
-
-```text
-falecom@marmoteiro.com
-```
-
-**Pronto quando:** a mensagem chega à sua caixa de destino.
-
-> Email Routing só recebe/encaminha. Ele não cria webmail, IMAP ou SMTP para você enviar manualmente como `falecom@`.
-
-### 10.4 Configurar o Resend
-
-O sistema usará:
-
-```text
-notificacoes.marmoteiro.com
-```
-
-1. Entre no Resend.
+1. Entre no [Resend](https://resend.com/) e crie sua conta. Confirme o e-mail e o plano Free.
 2. Abra **Domains > Add domain**.
-3. Informe `notificacoes.marmoteiro.com`.
-4. Se o Resend oferecer integração automática com Cloudflare/Domain Connect, prefira essa opção.
-5. Caso contrário, mantenha Resend e Cloudflare abertos lado a lado e, para cada registro mostrado:
-   - Cloudflare > `marmoteiro.com` > **DNS > Records > Add record**;
-   - copie Type;
-   - copie Name;
-   - copie Content/Target;
-   - copie Priority, se existir;
-   - TTL = Auto;
-   - Proxy = **DNS only**, quando esse campo existir;
-   - Save.
-6. Volte ao Resend e execute a verificação.
-7. Só conclua quando o domínio aparecer como **Verified**.
+3. Use o subdomínio `notificacoes.marmoteiro.com`. Ele permite separar os envios do sistema da caixa postal já existente.
+4. Escolha a região de envio disponível mais adequada e registre a escolha; ela é independente da região do banco.
+5. O Resend exibirá os registros DNS. Abra o painel onde a zona DNS do domínio é realmente administrada — pode ser diferente do registrador e do provedor de e-mail.
+6. Copie **tipo, host/nome, conteúdo e prioridade**, quando houver, exatamente do painel. O TTL padrão normalmente serve.
+7. Atenção ao campo de nome: alguns provedores acrescentam `.marmoteiro.com` automaticamente. Evite criar um nome duplicado como `...marmoteiro.com.marmoteiro.com`.
+8. Preserve os registros MX da raiz que recebem mensagens do seu e-mail profissional. Um MX de subdomínio mostrado para retorno de mensagens não substitui o MX da raiz.
+9. Não crie dois TXT começando com `v=spf1` no mesmo hostname. Se já houver um registro no nome solicitado, concilie-o com a configuração existente.
+10. Clique em **Verify / I've added the records** e aguarde a verificação. Se continuar pendente, compare os nomes completos e valores antes de repetir registros.
 
-Regras importantes:
+Verificar domínio de envio não exige transferir sua caixa postal. O sistema terá remetente sugerido `O Tal do Marmoteiro <avisos@notificacoes.marmoteiro.com>` e resposta dirigida a `falecom@marmoteiro.com`. Esse remetente é uma proposta para a futura integração, não uma variável já utilizada pelo código. [Domínios](https://resend.com/docs/dashboard/domains/introduction), [gestão e verificação](https://resend.com/docs/dashboard/domains/manage-domains).
 
-- não altere os MX da raiz `marmoteiro.com` criados pelo Email Routing;
-- não crie dois TXT começando com `v=spf1` no mesmo hostname;
-- copie DKIM exatamente como o Resend mostrar;
-- não use proxy laranja em registro de validação/e-mail.
+Depois da verificação, crie a chave em **API Keys > Create API Key**:
 
-### 10.5 Criar a API Key do Resend
+| Campo | Valor |
+| --- | --- |
+| Nome | `marmoteiro-producao-envio` |
+| Permissão | Sending access |
+| Domínio | `notificacoes.marmoteiro.com` |
 
-Depois de `Verified`:
+Guarde o valor exibido uma vez como segredo `marmoteiro-resend-api-key` no Secret Manager. A associação à API e a variável de ambiente serão acrescentadas quando implementarmos o provedor de envio. Desative rastreamento de abertura/clique para os avisos de consulta; preserve conteúdo mínimo. Se a conta solicitar aprovação para produção, complete o cadastro verdadeiro do negócio. [Chaves](https://resend.com/docs/dashboard/api-keys/introduction), [permissões](https://resend.com/docs/api-reference/api-keys/create-api-key).
 
-1. Resend > **API Keys > Create API Key**.
-2. Nome: `marmoteiro-producao-envio`.
-3. Permissão: **Sending access**.
-4. Restrinja ao domínio `notificacoes.marmoteiro.com`, se disponível.
-5. Crie e copie a chave.
-6. No Google Cloud Secret Manager, salve como:
-   ```text
-   marmoteiro-resend-api-key
-   ```
-
-Nunca grave essa chave no Git ou na documentação.
-
-Configuração prevista:
-
-```text
-From: O Tal do Marmoteiro <avisos@notificacoes.marmoteiro.com>
-Reply-To: falecom@marmoteiro.com
-```
-
-### 10.6 Criar DMARC inicial
-
-Depois que Routing e Resend estiverem funcionando:
-
-1. Cloudflare > `marmoteiro.com` > **DNS > Records > Add record**.
-2. Type: **TXT**.
-3. Name:
-   ```text
-   _dmarc
-   ```
-4. Content:
-   ```text
-   v=DMARC1; p=none;
-   ```
-5. TTL: **Auto**.
-6. Save.
-
-`p=none` é somente observação. Não usar `quarantine`/`reject` antes de validar todos os remetentes.
-
-### 10.7 Checklist
-
-- [ ] `marmoteiro.com` ativo
-- [ ] Auto-renew ligado
-- [ ] DNSSEC ativo
-- [ ] Email Routing onboarded
-- [ ] Destination Address verificada
-- [ ] regra `falecom@` criada
-- [ ] teste de recebimento passou
-- [ ] Catch-all desligado
-- [ ] `notificacoes.marmoteiro.com` Verified no Resend
-- [ ] API key guardada no Secret Manager
-- [ ] DMARC `p=none` criado
-- [ ] nenhuma credencial no Git
-
-Se algo falhar, use o runbook [domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md), que contém diagnóstico por problema.
+**Verificação:** domínio Verified, chave restrita guardada privadamente e e-mail profissional continuando a receber normalmente. Nenhuma mensagem real será disparada apenas por concluir essas configurações.
 
 ## 11. Autenticar o Terminal do Mac
 
@@ -583,57 +392,23 @@ A fonte técnica é a [coleção oficial da Meta](https://www.postman.com/meta/w
 
 O gateway de pagamento ainda não foi escolhido definitivamente. A criação da conta e das credenciais de sandbox será detalhada quando decidirmos o provedor, métodos e condições comerciais.
 
-## 16. Domínio próprio no Cloudflare
+## 16. Domínio próprio: etapa posterior à URL de avaliação
 
-O domínio `marmoteiro.com` já está registrado no **Cloudflare Registrar** e a zona DNS também fica na Cloudflare. Portanto não existe etapa futura de “escolher registrador/DNS”; o trabalho agora é conectar esse DNS ao frontend escolhido.
+Identifique registrador, administrador do DNS e provedor da caixa postal; podem ser três empresas diferentes. Preserve o e-mail oficial `falecom@marmoteiro.com` e os demais endereços já existentes.
 
-### Estado recomendado
+Não basta colocar um CNAME apontando para `run.app` para garantir roteamento e certificado do domínio. O Google oferece load balancer, Firebase Hosting e mapeamento limitado; o mapeamento nativo ainda consta como prévia e não é recomendado para produção. [Opções de domínio](https://docs.cloud.google.com/run/docs/mapping-custom-domains).
 
-1. Primeiro publique e valide web/API nas URLs `run.app`.
-2. O Cloud Run continuará em `southamerica-east1`, junto da estratégia regional do banco.
-3. **Não usar o mapeamento nativo de domínio do Cloud Run** como solução principal: ele continua em Preview, não é recomendado para produção e `southamerica-east1` não está na lista de regiões do recurso.
-4. Para custo baixo, o candidato natural é **Firebase Hosting na frente do Cloud Run**, porque aceita domínio customizado e rewrites para Cloud Run em `southamerica-east1`.
-5. Porém, **não ligar o domínio ao Hosting antes de corrigir a sessão administrativa**: Firebase Hosting remove cookies de requests dinâmicos, exceto o cookie especial `__session`; o código atual usa `__Host-marmoteiro-admin`.
-6. Enquanto essa compatibilidade não for implementada/testada, mantenha o domínio sem apontar o tráfego autenticado ao Firebase Hosting.
-7. A alternativa sem essa limitação é um **Global External Application Load Balancer** na frente do Cloud Run, recomendada pela própria documentação do Cloud Run, mas com mais configuração e potencial custo.
+Firebase Hosting como frente do Cloud Run pode ser uma opção econômica, mas precisa de ajuste e homologação do login: esse proxy encaminha normalmente apenas o cookie `__session`; hoje usamos `__Host-marmoteiro-admin`. Portanto, não configurar esse redirecionamento como se já estivesse compatível. [Cookies do Hosting](https://firebase.google.com/docs/hosting/manage-cache).
 
-### Quando a opção Firebase Hosting estiver homologada
-
-1. Alterar a sessão para um desenho compatível com `__session` e manter `Secure`, `HttpOnly`, `SameSite` e validação server-side.
-2. Criar `firebase.json` com rewrite `**` para o serviço `marmoteiro-web` em `southamerica-east1`.
-3. Fazer deploy da configuração do Hosting.
-4. Em **Firebase Hosting > Add custom domain**, adicionar `marmoteiro.com`.
-5. Usar o próprio wizard do Firebase como fonte dos registros TXT/A/CNAME.
-6. Criar os registros no Cloudflare DNS inicialmente como **DNS only**. O Firebase já fornece CDN e certificado; uma segunda camada de proxy Cloudflare não é necessária para essa primeira topologia.
-7. Adicionar `www.marmoteiro.com` como redirecionamento para o domínio canônico.
-8. Aguardar status de certificado/domínio ficar ativo antes de mudar `APP_ORIGIN`.
-9. Atualizar:
-   - `APP_ORIGIN=https://marmoteiro.com`;
-   - Firebase Auth > Authorized domains;
-   - OAuth callbacks;
-   - webhooks que dependam da origem;
-   - testes de cookie, CSRF/origin e logout.
-10. Manter a URL `run.app` registrada para troubleshooting/rollback, mas não divulgá-la como URL comercial.
-
-O procedimento detalhado, inclusive DNSSEC, e-mail e checklists, está em [domínio Cloudflare e e-mail](./dominio-cloudflare-email.md).
+Após escolher e implementar a frente de domínio, o painel fornecerá os registros DNS exatos. Então serão atualizados DNS, certificado, `APP_ORIGIN`, domínios Firebase e callbacks/webhooks pertinentes. Essa decisão será documentada antes de trocar o destino atual de `marmoteiro.com`.
 
 ## 17. Informações para retornar ao Codex
 
 Pode colar esta ficha, sem credenciais:
 
 ```text
-Domínio principal: marmoteiro.com
-Registrador: Cloudflare Registrar
-DNS: Cloudflare DNS
-DNSSEC ativo: sim/não
-Cloudflare Email Routing ativo: sim/não
-falecom@marmoteiro.com encaminha para caixa verificada: sim/não
 Firebase / Google Cloud Project ID:
-Plano Firebase atual: Spark/Blaze
-Google AI Pro vinculado ao Perfil de Desenvolvedor: sim/não
-Google Developer Program Premium ativo: sim/não
-Crédito Google Cloud mensal visível/resgatado: sim/não
-Faturamento Google Cloud vinculado: sim/não
+Faturamento vinculado: sim/não
 Orçamento de alerta criado: sim/não
 Região Cloud Run escolhida:
 Firebase app web registrado: sim/não
@@ -646,13 +421,12 @@ Quatro contas de serviço criadas: sim/não
 Repositório Artifact Registry:
 Bucket de fonte do build:
 gcloud autenticado neste Mac: sim/não
-Domínio Resend: notificacoes.marmoteiro.com
-Status Resend: Pending/Verified
-Estratégia de domínio web: run.app / Firebase Hosting / Load Balancer
-Provedor de caixa postal SMTP para envio humano (se houver):
+Domínio Resend / status Verified:
+Provedor da caixa postal profissional:
+Provedor que administra o DNS:
 ```
 
-Não enviar URLs completas de banco, senha de login, API key Resend, client secret Google, refresh token, token WhatsApp, chave JSON privada, Cloudflare API token ou códigos de autenticação. A configuração pública do SDK Firebase pode ser compartilhada; os segredos serão acessados pelos recursos autorizados no ambiente.
+Não enviar URLs completas de banco, senha de login, API key Resend, client secret Google, refresh token, token WhatsApp, chave JSON privada ou códigos de autenticação. A configuração pública do SDK Firebase pode ser compartilhada; os segredos serão acessados pelos recursos autorizados no ambiente.
 
 ## 18. Problemas comuns
 
