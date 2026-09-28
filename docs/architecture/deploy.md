@@ -1,12 +1,14 @@
 # Deploy e operação
 
-Atualizado em 22/09/2026. **Preparação local; nenhum deploy remoto foi concluído.** Faltam autenticação do proprietário, projeto Firebase/Google Cloud, conta de faturamento escolhida e banco remoto. Este roteiro não cria recursos sozinho. [Custos e franquias](./custos.md) e [estado funcional](./README.md).
+Atualizado em 28/09/2026. **Preparação local; nenhum deploy remoto foi concluído por esta atualização.** O proprietário informou domínio na Cloudflare e Firebase Spark. Faltam confirmar Project ID/acesso, faturamento/Blaze para este destino e banco remoto. Google Workspace não será contratado. Este roteiro não cria recursos sozinho. [Custos e franquias](./custos.md) e [estado funcional](./README.md).
 
 Para criar as contas e recursos desde o início, seguir o [guia detalhado do proprietário](./configuracao-das-contas.md), que inclui conta de build explícita, permissões e bucket de fonte. Este arquivo é a referência operacional resumida.
 
 ## Destino e pré-requisitos
 
 Primeiro destino: dois serviços Cloud Run, web Next.js e API NestJS, no mesmo projeto/região; PostgreSQL Neon por TLS. Firebase Authentication será integrado na próxima etapa funcional. Publicar esta versão é publicar uma prévia, com administração autenticada e operações comerciais demonstrativas.
+
+**Spark é suficiente para preparar Auth, mas não para executar este deploy.** Vincular Cloud Billing ao projeto muda o Firebase para Blaze; App Hosting também requer Blaze. Antes dos comandos, seguir a seção 3 do [guia de contas](./configuracao-das-contas.md): conferir AI Pro estudantil/Developer Program, resgatar créditos elegíveis na conta Billing correta e configurar alertas. Crédito não habilita Cloud Run sem faturamento e não garante custo zero. Se optar por permanecer no Spark, manter execução local até homologar outro destino web/API. [Planos Firebase](https://firebase.google.com/docs/projects/billing/firebase-pricing-plans).
 
 O responsável deve ter acesso ao projeto Google Cloud/Firebase e ao Neon, habilitar faturamento conscientemente e escolher região. `us-central1` nos exemplos é referência de preço, não decisão automática sobre localização de dados. Usar região próxima entre API e banco; registrar latência, transferência e requisitos de dados. Não alterar MX/e-mail do domínio ao publicar o site.
 
@@ -119,6 +121,8 @@ gcloud run deploy marmoteiro-web --project="$MARMOTEIRO_PROJECT" \
 ```
 
 Esses limites são ponto inicial de homologação; observar pico de memória no login scrypt e renderização antes de aumentar concorrência. Ainda não há medição de carga remota. A URL `run.app` serve à primeira avaliação HTTPS. Domínio próprio/CDN e suas cobranças devem ser escolhidos separadamente; não adicionar load balancer pago só para a prévia. Ao trocar origem, atualizar `APP_ORIGIN`, testar cookies e sessão; atualizar domínios autorizados no Firebase quando Auth estiver integrado.
+
+`marmoteiro.com` permanece registrado e com DNS na Cloudflare. Aplicar os registros fornecidos pela frente HTTPS escolhida, preservando MX/TXT de e-mail. O mapeamento nativo Cloud Run está em prévia e não suporta São Paulo (`southamerica-east1`); CNAME para `run.app` sozinho não conclui a ligação. Firebase Hosting exige homologação do cookie administrativo; proxy/Worker Cloudflare também exige implementação e testes. Ver seção 16 do [guia](./configuracao-das-contas.md), o [runbook Cloudflare/DNS/e-mail](./dominio-cloudflare-email.md) e [limitações oficiais](https://docs.cloud.google.com/run/docs/mapping-custom-domains).
 
 Criar o administrador remoto com o CLI [documentado](../acesso-administrativo.md), conectado explicitamente ao banco remoto através de ambiente protegido. Usar prompt oculto para a senha; não usar seed padrão nem copiar senha para shell/YAML. A conta já criada no banco local não aparece automaticamente no remoto. Não substituir o banco local nem transferir dados demonstrativos para produção.
 
