@@ -1,12 +1,20 @@
 # Handoff técnico e sequência de produção
 
-Atualizado em 25/09/2026. Branch padrão/produção: `main`; integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
+Atualizado em 28/09/2026. Branch padrão/produção: `main`; integração: `dev`. Repositório: `wellbenicio/o-tal-do-marmoteiro`. Novos trabalhos usam `feature/<descricao>` conforme o [Git Flow](./git-flow.md). Consulte `git status` e os PRs antes de editar; não descarte arquivos de outras etapas. O histórico do PR registra o resultado de CI da publicação; isso não comprova deploy.
 
 ## Primeiro minuto de outro desenvolvedor/agente
 
 Leia `AGENTS.md`, o baseline e [mapa técnico](./README.md). Confira arquivos de ambiente por nomes/validação, sem imprimir segredos. Inspecione processos nas portas 3008/3001 e Docker antes de reiniciar. A conta administrativa local existe; não criar senha padrão nem colocar credenciais em documentação/seed.
 
 O responsável recebeu um [guia de criação das contas e primeira publicação](./configuracao-das-contas.md). Sua existência não comprova que as etapas foram executadas. Confirmar recursos/IDs reais antes de publicar. A região sugerida no guia é São Paulo quando disponível no plano escolhido; exemplos antigos em `us-central1` não são uma decisão já aplicada. Domínio próprio ainda exige escolha/homologação da frente HTTPS; Firebase Hosting filtra cookies e não é compatível automaticamente com o cookie administrativo atual.
+
+## Contas e domínio — atualização em 28/09/2026
+
+Informado pelo proprietário: `marmoteiro.com` registrado na **Cloudflare**; e-mail do domínio **ainda não configurado**; **Google Workspace não será contratado**; Firebase no **Spark**; Google AI Pro pela oferta de estudantes e participação no Google Developer Program. Não há confirmação de saldo/resgate de crédito, expiração da oferta, configuração DNS, plano Workers ou recursos remotos.
+
+O [guia de contas](./configuracao-das-contas.md) passa a partir desse cenário: Email Routing para recebimento no Gmail, escolha separada do envio humano, Resend para a futura integração transacional, verificação dos benefícios AI Pro/Developer e migração Spark → Blaze quando for executar Cloud Run. Uso da conta Google pessoal é previsto para Calendar/Meet. Nenhum plano pago, envio, DNS ou deploy foi ativado pela atualização documental.
+
+Cloudflare continua registrador/DNS; frente HTTPS para web/API permanece a homologar. O mapeamento nativo Cloud Run não contempla `southamerica-east1`; Firebase Hosting depende de ajuste/teste de cookies e um proxy Cloudflare não está implementado. Respeitar o baseline completo, sem substituir checkout por agenda Google ou site estático.
 
 ## Preços e duração — 25/09/2026
 
@@ -27,7 +35,7 @@ O catálogo persistente ainda será integrado. A prioridade de R$ 20,00 permanec
 
 ## O que impede a publicação remota agora
 
-Nenhuma conta Firebase/Google Cloud/hospedagem está autenticada neste ambiente e nenhum projeto remoto foi informado. Também não há banco remoto configurado. O build local não equivale a deploy. É necessário selecionar projeto/conta de faturamento, autenticar o proprietário, criar/conectar o banco e provisionar segredos/acesso administrativo.
+O proprietário já informou um projeto Firebase Spark; seu ID e acesso operacional neste ambiente ainda precisam ser confirmados, assim como o banco remoto. O build local não equivale a deploy. Para o destino Cloud Run, é necessário conferir benefícios/créditos, vincular a conta de faturamento ao projeto (Blaze), autenticar o proprietário e provisionar banco, segredos e acesso administrativo. E-mail e apontamento web do domínio permanecem pendentes.
 
 Não publicar somente a web dizendo que o painel está funcional: a verificação administrativa depende da API e do PostgreSQL. Uma prévia sem API falha fechada no login, mas isso precisa ser explicitamente combinado; o objetivo é publicar as camadas necessárias.
 
@@ -86,7 +94,8 @@ Registrar problema e comportamento final; contrato e autorização; regras/invar
 ## Decisões ainda a fechar
 
 - ID/conta do projeto Firebase, regiões e transferência aplicável de dados; limite de gasto aceitável e método de acompanhamento.
-- Provedor atual do e-mail profissional; gateway/conta elegível para o ramo de atividade e formas de pagamento.
+- Configurar recebimento por Email Routing/Gmail e escolher saída humana autenticada do e-mail profissional, sem Workspace; gateway/conta elegível para o ramo de atividade e formas de pagamento.
+- Vínculo AI Pro/Developer, validade da oferta estudantil e créditos resgatados na conta Billing correta; confirmar custo bruto e após abatimentos.
 - OAuth da agenda: conta organizadora, calendário e permissões; homologação do Meet conforme recursos da conta.
 - Número Meta, template aprovado, política de contato comercial separada dos lembretes; atendimento inicial manual da pergunta continua previsto.
 - Retenção por categoria de dados, backup e recuperação; arquivos e gravações (quando autorizadas) fora do banco relacional.

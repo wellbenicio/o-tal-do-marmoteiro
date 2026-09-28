@@ -15,6 +15,10 @@ funcional está em [`docs/product/`](./docs/product), especialmente
 
 O [mapa técnico atualizado](./docs/architecture/README.md) reúne arquitetura, estado real das funcionalidades, contratos, custos, publicação e próximos passos. A prévia tem login administrativo real; os fluxos comerciais continuam demonstrativos. O deploy remoto depende de projeto/contas e banco configurados.
 
+## Configurar domínio, contas e ferramentas
+
+Comece pelo **[guia de configuração das contas e primeira publicação](./docs/architecture/configuracao-das-contas.md)**: domínio na Cloudflare, e-mail sem Google Workspace, Firebase Spark e mudança para Blaze, benefícios Google AI Pro para estudantes/Developer Program, Neon, Resend, Calendar/Meet e WhatsApp. Atualizado em 28/09/2026 com o cenário informado pelo proprietário. Consulte também [custos](./docs/architecture/custos.md) e [deploy](./docs/architecture/deploy.md).
+
 ## Prévia navegável da interface
 
 A interface do Figma, a área do consulente e o painel do prestador estão em `apps/web`. Para validar o visual sem serviços externos:

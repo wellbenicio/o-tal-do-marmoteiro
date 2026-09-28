@@ -11,7 +11,15 @@ Data: 22/09/2026. Status: diretriz adotada para preparação; ativação dos pro
 - Manter o acesso administrativo existente enquanto a identidade é integrada. A futura associação Firebase do administrador depende de provisionamento autorizado no servidor e conta ativa no banco; cadastro público nunca concede papel administrativo. Não há migração automática de hash scrypt local.
 - Não adotar Firestore/Realtime Database como segundo banco transacional agora. Firestore possui transações, mas migrar exigiria redesenhar relações, garantias de agenda, relatórios, histórico jurídico, auditoria e outbox. Não há economia comprovada que justifique esse trabalho. SQL Connect (antes Data Connect) usa Cloud SQL e não elimina seu custo após o período de avaliação.
 - Não exigir Redis enquanto a outbox PostgreSQL atende a demanda. O worker deve terminar dentro de uma requisição autenticada; timer local é opcional. No futuro, Cloud Tasks agenda despachos, e uma reconciliação periódica recupera tarefas pendentes. A integração de Cloud Tasks ainda não está implementada.
-- E-mails transacionais: Resend é o candidato inicial. Caixa postal profissional continua no provedor de e-mail do domínio; são serviços distintos. WhatsApp utiliza API oficial e templates/consentimentos; taxa por mensagem não é custo de hospedagem.
+- E-mails transacionais: Resend é o candidato inicial. Recebimento e envio humano do e-mail profissional são serviços distintos, ainda a configurar conforme o complemento abaixo. WhatsApp utiliza API oficial e templates/consentimentos; taxa por mensagem não é custo de hospedagem.
+
+## Complemento de contas e domínio — 28/09/2026
+
+O responsável confirmou domínio na Cloudflare, e-mail ainda não configurado, ausência de contratação de Google Workspace, Firebase Spark e Google AI Pro estudantil/Developer Program. A documentação operacional foi ajustada no [guia de contas](../architecture/configuracao-das-contas.md) e em [custos](../architecture/custos.md).
+
+Mantém-se a direção Next.js/NestJS/Neon. Spark permite preparar a identidade, mas Cloud Run no mesmo projeto exige faturamento e mudança para Blaze. Benefícios devem ser conferidos/resgatados na conta do proprietário antes de compor abatimentos; não são garantia de gratuidade ou autorização para ativar cobrança. Conta Google pessoal atende à preparação de Calendar/Meet; Workspace não é dependência do produto.
+
+Cloudflare será mantida como registrador/DNS. Recebimento por Email Routing e envio profissional são configurações distintas. Frente HTTPS, provedor de saída humana e integrações reais permanecem pendentes; esta atualização não escolhe outro runtime, altera regras funcionais ou ativa serviços. As fontes e passos de verificação estão no guia.
 
 ## Consequências
 
