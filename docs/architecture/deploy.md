@@ -1,6 +1,6 @@
 # Deploy e operação
 
-Atualizado em 22/09/2026. **Preparação local; nenhum deploy remoto foi concluído.** Faltam autenticação do proprietário, projeto Firebase/Google Cloud, conta de faturamento escolhida e banco remoto. Este roteiro não cria recursos sozinho. [Custos e franquias](./custos.md) e [estado funcional](./README.md).
+Atualizado em 28/09/2026. **Preparação local; nenhum deploy remoto foi concluído.** O domínio `marmoteiro.com` já está registrado no Cloudflare Registrar/DNS e o projeto Firebase está atualmente no Spark. Ainda faltam autenticação operacional do proprietário, Cloud Billing/Blaze para o deploy em Cloud Run e banco remoto. Este roteiro não cria recursos sozinho. [Custos e franquias](./custos.md) e [estado funcional](./README.md).
 
 Para criar as contas e recursos desde o início, seguir o [guia detalhado do proprietário](./configuracao-das-contas.md), que inclui conta de build explícita, permissões e bucket de fonte. Este arquivo é a referência operacional resumida.
 
@@ -8,7 +8,7 @@ Para criar as contas e recursos desde o início, seguir o [guia detalhado do pro
 
 Primeiro destino: dois serviços Cloud Run, web Next.js e API NestJS, no mesmo projeto/região; PostgreSQL Neon por TLS. Firebase Authentication será integrado na próxima etapa funcional. Publicar esta versão é publicar uma prévia, com administração autenticada e operações comerciais demonstrativas.
 
-O responsável deve ter acesso ao projeto Google Cloud/Firebase e ao Neon, habilitar faturamento conscientemente e escolher região. `us-central1` nos exemplos é referência de preço, não decisão automática sobre localização de dados. Usar região próxima entre API e banco; registrar latência, transferência e requisitos de dados. Não alterar MX/e-mail do domínio ao publicar o site.
+O responsável deve ter acesso ao projeto Google Cloud/Firebase e ao Neon, habilitar faturamento conscientemente e escolher região. **Cloud Run não pode ser implantado enquanto o projeto permanecer no Spark**: vincular Cloud Billing ao mesmo Project ID muda o Firebase para Blaze. O benefício Google AI Pro/Google Developer Program Premium pode fornecer US$ 10/mês em créditos Google Cloud quando corretamente vinculado/resgatado, mas não substitui a conta de faturamento nem os controles de custo. `us-central1` nos exemplos é referência de preço, não decisão automática sobre localização de dados. Usar região próxima entre API e banco; registrar latência, transferência e requisitos de dados. O DNS é administrado na Cloudflare. Não alterar MX/e-mail do domínio ao publicar o site; a configuração web e a configuração de e-mail são independentes.
 
 Ferramentas locais: Node 22, npm, Docker; para a publicação, Google Cloud CLI autenticada e permissões para Cloud Build, Artifact Registry, Cloud Run, IAM e Secret Manager. Firebase CLI só é necessária para a alternativa App Hosting ou etapas de Firebase. Não solicitar senha pessoal/token por chat: o proprietário autentica no fluxo oficial do provedor.
 
@@ -118,13 +118,34 @@ gcloud run deploy marmoteiro-web --project="$MARMOTEIRO_PROJECT" \
   --set-secrets='ADMIN_API_SECRET=marmoteiro-admin-api-secret:1'
 ```
 
-Esses limites são ponto inicial de homologação; observar pico de memória no login scrypt e renderização antes de aumentar concorrência. Ainda não há medição de carga remota. A URL `run.app` serve à primeira avaliação HTTPS. Domínio próprio/CDN e suas cobranças devem ser escolhidos separadamente; não adicionar load balancer pago só para a prévia. Ao trocar origem, atualizar `APP_ORIGIN`, testar cookies e sessão; atualizar domínios autorizados no Firebase quando Auth estiver integrado.
+Esses limites são ponto inicial de homologação; observar pico de memória no login scrypt e renderização antes de aumentar concorrência. Ainda não há medição de carga remota. A URL `run.app` serve à primeira avaliação HTTPS. O domínio já existe na Cloudflare, mas **não deve ser ligado antes da validação da sessão**. Para custo baixo, a frente candidata é Firebase Hosting -> Cloud Run; o mapeamento nativo do Cloud Run não é adequado em `southamerica-east1` e continua em Preview. Não adicionar load balancer pago só para a prévia. Ao trocar origem, atualizar `APP_ORIGIN`, testar cookies e sessão; atualizar domínios autorizados no Firebase quando Auth estiver integrado.
 
 Criar o administrador remoto com o CLI [documentado](../acesso-administrativo.md), conectado explicitamente ao banco remoto através de ambiente protegido. Usar prompt oculto para a senha; não usar seed padrão nem copiar senha para shell/YAML. A conta já criada no banco local não aparece automaticamente no remoto. Não substituir o banco local nem transferir dados demonstrativos para produção.
 
 ## Alternativa Firebase App Hosting
 
 `apps/web/apphosting.yaml` é configuração candidata, não um deploy homologado. Antes de usá-la, verificar suporte ao Next 16.3.6 e ao monorepo npm contra a [documentação oficial](https://firebase.google.com/docs/app-hosting/frameworks-tooling). App Hosting requer Blaze. Criar backend associado ao repositório/branch escolhidos e raiz de aplicativo `apps/web`, preservando o contexto e lockfile da raiz do monorepo; conceder acesso aos três segredos referenciados. Confirmar primeiro build/rollout com sessão e assets. Não prometer suporte apenas porque o Dockerfile passou localmente. Não rebaixar Next.js para uma versão antiga sem avaliar segurança/compatibilidade.
+
+## Domínio `marmoteiro.com` e Cloudflare
+
+O domínio está no Cloudflare Registrar e o DNS autoritativo é Cloudflare DNS. A sequência de produção é:
+
+1. validar web/API em `run.app`;
+2. manter `southamerica-east1`;
+3. adaptar a sessão administrativa antes de usar Firebase Hosting;
+4. testar em `web.app`;
+5. conectar `marmoteiro.com` no wizard do Firebase Hosting;
+6. criar na Cloudflare somente os registros entregues pelo wizard, inicialmente como **DNS only**;
+7. atualizar `APP_ORIGIN=https://marmoteiro.com`, Authorized Domains, OAuth callbacks e webhooks;
+8. testar login/logout/cookies/origin e rollback.
+
+### Bloqueio atual para Firebase Hosting
+
+Firebase Hosting remove cookies de requests dinâmicos, com exceção do cookie especial `__session`. O código atual usa `__Host-marmoteiro-admin`. Portanto, o rewrite Hosting -> Cloud Run não deve ser colocado em produção antes de uma alteração de sessão compatível e de testes de regressão.
+
+O mapeamento nativo de domínio do Cloud Run continua em Preview, não é recomendado para produção e não oferece `southamerica-east1` entre as regiões suportadas. A alternativa mais robusta é um Global External Application Load Balancer, porém com mais custo/complexidade.
+
+Guia completo: [domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md).
 
 ## Comunicações e execução assíncrona
 
