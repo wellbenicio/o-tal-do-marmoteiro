@@ -15,6 +15,7 @@ Cenário informado pelo proprietário: domínio registrado na **Cloudflare**, e-
 5. [Próximas etapas e handoff](./handoff.md): sequência de implementação, critérios de conclusão e bloqueios externos.
 6. ADRs [0001](../adr/0001-escolha-da-stack-tecnologica.md), [0002](../adr/0002-acesso-administrativo-e-canais.md), [0003](../adr/0003-infraestrutura-baixo-custo-e-firebase.md).
 7. [Git Flow](./git-flow.md): branches, integração, releases, sincronização e limpeza.
+8. [Domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md): passo a passo do painel, DNSSEC, Email Routing, Resend, DMARC e conexão do domínio.
 
 ## Estado real
 
