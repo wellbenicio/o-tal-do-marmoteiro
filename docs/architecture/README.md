@@ -1,10 +1,12 @@
 # Mapa técnico — O Tal do Marmoteiro
 
-Atualizado em 25/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
+Atualizado em 28/09/2026. Ponto de entrada para outro desenvolvedor ou agente. Leia primeiro [AGENTS](../../AGENTS.md) e o [baseline funcional](../../o-tal-do-marmoteiro-especificacao-funcional-regulatoria-v1.0.md). Este mapa descreve o código e a direção técnica; não substitui as regras comerciais/jurídicas.
 
 ## Leitura rápida
 
 Para configurar as contas como proprietário, comece pelo [passo a passo de configuração e primeira publicação](./configuracao-das-contas.md). Ele inclui consoles, nomes dos recursos, permissões, segredos e comandos, sem presumir que a integração já esteja ativa.
+
+Cenário informado pelo proprietário: domínio registrado na **Cloudflare**, e-mail do domínio ainda não configurado, **sem Google Workspace**, Firebase **Spark** e Google **AI Pro estudantil + Developer Program**. O guia detalha encaminhamento de e-mail, verificação dos benefícios e passagem para Blaze quando for executar o deploy Cloud Run. Saldos, vigência das ofertas, DNS e recursos remotos ainda não foram verificados nos consoles.
 
 1. Este mapa: responsabilidades e estado real.
 2. [Fluxos e contratos](./fluxos-e-contratos.md): identidade, contratação, agenda, pagamento e comunicações.
@@ -13,12 +15,13 @@ Para configurar as contas como proprietário, comece pelo [passo a passo de conf
 5. [Próximas etapas e handoff](./handoff.md): sequência de implementação, critérios de conclusão e bloqueios externos.
 6. ADRs [0001](../adr/0001-escolha-da-stack-tecnologica.md), [0002](../adr/0002-acesso-administrativo-e-canais.md), [0003](../adr/0003-infraestrutura-baixo-custo-e-firebase.md).
 7. [Git Flow](./git-flow.md): branches, integração, releases, sincronização e limpeza.
+8. [Domínio Cloudflare, DNS e e-mail](./dominio-cloudflare-email.md): passo a passo do painel, DNSSEC, Email Routing, Resend, DMARC e conexão do domínio.
 
 ## Estado real
 
 | Área | Implementado | Ainda necessário para operação real |
 | --- | --- | --- |
-| Site | Landing e identidade visual do Figma; assets/fontes locais | Domínio/hosting remoto; conteúdo final |
+| Site | Landing e identidade visual do Figma; assets/fontes locais; domínio registrado na Cloudflare conforme informado | Conectar domínio à hospedagem, HTTPS e conteúdo final |
 | Cliente | Cadastro/login, checkout, histórico, solicitações e notas demonstrativos | Firebase Auth, sessão, autorização e persistência da conta real |
 | Admin | Login real, hash scrypt, sessões PostgreSQL, proteção BFF/API, provisionamento restrito | Publicação do banco/API e criação/associação do acesso remoto; RBAC ampliado |
 | Domínio | Máquinas de estado, fila/SLA por calendário injetado, reagendamento, reembolso, retenção e correção cadastral com testes e contratos de cálculo `/api/v1` | Orquestração transacional autorizada, auditoria dos comandos, calendário e integrações reais |
@@ -27,7 +30,7 @@ Para configurar as contas como proprietário, comece pelo [passo a passo de conf
 | Pagamento | Estados e regras de prévia separados | Gateway, webhook assinado, idempotência, reconciliação e estorno real |
 | Agenda | Slots/hold/reagendamento/cancelamento na prévia | Exclusividade transacional, concorrência, expiração e integração com disponibilidade pessoal |
 | Comunicações | Outbox PostgreSQL e adaptadores Calendar/Meet/WhatsApp; execução por chamada interna autenticada | Eventos confiáveis de domínio, Cloud Tasks/OAuth, e-mail comercial, consentimentos persistidos e recibos |
-| Infraestrutura | Dockerfiles, Next standalone, App Hosting config, build Cloud Run, CI e limites de pool | Contas/projeto remoto autenticados, faturamento escolhido, deploy e smoke test remoto |
+| Infraestrutura | Dockerfiles, Next standalone, App Hosting config, build Cloud Run, CI e limites de pool; Firebase Spark informado | Confirmar projeto/benefícios, vincular faturamento para Cloud Run/Blaze, banco remoto, deploy e smoke test |
 
 A conta administrativa criada durante a validação pertence ao PostgreSQL local. Nenhuma senha ou conta deve ser copiada para Git, YAML ou documentação. Migrar banco ou provisionar administrador remoto é etapa explícita do deploy.
 

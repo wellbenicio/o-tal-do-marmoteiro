@@ -1,14 +1,25 @@
 # Custos e alternativas de infraestrutura
 
-Referência consultada em 22/09/2026. Valores em USD, antes de câmbio/impostos, sujeitos a alteração. Franquia gratuita não significa SLA, backup completo ou limite financeiro automático. Créditos promocionais temporários não entram nas estimativas.
+Tabela geral de referência consultada em 22/09/2026; cenário de contas, e-mail e benefícios Google atualizado em **28/09/2026**, com fontes abaixo. Valores em USD, antes de câmbio/impostos, sujeitos a alteração. Franquia gratuita não significa SLA, backup completo ou limite financeiro automático. Estimar primeiro o custo bruto; abater somente créditos efetivamente concedidos e elegíveis.
 
 ## Recomendação para 50 consulentes + 1 administrador
 
-Firebase Authentication + Cloud Run (web e API, em dois containers) + Neon PostgreSQL + Resend (e-mails transacionais). Manter a caixa postal e o domínio no provedor já contratado. WhatsApp oficial e gateway são despesas variáveis de operação. Redis não é necessário nesta fase.
+Firebase Authentication + Cloud Run (web e API, em dois containers) + Neon PostgreSQL + Resend (e-mails transacionais). **Domínio já registrado na Cloudflare; Google Workspace fora do orçamento por decisão do proprietário.** O e-mail ainda não está configurado: Cloudflare Email Routing para Gmail é a proposta de recebimento; saída humana pelo endereço profissional requer escolha e teste separados. WhatsApp oficial e gateway são despesas variáveis de operação. Redis não é necessário nesta fase.
+
+O Firebase informado está no **Spark**. Auth pode ser preparado nesse plano; a hospedagem Cloud Run prevista exige Cloud Billing e **Blaze** no mesmo projeto, com cobrança por uso e franquias. [Planos Firebase](https://firebase.google.com/docs/projects/billing/firebase-pricing-plans). O procedimento está na seção 3 do [guia de contas](./configuracao-das-contas.md). Detalhes operacionais de Cloudflare, DNS e e-mail ficam no [runbook específico](./dominio-cloudflare-email.md).
 
 Firebase App Hosting é uma alternativa gerenciada para a web, condicionada à homologação: a tabela oficial consultada ainda não confirma suporte ativo ao Next.js 16.3.6 e ao monorepo npm deste projeto. Os containers próprios evitam depender desse adaptador no primeiro deploy. [Suporte de frameworks](https://firebase.google.com/docs/app-hosting/frameworks-tooling).
 
-Estimativa de planejamento, não orçamento garantido: **US$ 0 a US$ 5/mês para a infraestrutura pequena**, enquanto dentro das franquias, sem grandes arquivos/gravações, sem instâncias sempre ligadas e sem consultas periódicas que mantenham o banco acordado. Isso exclui domínio, caixa postal, pagamento, WhatsApp, tributos e quaisquer planos extras. Medir a primeira fatura antes de assumir custo estável.
+Estimativa de planejamento, não orçamento garantido: **US$ 0 a US$ 5/mês para a infraestrutura pequena**, enquanto dentro das franquias, sem grandes arquivos/gravações, sem instâncias sempre ligadas e sem consultas periódicas que mantenham o banco acordado. Isso exclui domínio, saída profissional de e-mail/caixa postal, frente HTTPS adicional (por exemplo, load balancer), pagamento, WhatsApp, tributos e quaisquer planos extras. Medir a primeira fatura antes de assumir custo estável.
+
+## Benefícios existentes a conferir antes de gastar
+
+O proprietário informou Google AI Pro pela oferta de estudantes e participação no Google Developer Program. A página atual de planos vincula ao AI Pro **US$ 10 mensais de crédito GenAI/Cloud**; o saldo efetivo depende da conta e do resgate. O Standard sozinho não comprova esse benefício. [Planos Developer](https://developers.google.com/program/plans-and-pricing).
+
+- Conferir titularidade e vigência no Google One, vínculo no Developer e valor/validade/SKUs em Cloud Billing. A estimativa usa **zero de crédito** até essa confirmação; detalhes e links de resgate estão na seção 3.2 do guia.
+- Crédito elegível pode reduzir a parcela Google Cloud. Cloudflare, Neon, Resend, Meta e gateway continuam com suas próprias cobranças. Não somar saldo Google Skills, AI credits ou armazenamento Google One como dinheiro para hospedagem.
+- Os créditos/benefícios dos antigos planos Premium anuais não devem ser presumidos como parte da oferta estudantil. [Condições e transição](https://developers.google.com/profile/help/benefits).
+- Registrar a expiração da oferta e acompanhar a renovação. Custos persistem se os recursos continuarem ativos após acabar o crédito; alertas de orçamento não desligam o serviço.
 
 ## Componentes
 
@@ -23,7 +34,11 @@ Estimativa de planejamento, não orçamento garantido: **US$ 0 a US$ 5/mês para
 | WhatsApp Business Platform | Cobrança variável por mensagens/categoria/mercado e condições vigentes | Lembretes agendados não devem ser orçados como universalmente gratuitos. Usar Cloud API direta evita mensalidade de um intermediário, mas não elimina tarifas Meta. [Preços oficiais](https://whatsappbusiness.com/products/platform-pricing/) |
 | Gateway | Há provedores sem mensalidade básica que cobram por transação | Taxa varia por método, prazo de recebimento, parcelamento e contrato. Consultar a conta comercial antes de decidir; não confundir Pix pessoal manual com integração gratuita de checkout. [Exemplo Mercado Pago](https://www.mercadopago.com.br/blog/links-pagamento-o-que-sao-vantagens) |
 | Agendamento técnico | Cloud Scheduler oferece 3 jobs gratuitos por conta de faturamento; excedente US$ 0,10/job/mês | A execução disparada pode gerar custo no Cloud Run/banco. Usar Cloud Tasks para horários individuais na etapa funcional; não manter o banco ativo só para consultar uma fila vazia. [Scheduler](https://cloud.google.com/scheduler/pricing) |
-| Domínio/caixa postal | Reaproveitar o existente | Resend envia mensagens do sistema, mas não é uma caixa de entrada. Manter MX do provedor de correio; SPF/DKIM/DMARC precisam ser configurados sem destruir os registros atuais. |
+| Domínio Cloudflare | Registro já contratado; prever renovação | DNS do domínio permanece na Cloudflare. Registro não inclui execução dos containers. [Registrar](https://developers.cloudflare.com/registrar/get-started/register-domain/) |
+| Recebimento profissional | Email Routing gratuito para Gmail | Encaminhamento não cria uma caixa/SMTP de saída. Preservar MX de recebimento e separar o subdomínio transacional. [Condições](https://developers.cloudflare.com/email-service/platform/pricing/) |
+| Envio humano pelo domínio | Provedor ainda a escolher; sem Workspace obrigatório | Cloudflare Email Sending/SMTP é opção em beta; envio a destinatários arbitrários requer Workers Paid. Não incluir essa despesa antes de escolher o serviço. [SMTP](https://developers.cloudflare.com/email-service/api/send-emails/smtp/), [preço](https://developers.cloudflare.com/email-service/platform/pricing/) |
+
+AI Pro/Google One elegível pode fornecer benefícios adicionais de Calendar/Meet na conta pessoal, inclusive gravação, conforme disponibilidade no Brasil e vigência da oferta. Verificar antes de contratar outro plano. Essa disponibilidade não ativa gravação no projeto nem dispensa consentimento/retenção. [Benefícios Calendar/Meet](https://support.google.com/googleone/answer/12351029?hl=en).
 
 ## Outras hospedagens que vale conhecer
 

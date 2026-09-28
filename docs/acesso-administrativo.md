@@ -6,6 +6,10 @@ O login da gestão é real: conta e hash de senha no PostgreSQL, sessão revogá
 
 `/gestao` encaminha visitantes para `/gestao/login`. Não existe cadastro público administrativo, senha padrão ou aprovação por link de e-mail. Uma conta de consulente não dá acesso à gestão. A criação depende de acesso ao servidor/banco e fica sob controle do responsável.
 
+## Contas externas e e-mail — atualização em 28/09/2026
+
+O domínio está registrado na Cloudflare, o e-mail do domínio ainda será configurado e Google Workspace não será contratado. Usar conta Google pessoal para preparar Calendar/Meet; verificar recursos adicionais do AI Pro estudantil na conta organizadora. Firebase Spark, passagem para Blaze no deploy Cloud Run e resgate dos benefícios Developer estão detalhados no [guia de contas](./architecture/configuracao-das-contas.md). Conta Firebase/Google pessoal não concede acesso administrativo ao sistema.
+
 ## Configuração local
 
 1. Inicie Postgres com `docker compose up -d postgres`. Redis é opcional e não é utilizado pela execução atual.
