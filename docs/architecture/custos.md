@@ -1,25 +1,14 @@
 # Custos e alternativas de infraestrutura
 
-Referência revisada em 28/09/2026. Valores em USD, antes de câmbio/impostos, sujeitos a alteração. Franquia gratuita não significa SLA, backup completo ou limite financeiro automático. Créditos promocionais temporários não entram nas estimativas.
+Referência consultada em 22/09/2026. Valores em USD, antes de câmbio/impostos, sujeitos a alteração. Franquia gratuita não significa SLA, backup completo ou limite financeiro automático. Créditos promocionais temporários não entram nas estimativas.
 
 ## Recomendação para 50 consulentes + 1 administrador
 
-Firebase Authentication + Cloud Run (web e API, em dois containers) + Neon PostgreSQL + Resend (e-mails transacionais). O domínio `marmoteiro.com` já está no Cloudflare Registrar/DNS. Google Workspace não será contratado nesta fase; entrada de `falecom@marmoteiro.com` pode usar Cloudflare Email Routing. WhatsApp oficial e gateway são despesas variáveis de operação. Redis não é necessário nesta fase.
+Firebase Authentication + Cloud Run (web e API, em dois containers) + Neon PostgreSQL + Resend (e-mails transacionais). Manter a caixa postal e o domínio no provedor já contratado. WhatsApp oficial e gateway são despesas variáveis de operação. Redis não é necessário nesta fase.
 
 Firebase App Hosting é uma alternativa gerenciada para a web, condicionada à homologação: a tabela oficial consultada ainda não confirma suporte ativo ao Next.js 16.3.6 e ao monorepo npm deste projeto. Os containers próprios evitam depender desse adaptador no primeiro deploy. [Suporte de frameworks](https://firebase.google.com/docs/app-hosting/frameworks-tooling).
 
-Estimativa de planejamento, não orçamento garantido: **US$ 0 a US$ 5/mês para a infraestrutura pequena**, enquanto dentro das franquias, sem grandes arquivos/gravações, sem instâncias sempre ligadas e sem consultas periódicas que mantenham o banco acordado. Isso exclui renovação do domínio, eventual caixa postal, pagamento, WhatsApp, tributos e quaisquer planos extras.
-
-O projeto Firebase está hoje no **Spark**, mas Cloud Run/App Hosting exigem Cloud Billing e, ao vinculá-lo, o projeto passa automaticamente para **Blaze**. Blaze não implica mensalidade fixa; libera produtos pagos por consumo. O Google AI Pro vinculado ao Google Developer Program Premium anuncia **US$ 10/mês em créditos Google Cloud**. Esse crédito pode absorver parte ou todo o consumo pequeno, mas não entra como garantia de custo zero e deve ser confirmado mensalmente antes de ser considerado no caixa.
-
-## Spark, Blaze e benefício Google AI Pro
-
-- **Spark:** adequado enquanto o trabalho estiver limitado a configuração/desenvolvimento dos produtos Firebase gratuitos.
-- **Blaze:** necessário para Cloud Run, Cloud Build, Artifact Registry, Secret Manager e App Hosting. O vínculo de uma Cloud Billing Account ao mesmo projeto converte Spark -> Blaze.
-- **Google AI Pro / Developer Program Premium:** a documentação vigente inclui US$ 10/mês em créditos Google Cloud, além de cotas maiores do Gemini Code Assist e 30 workspaces Firebase Studio.
-- **Planejamento financeiro:** tratar o crédito como abatimento promocional/benefício, não como teto de uso. Alertas de orçamento continuam obrigatórios.
-
-Detalhes operacionais: [domínio, Cloudflare e billing](./dominio-cloudflare-email.md).
+Estimativa de planejamento, não orçamento garantido: **US$ 0 a US$ 5/mês para a infraestrutura pequena**, enquanto dentro das franquias, sem grandes arquivos/gravações, sem instâncias sempre ligadas e sem consultas periódicas que mantenham o banco acordado. Isso exclui domínio, caixa postal, pagamento, WhatsApp, tributos e quaisquer planos extras. Medir a primeira fatura antes de assumir custo estável.
 
 ## Componentes
 
@@ -34,10 +23,7 @@ Detalhes operacionais: [domínio, Cloudflare e billing](./dominio-cloudflare-ema
 | WhatsApp Business Platform | Cobrança variável por mensagens/categoria/mercado e condições vigentes | Lembretes agendados não devem ser orçados como universalmente gratuitos. Usar Cloud API direta evita mensalidade de um intermediário, mas não elimina tarifas Meta. [Preços oficiais](https://whatsappbusiness.com/products/platform-pricing/) |
 | Gateway | Há provedores sem mensalidade básica que cobram por transação | Taxa varia por método, prazo de recebimento, parcelamento e contrato. Consultar a conta comercial antes de decidir; não confundir Pix pessoal manual com integração gratuita de checkout. [Exemplo Mercado Pago](https://www.mercadopago.com.br/blog/links-pagamento-o-que-sao-vantagens) |
 | Agendamento técnico | Cloud Scheduler oferece 3 jobs gratuitos por conta de faturamento; excedente US$ 0,10/job/mês | A execução disparada pode gerar custo no Cloud Run/banco. Usar Cloud Tasks para horários individuais na etapa funcional; não manter o banco ativo só para consultar uma fila vazia. [Scheduler](https://cloud.google.com/scheduler/pricing) |
-| Domínio e DNS | Cloudflare Registrar + Cloudflare DNS | Domínio já contratado; considerar renovação anual. Nameservers permanecem na Cloudflare. DNSSEC é gratuito. |
-| Entrada `falecom@` | Cloudflare Email Routing | Encaminhamento de entrada sem Workspace; não oferece uma caixa IMAP/SMTP completa. |
-| E-mail transacional | Resend Free inicialmente | 3.000 e-mails/mês e 100/dia na referência de 28/09/2026; usar `notificacoes.marmoteiro.com`. |
-| Caixa postal humana | Não contratar inicialmente | Só adicionar provedor IMAP/SMTP quando houver necessidade de responder manualmente como `falecom@`. Não depender do Gmail “Enviar como”, cuja retirada para terceiros foi anunciada para janeiro/2027. |
+| Domínio/caixa postal | Reaproveitar o existente | Resend envia mensagens do sistema, mas não é uma caixa de entrada. Manter MX do provedor de correio; SPF/DKIM/DMARC precisam ser configurados sem destruir os registros atuais. |
 
 ## Outras hospedagens que vale conhecer
 
