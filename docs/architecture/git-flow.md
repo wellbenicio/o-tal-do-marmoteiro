@@ -84,7 +84,7 @@ Configuração aplicada e verificada: `main` como branch padrão, merge commits 
 
 O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
 
-Em 01/10/2026, o repositório passou a ser público e `main` e `dev` foram protegidas. Ambas exigem PR, checks `git-flow`/`validate`, base atualizada, resolução de conversas, uma aprovação, revisão do CODEOWNER `@wellbenicio` e aprovação do último push. Force push e exclusão estão desabilitados.
+Em 01/10/2026, o repositório passou a ser público e `main` e `dev` foram protegidas. Ambas exigem PR, checks `git-flow`/`validate` e `SonarCloud Code Analysis`, base atualizada, resolução de conversas, uma aprovação, revisão do CODEOWNER `@wellbenicio` e aprovação do último push. Force push e exclusão estão desabilitados.
 
 Após atualização de `dev`, o workflow `Open dev to main pull request` abre um PR para `main` caso ainda não exista um. A automação não faz merge e não substitui a aprovação do responsável.
 
