@@ -44,7 +44,7 @@ Resolver conflitos não é escolher todos os arquivos de um lado: preservar cont
 1. Revisar diff, escopo e ausência de segredos; abrir PR `feature/*` → `dev`.
 2. Explicar comportamento entregue, validação, migração e limitações. Rascunho preserva trabalho ainda não pronto.
 3. Concluir os checks `git-flow`, `validate` e o **Quality Gate do Sonar** no commit atual: direção das branches, instalação reproduzível, auditoria de dependências de produção, Prisma/migrations em Postgres de teste, lint, testes, builds e análise de qualidade. Corrigir achados na origem, sem desabilitar regras ou aceitar issues para contornar o gate. Aprovação de um commit anterior não valida mudanças posteriores.
-4. Conferir revisão e base atualizadas. Por instrução do responsável em 25/09/2026, **concluir o merge assim que a entrega estiver aprovada**, sem pedir nova confirmação nem deixar PR concluído aberto ou em rascunho apenas aguardando autorização. Retirar o rascunho e integrar por **merge commit**, verificando o SHA aprovado e preservando a ancestralidade da feature. Não usar squash/rebase. Conflitos, checks em andamento/reprovados ou revisões obrigatórias pendentes devem ser resolvidos; não são motivo para ignorar validações.
+4. Conferir revisão e base atualizadas. Todo PR aberto por colaborador exige aprovação explícita de `@wellbenicio`, proprietário definido em `.github/CODEOWNERS`; CI aprovado não substitui essa revisão. Depois da aprovação do responsável, concluir o merge sem pedir nova confirmação e integrar por **merge commit**, verificando o SHA aprovado e preservando a ancestralidade da feature. Não usar squash/rebase. Conflitos, checks em andamento/reprovados ou revisões obrigatórias pendentes devem ser resolvidos; não são motivo para ignorar validações.
 5. Atualizar a cópia local de `dev` e remover a feature concluída:
 
 ```bash
@@ -80,13 +80,13 @@ A antiga `features/mvp-implementation`, encerrada sem merge no PR #1, está pres
 
 ## Configuração e limites do GitHub
 
-Configuração aplicada e verificada: `main` como branch padrão, merge commits habilitados, squash/rebase desabilitados e `delete_branch_on_merge=true`. A opção nativa do GitHub remove a branch remota de origem após o merge do PR, inclusive `feature/*` → `dev`; não possui filtro por prefixo. Preservar PRs ainda abertos e observar os dois destinos de releases/hotfixes. A remoção da branch local continua sendo feita com `git branch -d`, após verificar a integração.
+Configuração aplicada e verificada em 01/10/2026: `main` como branch padrão, merge commits habilitados, squash/rebase desabilitados e `delete_branch_on_merge=false`. A exclusão automática nativa foi desativada porque não filtra por prefixo e pode apagar a branch de origem `dev` depois de um PR `dev` → `main`. O workflow `delete-merged-feature.yml` remove exclusivamente branches `feature/*` do próprio repositório depois do merge confirmado em `dev`. `main` e `dev` são permanentes e não podem ser excluídas.
 
 O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
 
-Em 22/09/2026, a API de regras do repositório privado respondeu **403: requer GitHub Pro ou repositório público**. Portanto não há proteção efetiva contra push direto ou merge com check falhando no plano atual. O CI detecta problemas, mas não impede sozinho o administrador de ignorá-los. O repositório permanece privado; nenhuma troca de plano foi realizada.
+Em 01/10/2026, o repositório está público e as proteções de `main` e `dev` foram verificadas pela API do GitHub. As duas branches exigem PR, base atualizada, checks `git-flow` e `validate`, uma aprovação, revisão de code owner, nova aprovação depois do último push, resolução de conversas e bloqueio de force push e exclusão. `.github/CODEOWNERS` atribui todo o repositório a `@wellbenicio`, fazendo com que PRs de colaboradores dependam da aprovação dele.
 
-Quando houver plano elegível, proteger `main` e `dev`: exigir PR, checks `git-flow`/`validate`, base atualizada, resolução de conversas, impedir force push e exclusão. Calibrar revisão humana para a equipe existente; não exigir aprovação externa inexistente em projeto de um único mantenedor. Não prometer enforcement antes de verificar as regras aplicadas.
+Não existe automação de promoção `dev` → `main`. O workflow atual rejeita essa direção, pois esta política determina que `main` recebe apenas `release/*` e `hotfix/*`. Um merge direto de `dev` em `main` exige mudança explícita desta política e do workflow; não deve ser tratado como consequência automática de uma feature aprovada.
 
 ## Conferência ao terminar uma entrega
 
