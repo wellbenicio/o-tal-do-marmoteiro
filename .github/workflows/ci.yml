@@ -18,11 +18,11 @@ jobs:
         shell: bash
         run: |
           case "$BASE_BRANCH:$HEAD_BRANCH" in
-            dev:feature/?*|dev:release/?*|dev:hotfix/?*|main:release/?*|main:hotfix/?*)
+            dev:feature/?*|dev:release/?*|dev:hotfix/?*|main:dev|main:release/?*|main:hotfix/?*)
               echo "Git Flow: $HEAD_BRANCH -> $BASE_BRANCH"
               ;;
             *)
-              echo "::error::Use feature/* -> dev; release/* ou hotfix/* -> main e dev."
+              echo "::error::Use feature/* -> dev; dev, release/* ou hotfix/* -> main."
               exit 1
               ;;
           esac
@@ -36,7 +36,7 @@ jobs:
           POSTGRES_USER: marmoteiro
           POSTGRES_PASSWORD: ci-only-password
           POSTGRES_DB: marmoteiro_test
-        ports: [5432:5432]
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U marmoteiro"
           --health-interval 5s --health-timeout 5s --health-retries 10

@@ -53,7 +53,7 @@ O repositório já contém scaffold de monorepo com Next.js, NestJS, Prisma e m�
 - Use `release/<versao>` para preparar uma versão e `hotfix/<descricao>` para correções da versão estável; reintegre em `dev`.
 - Atualize referências com `git fetch origin --prune`; sincronize branches permanentes com `--ff-only`. Nunca sobrescreva trabalho local para sincronizar.
 - Integre por PR e merge commit, depois das verificações. Não fazer force push em branches compartilhadas.
-- O responsável autoriza concluir o merge dos PRs assim que CI e Quality Gate do Sonar forem aprovados no commit atual, com base atualizada e sem conflitos ou revisão obrigatória pendente. Não pedir nova confirmação nem deixar uma entrega concluída em rascunho/aberta apenas aguardando autorização.
+- Todo PR de colaborador exige aprovação explícita de `@wellbenicio`, além de CI e Quality Gate do Sonar aprovados no commit atual, base atualizada e ausência de conflitos ou revisão obrigatória pendente. Nunca interpretar checks verdes como autorização de merge.
 - Corrija os achados de qualidade na origem, preservando comportamento e segurança; não desative regras ou aceite issues para contornar o gate. Confirme o SHA validado antes do merge e atualize as branches locais após a integração.
 - Exclua branches concluídas apenas depois de verificar a integração. Trabalho abandonado deve continuar recuperável por referência arquivada; PR em rascunho não significa trabalho concluído.
 - Segredos, bancos, sessões, arquivos de ambiente reais e credenciais não entram no Git.

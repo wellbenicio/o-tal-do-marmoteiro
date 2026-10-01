@@ -1,0 +1,37 @@
+name: Open dev to main pull request
+
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: promote-dev-to-main
+  cancel-in-progress: false
+
+jobs:
+  open-pull-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Open pull request when one does not already exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          existing_pr="$(gh pr list --base main --head dev --state open --json number --jq '.[0].number // empty')"
+
+          if [ -n "$existing_pr" ]; then
+            echo "Pull request #$existing_pr from dev to main is already open."
+            exit 0
+          fi
+
+          gh pr create \
+            --base main \
+            --head dev \
+            --title "chore: promover dev para produção" \
+            --body "PR aberto automaticamente após atualização da branch \`dev\`. O merge exige os checks obrigatórios e a aprovação do CODEOWNER @wellbenicio."

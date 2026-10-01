@@ -44,7 +44,7 @@ Resolver conflitos não é escolher todos os arquivos de um lado: preservar cont
 1. Revisar diff, escopo e ausência de segredos; abrir PR `feature/*` → `dev`.
 2. Explicar comportamento entregue, validação, migração e limitações. Rascunho preserva trabalho ainda não pronto.
 3. Concluir os checks `git-flow`, `validate` e o **Quality Gate do Sonar** no commit atual: direção das branches, instalação reproduzível, auditoria de dependências de produção, Prisma/migrations em Postgres de teste, lint, testes, builds e análise de qualidade. Corrigir achados na origem, sem desabilitar regras ou aceitar issues para contornar o gate. Aprovação de um commit anterior não valida mudanças posteriores.
-4. Conferir revisão e base atualizadas. Por instrução do responsável em 25/09/2026, **concluir o merge assim que a entrega estiver aprovada**, sem pedir nova confirmação nem deixar PR concluído aberto ou em rascunho apenas aguardando autorização. Retirar o rascunho e integrar por **merge commit**, verificando o SHA aprovado e preservando a ancestralidade da feature. Não usar squash/rebase. Conflitos, checks em andamento/reprovados ou revisões obrigatórias pendentes devem ser resolvidos; não são motivo para ignorar validações.
+4. Conferir revisão e base atualizadas. Todo PR de colaborador precisa da aprovação explícita de `@wellbenicio`; checks verdes não substituem essa revisão. Depois da aprovação, integrar por **merge commit**, verificando o SHA aprovado e preservando a ancestralidade da feature. Não usar squash/rebase. Conflitos, checks em andamento/reprovados ou revisões obrigatórias pendentes devem ser resolvidos; não são motivo para ignorar validações.
 5. Atualizar a cópia local de `dev` e remover a feature concluída:
 
 ```bash
@@ -84,9 +84,9 @@ Configuração aplicada e verificada: `main` como branch padrão, merge commits 
 
 O workflow valida convenções em PRs e executa os checks de aplicação em PRs e pushes de `dev`/`main`. Ele não publica na nuvem.
 
-Em 22/09/2026, a API de regras do repositório privado respondeu **403: requer GitHub Pro ou repositório público**. Portanto não há proteção efetiva contra push direto ou merge com check falhando no plano atual. O CI detecta problemas, mas não impede sozinho o administrador de ignorá-los. O repositório permanece privado; nenhuma troca de plano foi realizada.
+Em 01/10/2026, o repositório passou a ser público e `main` e `dev` foram protegidas. Ambas exigem PR, checks `git-flow`/`validate`, base atualizada, resolução de conversas, uma aprovação, revisão do CODEOWNER `@wellbenicio` e aprovação do último push. Force push e exclusão estão desabilitados.
 
-Quando houver plano elegível, proteger `main` e `dev`: exigir PR, checks `git-flow`/`validate`, base atualizada, resolução de conversas, impedir force push e exclusão. Calibrar revisão humana para a equipe existente; não exigir aprovação externa inexistente em projeto de um único mantenedor. Não prometer enforcement antes de verificar as regras aplicadas.
+Após atualização de `dev`, o workflow `Open dev to main pull request` abre um PR para `main` caso ainda não exista um. A automação não faz merge e não substitui a aprovação do responsável.
 
 ## Conferência ao terminar uma entrega
 
