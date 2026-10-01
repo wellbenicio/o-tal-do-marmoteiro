@@ -7,8 +7,8 @@ Política adotada em 22/09/2026 e atualizada em 25/09/2026 para `wellbenicio/o-t
 | Branch | Criada de | PR de destino | Encerramento |
 | --- | --- | --- | --- |
 | `feature/<descricao>` | `dev` atualizada | `dev` | Excluir após merge validado |
-| `release/<versao>` | `dev` atualizada | `main` e `dev` | Tag anotada `v<versao>` em `main`; excluir após ambos os merges |
-| `hotfix/<descricao>` | `main` atualizada | `main` e `dev` | Nova versão de correção; excluir após ambos os merges |
+| `release/<versao>` | `dev` atualizada | `main` e `dev` | Tag anotada `v<versao>` em `main`; preservar a branch |
+| `hotfix/<descricao>` | `main` atualizada | `main` e `dev` | Nova versão de correção; preservar a branch |
 
 A branch padrão do repositório não altera o destino dos PRs de feature: selecionar explicitamente `dev` como base. `main` recebe apenas releases e hotfixes validados.
 
@@ -64,7 +64,7 @@ git fetch origin --prune
 
 Criar `release/<versao>` a partir de `dev` quando houver uma versão a homologar. Atualizar changelog, versões pertinentes, contratos de configuração e plano de migração/rollback. Só correções da release entram nessa branch. Aprovar os checks e abrir PR para `main`; depois reintegrar a mesma branch em `dev`.
 
-Antes de integrar o primeiro PR de uma release/hotfix, manter os dois PRs abertos para preservar o segundo destino. A exclusão automática é uma conveniência; verificar que ambos os merges aconteceram antes de excluir a referência. Se necessário, recriar a referência a partir do SHA do PR para concluir a reintegração.
+Antes de integrar o primeiro PR de uma release/hotfix, manter os dois PRs abertos para preservar o segundo destino. Depois das integrações, preservar as branches `release/*` e `hotfix/*`; somente `feature/*` integrada em `dev` pode ser excluída.
 
 Depois do merge em `main`, criar tag anotada no commit validado, por exemplo `git tag -a v0.1.0 <sha-do-merge> -m 'Release 0.1.0'`, e publicar somente essa tag com `git push origin v0.1.0`. O exemplo não declara que essa versão existe. Nunca mover tags publicadas. Versionamento semântico: patch para correção compatível, minor para funcionalidade compatível e major para quebra de contrato; pré-lançamentos podem usar `-rc.1`.
 
@@ -99,4 +99,4 @@ git rev-list --left-right --count main...origin/main
 gh pr list --repo wellbenicio/o-tal-do-marmoteiro --state open
 ```
 
-Branches permanentes locais devem indicar `0 0` contra seus remotos. A árvore deve estar limpa; branches concluídas removidas; PRs pendentes devem informar claramente o que falta. Atualizar o handoff quando mudar o estado de integração, CI ou release.
+Branches permanentes locais devem indicar `0 0` contra seus remotos. A árvore deve estar limpa; branches `feature/*` concluídas removidas; PRs pendentes devem informar claramente o que falta. Atualizar o handoff quando mudar o estado de integração, CI ou release.
